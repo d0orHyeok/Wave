@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import {
   Body,
   Controller,
+  Get,
   Post,
   Res,
   UseGuards,
@@ -56,9 +57,18 @@ export class AuthController {
     response.cookie('RefreshToken', '', cookieOption);
   }
 
-  @Post('/test')
+  @Post('/refresh')
+  @UseGuards(JwTRefreshGuard)
+  refreshAccessToken(@GetUser() user: User): { accessToken: string } {
+    const payload = { id: user.id };
+    const accessToken = this.authService.getAccessToken(payload);
+
+    return { accessToken };
+  }
+
+  @Get('/info')
   @UseGuards(JwtAuthGuard)
   test(@GetUser() user: User) {
-    console.log('user', user);
+    return user;
   }
 }
