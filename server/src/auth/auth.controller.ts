@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Post,
+  Res,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -10,23 +11,35 @@ import { AuthCredentailDto } from './dto/auth-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
-  signUp(
+  async signUp(
     @Body(ValidationPipe) authCredentailDto: AuthCredentailDto,
   ): Promise<void> {
-    return this.authService.signUp(authCredentailDto);
+    await this.authService.signUp(authCredentailDto);
   }
 
   @Post('/signin')
-  signIn(
+  async signIn(
     @Body(ValidationPipe) authCredentailDto: AuthCredentailDto,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(authCredentailDto);
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<string> {
+    const user = await this.authService.validateUser(authCredentailDto);
+
+    const payload = { id: user.id };
+
+    const accessToken = this.authService.getAccessToken(payload);
+    const { refreshToken, cookieOption } =
+      this.authService.getCookieWithRefreshToken(payload);
+
+    response.cookie('RefreshToken', refreshToken, cookieOption);
+
+    return accessToken;
   }
 
   @Post('/test')

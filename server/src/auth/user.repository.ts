@@ -5,7 +5,6 @@ import {
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
@@ -30,16 +29,11 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async findUser(authCredentailDto: AuthCredentailDto): Promise<User> {
-    const { username, password } = authCredentailDto;
-
-    const user = await this.findOne({ username });
+  async findUserById(id: string): Promise<User> {
+    const user = await this.findOne({ username: id });
 
     if (!user) {
-      throw new NotFoundException(`Can't find User with name ${username}`);
-    }
-    if (!(await bcrypt.compare(password, user.password))) {
-      throw new UnauthorizedException('Wrong Password');
+      throw new NotFoundException(`Can't find User with id ${id}`);
     }
 
     return user;
