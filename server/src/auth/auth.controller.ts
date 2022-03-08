@@ -1,3 +1,5 @@
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwTRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
 import {
   Body,
@@ -8,7 +10,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { Response } from 'express';
@@ -28,22 +29,35 @@ export class AuthController {
   async signIn(
     @Body(ValidationPipe) authCredentailDto: AuthCredentailDto,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<string> {
+  ): Promise<{ accessToken: string }> {
     const user = await this.authService.validateUser(authCredentailDto);
 
     const payload = { id: user.id };
 
     const accessToken = this.authService.getAccessToken(payload);
     const { refreshToken, cookieOption } =
-      this.authService.getCookieWithRefreshToken(payload);
+      this.authService.getRefreshTokenWithCookie(payload);
+    await this.authService.setCurrentRefreshToken(refreshToken, user);
 
     response.cookie('RefreshToken', refreshToken, cookieOption);
 
-    return accessToken;
+    return { accessToken };
+  }
+
+  @Post('/signout')
+  @UseGuards(JwTRefreshGuard)
+  async siginOut(
+    @GetUser() user: User,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const cookieOption = await this.authService.removeRefreshTokenWithCookie(
+      user,
+    );
+    response.cookie('RefreshToken', '', cookieOption);
   }
 
   @Post('/test')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   test(@GetUser() user: User) {
     console.log('user', user);
   }

@@ -18,7 +18,15 @@ export class AuthService {
   ) {}
 
   async signUp(authCredentailDto: AuthCredentailDto): Promise<void> {
-    return this.userRepository.createUser(authCredentailDto);
+    const { username, password } = authCredentailDto;
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    return this.userRepository.createUser({
+      username,
+      password: hashedPassword,
+    });
   }
 
   async validateUser(authCredentailDto: AuthCredentailDto): Promise<User> {
@@ -43,30 +51,66 @@ export class AuthService {
   getAccessToken(payload: any): string {
     const accessToken = this.jwtService.sign(payload, {
       secret: this.config.get<string>('JWT_ACCESS_TOKEN_SECREAT'),
-      expiresIn: this.config.get<number>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      expiresIn: Number(
+        this.config.get<number>('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+      ),
     });
 
     return accessToken;
   }
 
-  getCookieWithRefreshToken(payload: any): {
+  getRefreshTokenWithCookie(payload: any): {
     refreshToken: string;
     cookieOption: CookieOptions;
   } {
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.config.get<string>('JWT_REFRESH_TOKEN_SECREAT'),
-      expiresIn: this.config.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+      expiresIn: Number(
+        this.config.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+      ),
     });
 
     return {
       refreshToken,
       cookieOption: {
-        secure: true,
         httpOnly: true,
         maxAge:
           Number(this.config.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME')) *
           1000,
       },
+    };
+  }
+
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    user: User,
+  ): Promise<void> {
+    const salt = await bcrypt.genSalt();
+    const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
+
+    user.hashedRefreshToken = hashedRefreshToken;
+    await this.userRepository.save(user);
+  }
+
+  async compareRefreshToken(
+    refreshToken: string,
+    hashedRefreshToken: string,
+  ): Promise<void> {
+    const isMatch = await bcrypt.compare(refreshToken, hashedRefreshToken);
+    if (!isMatch) {
+      throw new UnauthorizedException(
+        'RefreshToken is not match\nPlease SignIn again',
+      );
+    }
+  }
+
+  async removeRefreshTokenWithCookie(user: User): Promise<CookieOptions> {
+    user.hashedRefreshToken = null;
+    await this.userRepository.save(user);
+
+    return {
+      httpOnly: true,
+      maxAge: 0,
     };
   }
 }

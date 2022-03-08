@@ -6,17 +6,11 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async createUser(authCredentailDto: AuthCredentailDto): Promise<void> {
-    const { username, password } = authCredentailDto;
-
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = this.create({ username, password: hashedPassword });
+    const user = this.create(authCredentailDto);
 
     try {
       await this.save(user);
@@ -24,6 +18,7 @@ export class UserRepository extends Repository<User> {
       if (error.code === '23505') {
         throw new ConflictException('Existing username');
       } else {
+        console.log(error);
         throw new InternalServerErrorException();
       }
     }
