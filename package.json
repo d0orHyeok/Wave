@@ -4,8 +4,7 @@
   "description": "music stremming app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"npm run start:dev --prefix server\" \"npm run start --prefix client\"",
+    "dev": "concurrently \"npm run start --prefix client\"  \"npm run start:dev --prefix server\"",
     "frontend": "npm run start --prefix client",
     "backend": "npm run start:dev -prefix server"
   },

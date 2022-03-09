@@ -25,8 +25,8 @@ export class JwtRefreshStrategy extends PassportStrategy(
       ]),
       ignoreExpiration: false,
       secretOrKey:
-        process.env.JWT_REFRESH_TOKEN_SECREAT ||
-        config.get<string>('JWT_REFRESH_TOKEN_SECREAT'),
+        process.env.JWT_REFRESH_TOKEN_SECRET ||
+        config.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       passReqToCallback: true,
     });
   }
