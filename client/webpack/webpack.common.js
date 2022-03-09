@@ -6,6 +6,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   entry: path.resolve(__dirname, '..', './src/index.tsx'),
   resolve: {
+    alias: {
+      '@api': path.resolve(__dirname, '..', './src/api'),
+      '@assets': path.resolve(__dirname, '..', './src/assets'),
+      '@components': path.resolve(__dirname, '..', './src/components'),
+      '@pages': path.resolve(__dirname, '..', './src/pages'),
+      '@redux': path.resolve(__dirname, '..', './src/redux'),
+      '@routes': path.resolve(__dirname, '..', './src/routes'),
+      '@styles': path.resolve(__dirname, '..', './src/styles'),
+      '@types': path.resolve(__dirname, '..', './src/types'),
+    },
     extensions: ['.tsx', '.ts', '.js'],
   },
   module: {
