@@ -1,18 +1,20 @@
-import { selectUser } from '@redux/features/user/userSlice'
-import { useAppSelector } from '@redux/hook'
+import { useAppTheme } from '@redux/context/appThemeProvider'
 import React from 'react'
+import styled from 'styled-components'
+
+const TestBtn = styled.button`
+  background-color: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.primaryText};
+  border: 1px solid ${({ theme }) => theme.colors.borderColor};
+`
 
 const Home = () => {
-  const user = useAppSelector(selectUser)
-
-  const test = () => {
-    console.log(user, user.isLogin)
-  }
-
+  const [ThemeMode, toggleTheme] = useAppTheme()
   return (
     <>
-      <div>hello</div>
-      <button onClick={test}>test</button>
+      <h1>Hellow</h1>
+      <div>Hellow</div>
+      <TestBtn onClick={toggleTheme}>{ThemeMode}</TestBtn>
     </>
   )
 }

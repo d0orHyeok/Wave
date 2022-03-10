@@ -1,0 +1,19 @@
+@font-face {
+  font-family: LaferiSpecial;
+  src: url('../assets/font/LeferiPointSpecialItalic.ttf');
+}
+
+@font-face {
+  font-family: Laferi;
+  src: url('../assets/font/LeferiBaseRegular.ttf');
+}
+
+@font-face {
+  font-family: LaferiBold;
+  src: url('../assets/font/LeferiBaseBold.ttf');
+}
+
+@font-face {
+  font-family: LaferiLigter;
+  src: url('../assets/font/LeferiPointWhite.ttf');
+}
