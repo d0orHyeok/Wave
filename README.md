@@ -1,3 +1,3 @@
-# Flujo | Music Streamming
+# Wave | Music Streamming
 
 react + typescript project

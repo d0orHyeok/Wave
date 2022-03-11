@@ -10,13 +10,19 @@ declare module 'styled-components' {
 }
 
 interface Colors {
+  primaryColor: string
+  primaryVariantColor: string
+  secondaryColor: string
+  bgColor: string
+  bgColorRGBA: (opacity: string) => string
+  errorColor: string
   primaryText: string
   secondaryText: string
-  primaryColor: string
-  secondaryColor: string
-  background: string
-  borderColor: string
-  accentColor: string
+  bgText: string
+  bgTextRGBA: (opacity: string) => string
+  errorText: string
+  border1: string
+  border2: string
 }
 
 interface Device {

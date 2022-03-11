@@ -3,7 +3,7 @@ import { DefaultTheme } from 'styled-components'
 const size = {
   mobile: '480px',
   tablet: '768px',
-  desktop: '1200px',
+  desktop: '1440px',
 }
 
 const device = {
@@ -13,27 +13,36 @@ const device = {
 }
 
 const colors = {
-  accentColor: '#FFC107',
+  primaryVariantColor: '#3700B3',
+  secondaryColor: '#03DAC6',
+  secondaryText: '#000',
+  errorText: '#000',
 }
 
 const lightThemeColors = {
   ...colors,
-  primaryText: '#212121',
-  secondaryText: '#757575',
-  primaryColor: '#303F9F',
-  secondaryColor: '#3F51B5',
-  background: '#fff',
-  borderColor: '#BDBDBD',
+  primaryColor: '#6200EE',
+  bgColor: '#FFF',
+  bgColorRGBA: (opacity: string) => `rgba(18, 18, 18, ${opacity})`,
+  errorColor: '#B00020',
+  primaryText: '#FFF',
+  bgText: '#000',
+  bgTextRGBA: (opacity: string) => `rgba(0, 0, 0, ${opacity})`,
+  border1: 'rgba(0, 0, 0,0.15) ',
+  border2: 'rgba(0,0,0, 0.38)',
 }
 
 const darkThemeColors = {
   ...colors,
-  primaryText: '#fff',
-  secondaryText: '#BDBDBD',
-  primaryColor: '#3F51B5',
-  secondaryColor: '#C5CAE9',
-  background: '#212121',
-  borderColor: '#757575',
+  primaryColor: '#BB86FC',
+  bgColor: '#121212',
+  bgColorRGBA: (opacity: string) => `rgba(255, 255, 255, ${opacity})`,
+  errorColor: '#CF6679',
+  primaryText: '#000',
+  bgText: '#FFF',
+  bgTextRGBA: (opacity: string) => `rgba(255, 255, 255, ${opacity})`,
+  border1: 'rgba(255, 255, 255,0.15) ',
+  border2: 'rgba(255,255,255, 0.38)',
 }
 
 export const lightTheme: DefaultTheme = {

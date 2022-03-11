@@ -9,8 +9,8 @@ import { AppThemeProvider } from '@redux/context/appThemeProvider'
 function App() {
   return (
     <Provider store={store}>
-      <GlobalStyle />
       <AppThemeProvider>
+        <GlobalStyle />
         <Router />
       </AppThemeProvider>
     </Provider>

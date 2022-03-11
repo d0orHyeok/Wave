@@ -1,12 +1,21 @@
 import { RootState } from '@redux/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export interface UserState {
-  isLogin: boolean
+export interface IUserData {
+  username: string
+  email: string
+  nickname?: string
+  image?: string
 }
 
-const initialState: UserState = {
+export interface IUserState {
+  isLogin: boolean
+  userData?: IUserData | null
+}
+
+const initialState: IUserState = {
   isLogin: false,
+  userData: null,
 }
 
 export const userSlice = createSlice({
@@ -27,5 +36,6 @@ export const { toggleLogin, setLogin } = userSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.user
+export const selectUserData = (state: RootState) => state.user.userData
 
 export default userSlice.reducer
