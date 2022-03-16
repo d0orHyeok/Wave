@@ -2,8 +2,8 @@ import { DefaultTheme } from 'styled-components'
 
 const size = {
   mobile: '480px',
-  tablet: '768px',
-  desktop: '1440px',
+  tablet: '800px',
+  desktop: '1200px',
 }
 
 const device = {

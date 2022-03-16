@@ -13,10 +13,10 @@ interface IAppThemeContext {
   setThemeMode?: React.Dispatch<React.SetStateAction<string>>
 }
 
-const AppThemeContext = createContext<IAppThemeContext>({ ThemeMode: 'light' })
+const AppThemeContext = createContext<IAppThemeContext>({ ThemeMode: 'dark' })
 
 export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
-  const localSettingTheme = window.localStorage.getItem('theme') || 'light'
+  const localSettingTheme = window.localStorage.getItem('theme') || 'dark'
   const [ThemeMode, setThemeMode] = useState(localSettingTheme)
   const themeObject = ThemeMode === 'dark' ? darkTheme : lightTheme
 

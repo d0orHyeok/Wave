@@ -1,34 +1,71 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as S from './SearchBox.style.'
 import { BsSearch } from 'react-icons/bs'
 import { MdCancel } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 
-const SearchBox = () => {
+interface SearchBoxProps {
+  className?: string
+  windowWidth?: number
+}
+
+const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
   const navigate = useNavigate()
 
   const [focused, setFocused] = useState(false)
   const [text, setText] = useState('')
+  const [open, setOpen] = useState(true)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const closeSearchBox = () => {
+    if (windowWidth && windowWidth < 800 && open) {
+      setOpen(false)
+    }
+  }
+
+  const onClickMusicBtn = () => {
+    open ? searchMusic() : setOpen(true)
+    closeSearchBox()
+  }
+
+  const onClickCancelBtn = () => {
+    setText('')
+    closeSearchBox()
+  }
 
   const searchMusic = () => {
     navigate(`search?query=${text}`)
   }
+
   const onKeyPressHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && searchMusic()
+    if (event.key === 'Enter') {
+      searchMusic()
+    }
   }
   const onFocusHandler = () => setFocused(true)
-  const onBlurHandler = () => setFocused(false)
+  const onBlurHandler = () => {
+    setFocused(false)
+  }
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.currentTarget.value)
   }
 
+  useEffect(() => {
+    if (windowWidth) {
+      if (windowWidth < 800) {
+        setOpen(false)
+      }
+    }
+  }, [windowWidth])
+
   return (
     <>
-      <S.Container active={focused}>
-        <button className="searchBtn" onClick={searchMusic}>
+      <S.Container active={focused} open={open} className={className && className}>
+        <button className="searchBtn" onClick={onClickMusicBtn}>
           <BsSearch />
         </button>
         <input
+          ref={inputRef}
           className="search-input"
           type="text"
           placeholder="WAVE 검색"
@@ -38,8 +75,8 @@ const SearchBox = () => {
           onFocus={onFocusHandler}
           onBlur={onBlurHandler}
         />
-        {(text || focused) && (
-          <button className="cancelBtn" onClick={() => setText('')}>
+        {(text || focused || open) && (
+          <button className="cancelBtn" onClick={onClickCancelBtn}>
             <MdCancel />
           </button>
         )}

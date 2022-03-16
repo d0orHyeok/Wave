@@ -1,13 +1,16 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import * as S from './ProfileArea.style'
 import { FaUserAlt } from 'react-icons/fa'
 import { useAppSelector } from '@redux/hook'
 import { selectUser } from '@redux/features/user/userSlice'
 
-const ProfileArea = () => {
-  const user = useAppSelector(selectUser)
+interface ProfileAreaProps {
+  className?: string
+  fold: boolean
+}
 
-  const profileRef = useRef<HTMLDivElement>(null)
+const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
+  const user = useAppSelector(selectUser)
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -20,7 +23,7 @@ const ProfileArea = () => {
 
   return (
     <>
-      <S.ProfileWrapper onClick={handleClick} ref={profileRef}>
+      <S.ProfileWrapper fold={fold} className={className && className} onClick={handleClick}>
         <S.ImageArea>
           {user.userData && user.userData.image ? (
             <img className="user-image" src={user.userData.image} alt="profile" />
@@ -28,19 +31,20 @@ const ProfileArea = () => {
             <FaUserAlt className="empty-image" />
           )}
         </S.ImageArea>
-        <span>username</span>
+        <span className="profile-username">username</span>
       </S.ProfileWrapper>
       <S.MyMenu
+        fold={fold}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: fold ? 'top' : 'bottom',
+          horizontal: fold ? 'right' : 'left',
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: fold ? 'left' : 'right',
         }}
       >
         <S.MyMenuItem onClick={handleClose}>보관함</S.MyMenuItem>
