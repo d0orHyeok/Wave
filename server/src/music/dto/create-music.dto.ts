@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateBoardDto {
+export class CreateMusicDto {
   @IsNotEmpty()
   title: string;
 

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BoardsModule } from './boards/boards.module';
+import { MusicModule } from './music/music.module';
 import { ConfigurationModule } from './configs/configuration.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -13,7 +13,7 @@ import { AuthModule } from './auth/auth.module';
     // DB Connection
     TypeOrmModule.forRoot(),
 
-    BoardsModule,
+    MusicModule,
     AuthModule,
   ],
   controllers: [AppController],

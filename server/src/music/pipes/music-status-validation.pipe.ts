@@ -1,8 +1,8 @@
-import { BoardStatus } from 'src/entities/board.entity';
+import { MusicStatus } from 'src/entities/music.entity';
 import { BadRequestException, PipeTransform } from '@nestjs/common';
 
-export class BoardStatusValidationPipe implements PipeTransform {
-  readonly StatusOptions = [BoardStatus.PRIVATE, BoardStatus.PUBLIC];
+export class MusicStatusValidationPipe implements PipeTransform {
+  readonly StatusOptions = [MusicStatus.PRIVATE, MusicStatus.PUBLIC];
 
   transform(value: any) {
     value = value.toUpperCase();

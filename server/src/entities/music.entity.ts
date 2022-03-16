@@ -7,13 +7,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-export enum BoardStatus {
+export enum MusicStatus {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
 
 @Entity()
-export class Board extends BaseEntity {
+export class Music extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -24,8 +24,8 @@ export class Board extends BaseEntity {
   description: string;
 
   @Column()
-  status: BoardStatus;
+  status: MusicStatus;
 
-  @ManyToOne(() => User, (user) => user.boards)
+  @ManyToOne(() => User, (user) => user.musics, { onDelete: 'SET NULL' })
   user: User;
 }
