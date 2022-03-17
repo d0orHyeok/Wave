@@ -5,7 +5,8 @@ import { useAppTheme } from '@redux/context/appThemeProvider'
 
 const StyledModal = styled(MuiModal)<{ appTheme: string }>`
   & .MuiBackdrop-root {
-    background-color: ${({ appTheme }) => (appTheme === 'dark' ? 'rgba(18,18,18,0.38)' : 'rgba(255,255,255,0.38)')};
+    background-color: ${({ appTheme }) =>
+      appTheme === 'dark' ? 'rgba(18,18,18,0.38)' : 'rgba(255,255,255,0.38)'};
   }
 `
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import * as S from './ProfileArea.style'
 import { FaUserAlt } from 'react-icons/fa'
 import { useAppSelector } from '@redux/hook'
@@ -20,25 +20,36 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
-  const handleClose = () => {
+
+  const handleClose = useCallback(() => {
     setAnchorEl(null)
-  }
+  }, [])
 
   return (
     <>
-      <S.ProfileWrapper fold={fold} className={className && className} onClick={handleClick}>
+      <S.ProfileWrapper
+        fold={fold}
+        className={className && className}
+        onClick={handleClick}
+      >
         <>
           <S.ImageArea>
             {!user.isLogin ? (
               <BiLogInCircle className="empty-image" />
             ) : user.userData && user.userData.image ? (
-              <img className="user-image" src={user.userData.image} alt="profile" />
+              <img
+                className="user-image"
+                src={user.userData.image}
+                alt="profile"
+              />
             ) : (
               <FaUserAlt className="empty-image" />
             )}
           </S.ImageArea>
           <span className="profile-username">
-            {!user.isLogin ? 'Sign In' : user.userData?.nickname || user.userData?.username || 'User'}
+            {!user.isLogin
+              ? 'Sign In'
+              : user.userData?.nickname || user.userData?.username || 'User'}
           </span>
         </>
       </S.ProfileWrapper>
@@ -62,7 +73,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
           <MenuItem onClick={handleClose}>로그아웃</MenuItem>
         </S.MyMenu>
       ) : (
-        <LoginModal open={true} onClose={handleClose} />
+        <LoginModal open={open} onClose={handleClose} />
       )}
     </>
   )

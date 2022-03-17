@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import * as S from './AppView.style'
 import { BiAlbum, BiLibrary } from 'react-icons/bi'
 import { MdOutlineAddchart } from 'react-icons/md'
-import { AiOutlineHome, AiOutlineMenuFold, AiOutlineMenuUnfold } from 'react-icons/ai'
+import {
+  AiOutlineHome,
+  AiOutlineMenuFold,
+  AiOutlineMenuUnfold,
+} from 'react-icons/ai'
 import { Link, useLocation } from 'react-router-dom'
 import SearchBox from '@components/SearchBox/SearchBox'
 import Logo from '@components/Logo/Logo'
@@ -24,7 +28,9 @@ const AppView = ({ children }: AppViewProps) => {
   const location = useLocation()
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
-  const [fold, setFold] = useState(window.localStorage.getItem('fold') === 'true')
+  const [fold, setFold] = useState(
+    window.localStorage.getItem('fold') === 'true'
+  )
 
   const toggleFold = () => {
     window.localStorage.setItem('fold', `${!fold}`)
@@ -64,7 +70,10 @@ const AppView = ({ children }: AppViewProps) => {
         <nav className="header-nav">
           <ul>
             {menuItems.map((item, index) => (
-              <S.MenuItem key={index} active={location.pathname.includes(item.path)}>
+              <S.MenuItem
+                key={index}
+                active={location.pathname.includes(item.path)}
+              >
                 <Link className="menuItem-link" to={item.path}>
                   {item.icon}
                   {!fold && <span className="menuItem-name">{item.name}</span>}
@@ -80,7 +89,11 @@ const AppView = ({ children }: AppViewProps) => {
           <SearchBox className="container-search" windowWidth={windowWidth} />
         </S.FloatBox>
         {children}
-        <div role="presentation" className="app-backdrop" onClick={toggleFold}></div>
+        <div
+          role="presentation"
+          className="app-backdrop"
+          onClick={toggleFold}
+        ></div>
       </S.AppContainer>
     </S.AppWrapper>
   )

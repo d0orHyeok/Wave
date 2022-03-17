@@ -22,6 +22,7 @@ export const GlobalStyle = createGlobalStyle`
         font-family: AppFont;
         color: ${({ theme }) => theme.colors.bgText};
         background-color: ${({ theme }) => theme.colors.bgColor};
+        line-height: 1.2rem;
     }
     h1,h2,h3,h4,h5,h6 {
         font-family: AppFont;

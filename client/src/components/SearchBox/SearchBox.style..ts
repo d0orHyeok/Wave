@@ -8,8 +8,10 @@ export const Container = styled.div<{ active: boolean; open: boolean }>`
   height: 40px;
   border-radius: 20px;
   padding: ${({ active }) => (active ? 0 : '0 1px')};
-  color: ${({ theme, active }) => (active ? theme.colors.bgText : theme.colors.bgTextRGBA('0.38'))};
-  border: ${({ theme, active }) => (!active ? 'none' : `0.5px solid ${theme.colors.border1}`)};
+  color: ${({ theme, active }) =>
+    active ? theme.colors.bgText : theme.colors.bgTextRGBA('0.38')};
+  border: ${({ theme, active }) =>
+    !active ? 'none' : `0.5px solid ${theme.colors.border1}`};
   background-color: ${({ theme }) => theme.colors.bgColor};
   transition: color ease 0.3s;
 

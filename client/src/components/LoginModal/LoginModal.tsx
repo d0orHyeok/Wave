@@ -71,4 +71,4 @@ const LoginModal = (props: LoginModalProps) => {
   )
 }
 
-export default LoginModal
+export default React.memo(LoginModal)

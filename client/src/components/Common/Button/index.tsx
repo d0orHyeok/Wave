@@ -38,7 +38,9 @@ const PrimaryButton = (props: ButtonProps) => {
 }
 
 const SecondaryButton = (props: ButtonProps) => {
-  return <StyledSecondaryButton {...props}>{props.children}</StyledSecondaryButton>
+  return (
+    <StyledSecondaryButton {...props}>{props.children}</StyledSecondaryButton>
+  )
 }
 
 export { PrimaryButton, SecondaryButton }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Home from '@pages/Home'
 import AppView from '@components/AppView/AppView'
-// import Navbar from '@components/Navbar/Navbar'
+import Home from '@pages/HomePage/Home'
+import Register from '@pages/RegisterPage/Register'
 
 const router = () => {
   return (
@@ -11,6 +11,7 @@ const router = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </AppView>
     </BrowserRouter>

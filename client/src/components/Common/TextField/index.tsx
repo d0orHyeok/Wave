@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
-interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement>, TextFieldStyledProps {
+interface TextFieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement>,
+    TextFieldStyledProps {
   errorText?: string
 }
 
@@ -64,9 +66,13 @@ const TextField = ({ errorText, ...props }: TextFieldProps) => {
   return (
     <StyledTextFieldWrapper>
       <StyledTextField {...props} />
-      {props.error && <StyledErrorText className="AppInput-errorText">{errorText}</StyledErrorText>}
+      {props.error && (
+        <StyledErrorText className="AppInput-errorText">
+          {errorText}
+        </StyledErrorText>
+      )}
     </StyledTextFieldWrapper>
   )
 }
 
-export default TextField
+export default React.memo(TextField)

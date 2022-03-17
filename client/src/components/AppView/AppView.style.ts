@@ -74,12 +74,14 @@ export const MenuItem = styled.li<{ active: boolean }>`
   border-radius: 10px;
   font-size: 16px;
   font-weight: bold;
-  color: ${({ theme, active }) => (active ? theme.colors.primaryColor : theme.colors.bgText)};
+  color: ${({ theme, active }) =>
+    active ? theme.colors.primaryColor : theme.colors.bgText};
   padding: 0 8px;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primaryText};
-    background-color: ${({ theme, active }) => (active ? theme.colors.primaryColor : theme.colors.bgTextRGBA('0.86'))};
+    background-color: ${({ theme, active }) =>
+      active ? theme.colors.primaryColor : theme.colors.bgTextRGBA('0.86')};
   }
   &:last-child {
     margin-bottom: 0;
@@ -107,9 +109,20 @@ export const AppContainer = styled.main<{ fold: boolean }>`
   right: 0;
   bottom: 0;
   min-height: 600px;
+  overflow-y: auto;
   transition: padding-left 0.3s ease;
   padding-left: ${({ fold }) => (!fold ? headerWidth[0] : headerWidth[1])};
   background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.06')};
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.38')};
+  }
 
   & .app-backdrop {
     position: fixed;

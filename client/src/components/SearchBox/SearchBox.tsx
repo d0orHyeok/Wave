@@ -60,7 +60,11 @@ const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
 
   return (
     <>
-      <S.Container active={focused} open={open} className={className && className}>
+      <S.Container
+        active={focused}
+        open={open}
+        className={className && className}
+      >
         <button className="searchBtn" onClick={onClickMusicBtn}>
           <BsSearch />
         </button>
