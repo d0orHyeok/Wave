@@ -57,6 +57,10 @@ export const silentRefresh = createAsyncThunk('SILENT_REFRESH', async () => {
   return response.data
 })
 
+export const userLogout = createAsyncThunk('LOGOUT', async () => {
+  await Axios.post('/api/auth/signout')
+})
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -69,6 +73,7 @@ export const userSlice = createSlice({
     // },
   },
   extraReducers: {
+    // 로그인
     [userLogin.fulfilled.type]: (state, action) => {
       state.accessToken = action.payload
     },
@@ -77,7 +82,9 @@ export const userSlice = createSlice({
       state.accessToken = null
       state.userData = null
     },
+    // 유저인증
     [userAuth.pending.type]: (state) => {
+      // 인증전에 accessToken을 헤더 Authorization Bearer에 담아준다.
       Axios.defaults.headers.common[
         'Authorization'
       ] = `Bearer ${state.accessToken}`
@@ -94,6 +101,7 @@ export const userSlice = createSlice({
       state.userData = null
     },
     [silentRefresh.pending.type]: (state) => {
+      // 재발급 전에 기존의 accessToken을 폐기
       state.accessToken = null
     },
     [silentRefresh.fulfilled.type]: (state, action) => {
@@ -104,6 +112,12 @@ export const userSlice = createSlice({
       state.userData = userData
     },
     [silentRefresh.rejected.type]: (state) => {
+      state.isLogin = false
+      state.accessToken = null
+      state.userData = null
+    },
+    [userLogout.pending.type]: (state) => {
+      // 재발급 전에 기존의 accessToken을 폐기
       state.isLogin = false
       state.accessToken = null
       state.userData = null

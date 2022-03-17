@@ -56,6 +56,7 @@ export class AuthController {
       user,
     );
     response.cookie('RefreshToken', '', cookieOption);
+    return;
   }
 
   @Post('/refresh')
