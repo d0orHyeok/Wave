@@ -35,6 +35,7 @@ export const userLogin = createAsyncThunk(
   async (loginBody: IUserLoginBody, { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/auth/signin', loginBody)
+      console.log(response)
       return response.data.accessToken
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -47,12 +48,13 @@ export const userLogin = createAsyncThunk(
 )
 
 export const userAuth = createAsyncThunk('AUTH', async () => {
-  try {
-    const response = await Axios.get('/api/auth/info')
-    return response.data
-  } catch (error) {
-    return 'Auth Error'
-  }
+  const response = await Axios.get('/api/auth/info')
+  return response.data
+})
+
+export const silentRefresh = createAsyncThunk('SILENT_REFRESH', async () => {
+  const response = await Axios.post('/api/auth/refresh')
+  return response.data
 })
 
 export const userSlice = createSlice({
@@ -69,20 +71,39 @@ export const userSlice = createSlice({
   extraReducers: {
     [userLogin.fulfilled.type]: (state, action) => {
       state.accessToken = action.payload
-      Axios.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${action.payload}`
     },
     [userLogin.rejected.type]: (state) => {
       state.isLogin = false
       state.accessToken = null
       state.userData = null
     },
+    [userAuth.pending.type]: (state) => {
+      Axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${state.accessToken}`
+    },
     [userAuth.fulfilled.type]: (state, action) => {
+      const { userData } = action.payload
+
       state.isLogin = true
-      state.userData = action.payload
+      state.userData = userData
     },
     [userAuth.rejected.type]: (state) => {
+      state.isLogin = false
+      state.accessToken = null
+      state.userData = null
+    },
+    [silentRefresh.pending.type]: (state) => {
+      state.accessToken = null
+    },
+    [silentRefresh.fulfilled.type]: (state, action) => {
+      const { accessToken, userData } = action.payload
+
+      state.isLogin = true
+      state.accessToken = accessToken
+      state.userData = userData
+    },
+    [silentRefresh.rejected.type]: (state) => {
       state.isLogin = false
       state.accessToken = null
       state.userData = null

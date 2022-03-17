@@ -114,4 +114,10 @@ export class AuthService {
       maxAge: 0,
     };
   }
+
+  getUserData(user: User) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, hashedRefreshToken, ...userData } = user;
+    return userData;
+  }
 }

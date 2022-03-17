@@ -60,18 +60,19 @@ export class AuthController {
 
   @Post('/refresh')
   @UseGuards(JwTRefreshGuard)
-  refreshAccessToken(@GetUser() user: User): { accessToken: string } {
+  refreshAccessToken(@GetUser() user: User) {
     const payload = { id: user.id };
     const accessToken = this.authService.getAccessToken(payload);
+    const userData = this.authService.getUserData(user);
 
-    return { accessToken };
+    return { accessToken, userData };
   }
 
   @Get('/info')
   @UseGuards(JwtAuthGuard)
   test(@GetUser() user: User) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { hashedRefreshToken, password, ...userData } = user;
-    return userData;
+    const userData = this.authService.getUserData(user);
+    return { userData };
   }
 }
