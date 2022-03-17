@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { Menu, MenuItem } from '@mui/material'
+import { Menu } from '@components/Common'
 
 export const ProfileWrapper = styled.div<{ fold: boolean }>`
-  padding: 0 0.5rem;
+  transform: ${({ fold }) => !fold && 'translateX(8px)'};
   border-left: none;
   border-right: none;
   display: flex;
@@ -10,10 +10,11 @@ export const ProfileWrapper = styled.div<{ fold: boolean }>`
   cursor: pointer;
   margin-left: ${({ fold }) => (fold ? '0' : '-3px')};
   justify-content: ${({ fold }) => (fold ? 'center' : 'left')};
+  transition: ease color 0.1s;
 
   & .profile-username {
     display: ${({ fold }) => fold && 'none'};
-    margin-left: 0.5rem;
+    margin-left: 8px;
   }
 `
 
@@ -23,12 +24,12 @@ export const ImageArea = styled.div`
   height: 30px;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.3')};
-  .empty-image {
+  & .empty-image {
     margin: 5px;
     width: 20px;
     height: 20px;
   }
-  .user-image {
+  & .user-image {
     width: 30px;
     height: 30px;
     border-radius: 15px;
@@ -36,24 +37,11 @@ export const ImageArea = styled.div`
 `
 
 export const MyMenu = styled(Menu)<{ fold: boolean }>`
-  .MuiPaper-root {
-    color: ${({ theme }) => theme.colors.bgText};
-    background-color: ${({ theme }) => theme.colors.bgColor};
+  & .MuiPaper-root {
     width: 160px;
     margin-left: 12px;
     border-radius: 0 3px 3px 0;
-    box-shadow: none;
     margin-top: ${({ fold }) => (fold ? '-4px' : '4px')};
-    border: 1px solid ${({ theme }) => theme.colors.border1};
     border-top: ${({ fold }) => !fold && 'none'};
-  }
-  .MuiMenuItem-root:hover {
-    background-color: ${({ theme }) => theme.colors.border1};
-  }
-`
-
-export const MyMenuItem = styled(MenuItem)`
-  .MuiMenuItem-root:hover {
-    background-color: ${({ theme }) => theme.colors.border1};
   }
 `
