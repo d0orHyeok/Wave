@@ -141,6 +141,7 @@ const Register = () => {
         <TextField
           className="register-input"
           type="text"
+          autoComplete="off"
           id="username"
           placeholder="ID*"
           value={username}
@@ -152,6 +153,7 @@ const Register = () => {
         <TextField
           className="register-input"
           type="password"
+          autoComplete="off"
           id="password"
           placeholder="Password*"
           value={password}
@@ -163,6 +165,7 @@ const Register = () => {
         <TextField
           className="register-input"
           type="password"
+          autoComplete="off"
           id="passwordConfirmed"
           placeholder="Password Confirmed*"
           value={passwordConfirmed}
@@ -174,6 +177,7 @@ const Register = () => {
         <TextField
           className="register-input"
           type="text"
+          autoComplete="off"
           id="email"
           placeholder="Email*"
           value={email}
@@ -185,6 +189,7 @@ const Register = () => {
         <TextField
           className="register-input"
           type="text"
+          autoComplete="off"
           id="nickname"
           placeholder="Nickname"
           value={nickname}

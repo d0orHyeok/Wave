@@ -4,7 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 @EntityRepository(User)
@@ -28,7 +28,7 @@ export class UserRepository extends Repository<User> {
     const user = await this.findOne({ username: id });
 
     if (!user) {
-      throw new NotFoundException(`Can't find User with id ${id}`);
+      throw new UnauthorizedException(`Can't find User with id ${id}`);
     }
 
     return user;

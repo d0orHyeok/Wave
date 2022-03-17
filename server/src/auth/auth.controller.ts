@@ -70,6 +70,8 @@ export class AuthController {
   @Get('/info')
   @UseGuards(JwtAuthGuard)
   test(@GetUser() user: User) {
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { hashedRefreshToken, password, ...userData } = user;
+    return userData;
   }
 }

@@ -11,7 +11,8 @@ const StyledModal = styled(MuiModal)<{ appTheme: string }>`
 `
 
 const Modal = (props: ModalProps) => {
-  const appTheme = useAppTheme()[0]
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [appTheme, _] = useAppTheme()
 
   return (
     <StyledModal {...props} appTheme={appTheme}>

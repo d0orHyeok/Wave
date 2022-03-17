@@ -7,6 +7,7 @@ export interface IUserData {
 
 export interface IUserState {
   isLogin: boolean
+  accessToken?: string | null
   userData?: IUserData | null
 }
 
@@ -15,4 +16,9 @@ export interface IUserRegisterBody {
   password: string
   email: string
   nickanem?: string
+}
+
+export interface IUserLoginBody {
+  username: string
+  password: string
 }

@@ -49,7 +49,8 @@ export const StyledContainer = styled.div`
       }
 
       &:first-child::after {
-        transform: translateX(7px);
+        top: 50%;
+        transform: translate(7px, -50%);
         position: absolute;
         content: '';
         width: 2px;

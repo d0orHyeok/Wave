@@ -25,7 +25,7 @@ const StyledErrorText = styled.span`
   position: absolute;
   display: inline-flex;
   align-items: flex-end;
-  padding: 4px 8px;
+  padding: 2px 8px;
   top: 0;
   left: 0;
   right: 0;
@@ -62,9 +62,14 @@ const StyledTextField = styled.input<TextFieldStyledProps>`
   }
 `
 
-const TextField = ({ errorText, ...props }: TextFieldProps) => {
+const TextField = ({
+  errorText,
+  style,
+  className,
+  ...props
+}: TextFieldProps) => {
   return (
-    <StyledTextFieldWrapper>
+    <StyledTextFieldWrapper className={className} style={style}>
       <StyledTextField {...props} />
       {props.error && (
         <StyledErrorText className="AppInput-errorText">
