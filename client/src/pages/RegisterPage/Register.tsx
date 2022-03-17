@@ -2,8 +2,14 @@ import * as S from './Register.style'
 import * as regex from './regex'
 import React, { useState } from 'react'
 import TextField from '@components/Common/TextField'
+import { useAppDispatch } from '@redux/hook'
+import { userRegister } from '@redux/features/user/userSlice'
+import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
   const [registerInput, setRegisterInput] = useState({
     username: '',
     password: '',
@@ -64,6 +70,68 @@ const Register = () => {
       }
     }
     setInputValidate({ ...inputValidate, [id]: validate })
+  }
+
+  const handleClickRegister = () => {
+    // 회원가입에 필요한 정보를 확인하고 올바르면 회원가입을 요청
+
+    // 입력한 정보가 올바른지 확인하고 바르지 않으면 focus
+    const validateEntries = Object.entries(inputValidate)
+    const notValidateIndex = validateEntries.findIndex((validate) => {
+      if (validate[0] === 'nickname') {
+        return validate[1] === -1
+      }
+      return validate[1] !== 1
+    })
+    if (notValidateIndex !== -1) {
+      const focusTargetId = validateEntries[notValidateIndex][0]
+
+      document.getElementById(focusTargetId)?.focus()
+      return setInputValidate({ ...inputValidate, [focusTargetId]: -1 })
+    }
+
+    const checkboxEntries = Object.entries(checkbox)
+    const notCheckedIndex = checkboxEntries.findIndex(
+      (checkbox) => checkbox[1] === false
+    )
+
+    // 각 항목에 동의했는지 확인
+    if (notCheckedIndex !== -1) {
+      const focusTargetId = checkboxEntries[notCheckedIndex][0]
+
+      document.getElementById(focusTargetId)?.focus()
+      return alert(
+        `${
+          focusTargetId[0].toUpperCase() + focusTargetId.slice(1)
+        } 항목에 동의해주세요.`
+      )
+    }
+
+    // 서버에 회원가입 요청
+    const registerInfo = {
+      username,
+      password,
+      email,
+      nickname,
+    }
+    dispatch(userRegister(registerInfo))
+      .unwrap()
+      .then((res) => {
+        console.log('Register Success', res)
+        navigate('/')
+      })
+      .catch((err) => {
+        if (err.status === 409) {
+          setRegisterInput({ ...registerInput, username: '' })
+          setInputValidate({ ...inputValidate, username: -1 })
+          document.getElementById('username')?.focus()
+
+          alert('이미 존재하는 아이디입니다.')
+        } else {
+          alert(err.response.message)
+        }
+        console.log('Register Error', err)
+      })
   }
 
   return (
@@ -177,7 +245,10 @@ const Register = () => {
             동의합니다
           </label>
         </S.TermBox>
-        <S.RegisterButton className="register-button">
+        <S.RegisterButton
+          className="register-button"
+          onClick={handleClickRegister}
+        >
           회원가입
         </S.RegisterButton>
       </S.InputArea>

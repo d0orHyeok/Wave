@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-type ButtonProps = React.HTMLAttributes<HTMLButtonElement>
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
 const StyledButton = styled.button`
   padding: 0;

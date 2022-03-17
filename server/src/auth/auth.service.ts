@@ -1,3 +1,4 @@
+import { AuthRegisterDto } from './dto/auth-register.dto';
 import { ConfigService } from '@nestjs/config';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -17,14 +18,14 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async signUp(authCredentailDto: AuthCredentailDto): Promise<void> {
-    const { username, password } = authCredentailDto;
+  async signUp(authRegisterDto: AuthRegisterDto): Promise<void> {
+    const { password } = authRegisterDto;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
     return this.userRepository.createUser({
-      username,
+      ...authRegisterDto,
       password: hashedPassword,
     });
   }

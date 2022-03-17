@@ -1,22 +1,29 @@
+import Axios from '@api/Axios'
 import { RootState } from '@redux/store'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-export interface IUserData {
-  username: string
-  email: string
-  nickname?: string
-  image?: string
-}
-
-export interface IUserState {
-  isLogin: boolean
-  userData?: IUserData | null
-}
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import axios from 'axios'
+import { IUserRegisterBody, IUserState } from './userSlice.interface'
 
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
 }
+
+export const userRegister = createAsyncThunk(
+  'SIGNUP',
+  async (registerInfo: IUserRegisterBody, { rejectWithValue }) => {
+    try {
+      const response = await Axios.post('/api/auth/signup', registerInfo)
+      return response
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return rejectWithValue(error.response)
+      } else {
+        return rejectWithValue(error)
+      }
+    }
+  }
+)
 
 export const userSlice = createSlice({
   name: 'user',
@@ -29,6 +36,7 @@ export const userSlice = createSlice({
       state.isLogin = action.payload
     },
   },
+  extraReducers: {},
 })
 
 // Action creators are generated for each case reducer function

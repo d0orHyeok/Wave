@@ -1,4 +1,4 @@
-import { AuthCredentailDto } from './dto/auth-credential.dto';
+import { AuthRegisterDto } from './dto/auth-register.dto';
 import { User } from 'src/entities/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import {
@@ -9,8 +9,8 @@ import {
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async createUser(authCredentailDto: AuthCredentailDto): Promise<void> {
-    const user = this.create(authCredentailDto);
+  async createUser(authRegisterlDto: AuthRegisterDto): Promise<void> {
+    const user = this.create(authRegisterlDto);
 
     try {
       await this.save(user);

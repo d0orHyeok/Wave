@@ -1,3 +1,4 @@
+import { AuthRegisterDto } from './dto/auth-register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwTRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
@@ -21,9 +22,9 @@ export class AuthController {
 
   @Post('/signup')
   async signUp(
-    @Body(ValidationPipe) authCredentailDto: AuthCredentailDto,
+    @Body(ValidationPipe) authRegisterDto: AuthRegisterDto,
   ): Promise<void> {
-    await this.authService.signUp(authCredentailDto);
+    await this.authService.signUp(authRegisterDto);
   }
 
   @Post('/signin')

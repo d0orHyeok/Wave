@@ -25,10 +25,10 @@ export class User extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   nickname: string;
 
-  @Column()
+  @Column({ nullable: true })
   profileImage: string;
 
   @ManyToMany(() => User, (user) => user.following)
