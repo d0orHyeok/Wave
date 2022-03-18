@@ -8,7 +8,7 @@ import {
   AiOutlineMenuUnfold,
 } from 'react-icons/ai'
 import { Link, useLocation } from 'react-router-dom'
-import SearchBox from '@components/SearchBox/SearchBox'
+import SearchBox from '@components/AppView/section/SearchBox'
 import Logo from '@components/Logo/Logo'
 import { debounce } from 'lodash'
 import ProfileArea from './section/ProfileArea'
@@ -34,7 +34,6 @@ const AppView = ({ children }: AppViewProps) => {
 
   const toggleFold = () => {
     window.localStorage.setItem('fold', `${!fold}`)
-
     setFold(!fold)
   }
 
@@ -53,7 +52,7 @@ const AppView = ({ children }: AppViewProps) => {
       window.removeEventListener('resize', handleResize)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windowWidth])
+  }, [windowWidth, location.pathname])
 
   return (
     <S.AppWrapper>

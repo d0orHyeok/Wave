@@ -6,7 +6,7 @@ import { MenuItem } from '@components/Common'
 import { BiLogInCircle } from 'react-icons/bi'
 import LoginModal from '@components/LoginModal/LoginModal'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
-import Alert from '@components/Common/Alert'
+import { useAlert } from '@redux/context/alertProvider'
 
 interface ProfileAreaProps {
   className?: string
@@ -17,7 +17,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch()
 
-  const [isLogout, setIsLogout] = useState(false)
+  const openAlert = useAlert()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -30,7 +30,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
 
   const handleClickLogout = () => {
     dispatch(userLogout())
-    setIsLogout(true)
+    openAlert('로그아웃 되었습니다.')
     handleClose()
   }
 
@@ -84,13 +84,6 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
       ) : (
         <LoginModal open={open} onClose={handleClose} />
       )}
-      <Alert
-        severity="success"
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        open={isLogout}
-        onClose={() => setIsLogout(false)}
-        alertText="로그아웃"
-      />
     </>
   )
 }

@@ -3,6 +3,7 @@ import { Menu } from '@components/Common'
 
 export const ProfileWrapper = styled.div<{ fold: boolean }>`
   transform: ${({ fold }) => !fold && 'translateX(8px)'};
+  max-width: 160px;
   border-left: none;
   border-right: none;
   display: flex;
@@ -14,6 +15,9 @@ export const ProfileWrapper = styled.div<{ fold: boolean }>`
 
   & .profile-username {
     display: ${({ fold }) => fold && 'none'};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-left: 8px;
   }
 `

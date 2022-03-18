@@ -5,6 +5,7 @@ import * as S from './LoginModal.style'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@redux/hook'
 import { userAuth, userLogin } from '@redux/features/user/userSlice'
+import { useAlert } from '@redux/context/alertProvider'
 
 interface LoginModalProps {
   open: boolean
@@ -16,6 +17,7 @@ const textFieldStyle = { width: '300px', marginBottom: '1rem' }
 const LoginModal = ({ onClose, ...props }: LoginModalProps) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const openAlert = useAlert()
 
   const [inputValue, setInputValue] = useState({
     username: window.localStorage.getItem('wave_id') || '',
@@ -63,6 +65,7 @@ const LoginModal = ({ onClose, ...props }: LoginModalProps) => {
       console.log('Login Success')
       closeModal()
       await dispatch(userAuth())
+      openAlert('로그인 되었습니다.')
     } catch (error) {
       console.log('Login Fail', error)
       if (error !== 'Auth Error') {

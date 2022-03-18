@@ -5,10 +5,12 @@ import TextField from '@components/Common/TextField'
 import { useAppDispatch } from '@redux/hook'
 import { userRegister } from '@redux/features/user/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { useAlert } from '@redux/context/alertProvider'
 
 const Register = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const openAlert = useAlert()
 
   const [registerInput, setRegisterInput] = useState({
     username: '',
@@ -119,6 +121,7 @@ const Register = () => {
       .then((res) => {
         console.log('Register Success', res)
         navigate('/')
+        openAlert('회원가입 되었습니다.')
       })
       .catch((err) => {
         if (err.status === 409) {
