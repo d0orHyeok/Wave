@@ -9,10 +9,11 @@ interface LogoProps {
 
 const AppLogo = styled.h1`
   font-size: 32px;
-  & a {
+  & .innerLogo {
     display: flex;
+    align-items: center;
   }
-  & svg {
+  & .innerLogo svg {
     color: ${({ theme }) => theme.colors.primaryColor};
     margin-right: 8px;
   }
@@ -21,7 +22,7 @@ const AppLogo = styled.h1`
 const Logo = ({ className }: LogoProps) => {
   return (
     <AppLogo className={className && className}>
-      <Link to={'/'}>
+      <Link className="innerLogo" to={'/'}>
         <GiSoundWaves />
         <span className="logo">WAVE</span>
       </Link>
