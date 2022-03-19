@@ -3,12 +3,11 @@ import React from 'react'
 import styled from 'styled-components'
 
 const StyledWrapper = styled.div`
-  position: relative;
   padding: 3rem;
-  height: 100%;
 `
 
 const StyledContainer = styled.div`
+  height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;

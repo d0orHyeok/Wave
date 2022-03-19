@@ -55,7 +55,7 @@ const AppView = ({ children }: AppViewProps) => {
   }, [windowWidth, location.pathname])
 
   return (
-    <S.AppWrapper>
+    <S.AppWrapper fold={fold}>
       <S.AppHeader id="header" fold={fold}>
         <div className="header-top">
           <S.FoldMenuArea className="header-fold">
@@ -82,18 +82,18 @@ const AppView = ({ children }: AppViewProps) => {
           </ul>
         </nav>
       </S.AppHeader>
+      <S.FloatBox fold={fold}>
+        <Logo className="float-logo" />
+        <SearchBox className="float-search" windowWidth={windowWidth} />
+      </S.FloatBox>
       <S.AppContainer id="container" fold={fold}>
-        <S.FloatBox>
-          <Logo className="container-logo" />
-          <SearchBox className="container-search" windowWidth={windowWidth} />
-        </S.FloatBox>
         {children}
-        <div
-          role="presentation"
-          className="app-backdrop"
-          onClick={toggleFold}
-        ></div>
       </S.AppContainer>
+      <div
+        role="presentation"
+        className="app-backdrop"
+        onClick={toggleFold}
+      ></div>
     </S.AppWrapper>
   )
 }

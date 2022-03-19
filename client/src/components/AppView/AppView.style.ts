@@ -1,13 +1,34 @@
 import styled from 'styled-components'
 
 // App Wrapper
-export const AppWrapper = styled.div`
+export const AppWrapper = styled.div<{ fold: boolean }>`
   max-width: 1920px;
   margin: 0 auto;
+
+  & .app-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background-color: #121212;
+    opacity: 0.6;
+    display: none;
+  }
+
+  ${({ theme }) => theme.device.desktop} {
+    & .app-backdrop {
+      display: ${({ fold }) => !fold && 'block'};
+    }
+  }
 `
 
 // App Header
 const headerWidth = ['225px', '75px']
+const getHeaderWidth = (fold: boolean) => {
+  return !fold ? headerWidth[0] : headerWidth[1]
+}
 
 export const AppHeader = styled.header<{ fold: boolean }>`
   position: fixed;
@@ -17,7 +38,7 @@ export const AppHeader = styled.header<{ fold: boolean }>`
   z-index: 100;
   transition: 0.3s ease width;
   padding: 24px 0;
-  width: ${({ fold }) => (!fold ? headerWidth[0] : headerWidth[1])};
+  width: ${({ fold }) => getHeaderWidth(fold)};
   border-right: 1px solid ${({ theme }) => theme.colors.border1};
   background-color: ${({ theme }) => theme.colors.bgColor};
 
@@ -101,6 +122,8 @@ export const MenuItem = styled.li<{ active: boolean }>`
   }
 `
 
+const floatBoxHeight = '72px'
+
 // App Container
 export const AppContainer = styled.main<{ fold: boolean }>`
   position: fixed;
@@ -111,8 +134,10 @@ export const AppContainer = styled.main<{ fold: boolean }>`
   min-height: 600px;
   overflow-y: auto;
   transition: padding-left 0.3s ease;
-  padding-left: ${({ fold }) => (!fold ? headerWidth[0] : headerWidth[1])};
+  padding-left: ${({ fold }) => getHeaderWidth(fold)};
   background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
+
+  padding-top: ${floatBoxHeight};
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -124,51 +149,43 @@ export const AppContainer = styled.main<{ fold: boolean }>`
     background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.38')};
   }
 
-  & .app-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 50;
-    background-color: #121212;
-    opacity: 0.6;
-    display: none;
+  /* media 1200px */
+  ${({ theme }) => theme.device.desktop} {
+    padding-left: ${headerWidth[1]};
+  }
+`
+
+export const FloatBox = styled.div<{ fold: boolean }>`
+  height: ${floatBoxHeight};
+  z-index: 48;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-left: ${({ fold }) => getHeaderWidth(fold)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease padding-left;
+
+  & .float-logo {
+    position: absolute;
+    left: ${({ fold }) => getHeaderWidth(fold)};
+    transform: scale(75%);
+    display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
   }
 
-  & .container-logo {
-    display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
+  & .float-search {
+    z-index: 49;
+    margin: 0 16px;
   }
 
   /* media 1200px */
   ${({ theme }) => theme.device.desktop} {
     padding-left: ${headerWidth[1]};
-
-    & .app-backdrop {
-      display: ${({ fold }) => !fold && 'block'};
-    }
-  }
-`
-
-export const FloatBox = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 16px 0;
-
-  & .container-logo {
-    transform: scale(75%);
-    position: absolute;
-    left: 0;
-  }
-
-  & .container-search {
-    z-index: 50;
   }
 
   ${({ theme }) => theme.device.tablet} {
-    padding: 0 16px;
     justify-content: right;
   }
 `
