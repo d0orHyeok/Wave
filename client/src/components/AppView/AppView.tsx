@@ -12,6 +12,7 @@ import SearchBox from '@components/AppView/section/SearchBox'
 import Logo from '@components/Logo/Logo'
 import { debounce } from 'lodash'
 import ProfileArea from './section/ProfileArea'
+import Footer from '../Footer/Footer'
 
 interface AppViewProps {
   children: React.ReactNode
@@ -87,7 +88,8 @@ const AppView = ({ children }: AppViewProps) => {
         <SearchBox className="float-search" windowWidth={windowWidth} />
       </S.FloatBox>
       <S.AppContainer id="container" fold={fold}>
-        {children}
+        <S.MainContent>{children}</S.MainContent>
+        <Footer />
       </S.AppContainer>
       <div
         role="presentation"

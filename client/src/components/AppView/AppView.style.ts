@@ -125,7 +125,7 @@ export const MenuItem = styled.li<{ active: boolean }>`
 const floatBoxHeight = '72px'
 
 // App Container
-export const AppContainer = styled.main<{ fold: boolean }>`
+export const AppContainer = styled.div<{ fold: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -136,7 +136,6 @@ export const AppContainer = styled.main<{ fold: boolean }>`
   transition: padding-left 0.3s ease;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
   background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
-
   padding-top: ${floatBoxHeight};
 
   &::-webkit-scrollbar {
@@ -188,4 +187,9 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   ${({ theme }) => theme.device.tablet} {
     justify-content: right;
   }
+`
+
+export const MainContent = styled.main`
+  height: calc(100% - ${floatBoxHeight});
+  padding: 3rem;
 `

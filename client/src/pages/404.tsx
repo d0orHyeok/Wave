@@ -2,10 +2,6 @@ import Logo from '@components/Logo/Logo'
 import React from 'react'
 import styled from 'styled-components'
 
-const StyledWrapper = styled.div`
-  padding: 3rem;
-`
-
 const StyledContainer = styled.div`
   height: 400px;
   display: flex;
@@ -21,15 +17,13 @@ const StyledContainer = styled.div`
 
 const NotFound = () => {
   return (
-    <StyledWrapper>
-      <StyledContainer>
-        <Logo />
-        <h1 className="notfound-title">페이지가 존재하지 않습니다.</h1>
-        <p className="notfound-description">
-          링크를 잘못입력하셨거나 페이지가 삭제/이동 되었을 수 있습니다.
-        </p>
-      </StyledContainer>
-    </StyledWrapper>
+    <StyledContainer>
+      <Logo />
+      <h1 className="notfound-title">페이지가 존재하지 않습니다.</h1>
+      <p className="notfound-description">
+        링크를 잘못입력하셨거나 페이지가 삭제/이동 되었을 수 있습니다.
+      </p>
+    </StyledContainer>
   )
 }
 
