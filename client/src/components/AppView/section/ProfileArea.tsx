@@ -28,11 +28,11 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
     setAnchorEl(null)
   }, [])
 
-  const handleClickLogout = () => {
+  const handleClickLogout = useCallback(() => {
     dispatch(userLogout())
     openAlert('로그아웃 되었습니다.')
     handleClose()
-  }
+  }, [dispatch, handleClose, openAlert])
 
   return (
     <>

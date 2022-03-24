@@ -14,12 +14,12 @@ interface Colors {
   primaryVariantColor: string
   secondaryColor: string
   bgColor: string
-  bgColorRGBA: (opacity: string) => string
+  bgColorRGBA: (opacity: string | number) => string
   errorColor: string
   primaryText: string
   secondaryText: string
   bgText: string
-  bgTextRGBA: (opacity: string) => string
+  bgTextRGBA: (opacity: string | number) => string
   errorText: string
   border1: string
   border2: string

@@ -1,21 +1,33 @@
 import styled from 'styled-components'
 
 // App Wrapper
-export const AppWrapper = styled.div<{ fold: boolean }>`
+export const AppWrapper = styled.div`
   max-width: 1920px;
-  margin: 0 auto;
+  margin: 0;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
 
-  & .app-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 50;
-    background-color: #121212;
-    opacity: 0.6;
-    display: none;
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
   }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.38')};
+  }
+`
+
+export const Backdrop = styled.div<{ fold: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background-color: #121212;
+  opacity: 0.6;
+  display: none;
 
   ${({ theme }) => theme.device.desktop} {
     & .app-backdrop {
@@ -33,8 +45,7 @@ const getHeaderWidth = (fold: boolean) => {
 export const AppHeader = styled.header<{ fold: boolean }>`
   position: fixed;
   top: 0;
-  left: 0;
-  bottom: 0;
+  bottom: 81px;
   z-index: 100;
   transition: 0.3s ease width;
   padding: 24px 0;
@@ -126,27 +137,12 @@ const floatBoxHeight = '72px'
 
 // App Container
 export const AppContainer = styled.div<{ fold: boolean }>`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  min-height: 600px;
-  overflow-y: auto;
+  min-height: 100vh;
+  height: 100%;
   transition: padding-left 0.3s ease;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
-  background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
+  background-color: ${({ theme }) => theme.colors.bgColor};
   padding-top: ${floatBoxHeight};
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    border-radius: 4px;
-    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.06')};
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.38')};
-  }
 
   /* media 1200px */
   ${({ theme }) => theme.device.desktop} {
@@ -160,7 +156,7 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  right: 8px;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
   display: flex;
   align-items: center;
@@ -190,6 +186,8 @@ export const FloatBox = styled.div<{ fold: boolean }>`
 `
 
 export const MainContent = styled.main`
-  height: calc(100% - ${floatBoxHeight});
+  height: calc(100% - 81px);
+  box-sizing: border-box;
+  position: relative;
   padding: 3rem;
 `

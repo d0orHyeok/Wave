@@ -24,4 +24,4 @@ const Alert = ({ alertText, severity, ...props }: IAlertProps) => {
   )
 }
 
-export default Alert
+export default React.memo(Alert)

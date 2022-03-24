@@ -43,9 +43,8 @@ const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
     }
   }
   const onFocusHandler = () => setFocused(true)
-  const onBlurHandler = () => {
-    setFocused(false)
-  }
+  const onBlurHandler = () => setFocused(false)
+
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setText(event.currentTarget.value)
   }
@@ -59,12 +58,8 @@ const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
   }, [windowWidth])
 
   return (
-    <>
-      <S.Container
-        active={focused}
-        open={open}
-        className={className && className}
-      >
+    <S.Wrapper className={className && className} open={open}>
+      <S.Container active={focused} open={open}>
         <button className="searchBtn" onClick={onClickMusicBtn}>
           <BsSearch />
         </button>
@@ -85,7 +80,7 @@ const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
           </button>
         )}
       </S.Container>
-    </>
+    </S.Wrapper>
   )
 }
 

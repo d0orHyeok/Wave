@@ -22,6 +22,7 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   rules: {
+    'jsx-a11y/media-has-caption': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error'],
     '@typescript-eslint/no-var-requires': 'off',

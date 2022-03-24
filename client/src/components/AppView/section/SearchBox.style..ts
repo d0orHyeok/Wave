@@ -1,10 +1,22 @@
 import styled from 'styled-components'
 
-export const Container = styled.div<{ active: boolean; open: boolean }>`
-  width: 100%;
+export const Wrapper = styled.div<{ open: boolean }>`
   max-width: 450px;
+  width: 100%;
+  display: inline-block;
+  background-color: ${({ theme }) => theme.colors.bgColor};
+  transition: ease all 0.3s;
+
+  ${({ theme }) => theme.device.tablet} {
+    max-width: 700px;
+    width: ${({ open }) => !open && '40px'};
+  }
+`
+
+export const Container = styled.div<{ active: boolean; open: boolean }>`
   display: inline-flex;
   align-items: center;
+  width: 100%;
   height: 40px;
   border-radius: 20px;
   padding: ${({ active }) => (active ? 0 : '0 1px')};
@@ -12,7 +24,7 @@ export const Container = styled.div<{ active: boolean; open: boolean }>`
     active ? theme.colors.bgText : theme.colors.bgTextRGBA('0.38')};
   border: ${({ theme, active }) =>
     !active ? 'none' : `0.5px solid ${theme.colors.border1}`};
-  background-color: ${({ theme }) => theme.colors.bgColor};
+  background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.06')};
   transition: color ease 0.3s;
 
   & .searchBtn svg,
@@ -31,6 +43,7 @@ export const Container = styled.div<{ active: boolean; open: boolean }>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
   }
   & .searchBtn:hover,
   & .cancelBtn:hover {
@@ -42,7 +55,7 @@ export const Container = styled.div<{ active: boolean; open: boolean }>`
     color: inherit;
     border: none;
     margin: 0 0.5rem;
-    background-color: inherit;
+    background-color: rgba(0, 0, 0, 0);
     padding: 0;
     font-size: 1rem;
     height: 24px;
@@ -56,11 +69,6 @@ export const Container = styled.div<{ active: boolean; open: boolean }>`
   }
 
   ${({ theme }) => theme.device.tablet} {
-    max-width: 700px;
-    width: ${({ open }) => !open && '40px'};
-
-    transition: ease all 0.3s;
-
     & .search-input,
     & .cancelBtn {
       display: ${({ open }) => !open && 'none'};

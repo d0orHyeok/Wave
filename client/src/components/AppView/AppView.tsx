@@ -13,6 +13,7 @@ import Logo from '@components/Logo/Logo'
 import { debounce } from 'lodash'
 import ProfileArea from './section/ProfileArea'
 import Footer from '../Footer/Footer'
+import Musicbar from '@components/Musicbar/Musicbar'
 
 interface AppViewProps {
   children: React.ReactNode
@@ -56,7 +57,7 @@ const AppView = ({ children }: AppViewProps) => {
   }, [windowWidth, location.pathname])
 
   return (
-    <S.AppWrapper fold={fold}>
+    <S.AppWrapper>
       <S.AppHeader id="header" fold={fold}>
         <div className="header-top">
           <S.FoldMenuArea className="header-fold">
@@ -91,11 +92,13 @@ const AppView = ({ children }: AppViewProps) => {
         <S.MainContent>{children}</S.MainContent>
         <Footer />
       </S.AppContainer>
-      <div
+      <Musicbar />
+      <S.Backdrop
+        fold={fold}
         role="presentation"
         className="app-backdrop"
         onClick={toggleFold}
-      ></div>
+      ></S.Backdrop>
     </S.AppWrapper>
   )
 }

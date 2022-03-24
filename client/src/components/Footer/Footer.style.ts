@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Divider as MuiDivider } from '@mui/material'
 
 export const Wrapper = styled.footer`
-  padding: 1rem 3rem;
   font-size: 12px;
   line-height: 12px;
   background-color: ${({ theme }) => theme.colors.bgColor};
@@ -11,6 +10,8 @@ export const Wrapper = styled.footer`
 
 export const Container = styled.div`
   position: relative;
+  padding: 1rem 3rem;
+  background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.06')};
 `
 
 export const Divider = styled(MuiDivider)`
