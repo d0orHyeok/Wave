@@ -44,8 +44,13 @@ export const MyMenu = styled(Menu)<{ fold: boolean }>`
   & .MuiPaper-root {
     width: 160px;
     margin-left: 12px;
-    border-radius: 0 3px 3px 0;
     margin-top: ${({ fold }) => (fold ? '-4px' : '4px')};
     border-top: ${({ fold }) => !fold && 'none'};
+    box-shadow: none;
+  }
+
+  & .MuiList-root {
+    padding: 0;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.08)};
   }
 `

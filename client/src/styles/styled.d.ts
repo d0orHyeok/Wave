@@ -14,6 +14,7 @@ interface Colors {
   primaryVariantColor: string
   secondaryColor: string
   bgColor: string
+  bgColorRGB: string
   bgColorRGBA: (opacity: string | number) => string
   errorColor: string
   primaryText: string

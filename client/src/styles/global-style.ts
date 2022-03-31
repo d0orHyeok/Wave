@@ -23,6 +23,15 @@ export const GlobalStyle = createGlobalStyle`
         color: ${({ theme }) => theme.colors.bgText};
         background-color: ${({ theme }) => theme.colors.bgColor};
         line-height: 1.2rem;
+
+        &::-webkit-scrollbar {
+        width: 8px;
+        background-color: lightgray;
+        }
+        &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(${({ theme }) => theme.colors.bgColorRGB}, 0.6);
+        }
     }
     h1,h2,h3,h4,h5,h6 {
         font-family: AppFont;

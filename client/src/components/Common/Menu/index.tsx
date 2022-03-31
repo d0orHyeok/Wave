@@ -4,10 +4,14 @@ import { Menu as MuiMenu, MenuProps } from '@mui/material'
 
 const StyledMenu = styled(MuiMenu)`
   & .MuiPaper-root {
+    border-radius: 2px;
+    border: none;
     color: ${({ theme }) => theme.colors.bgText};
     background-color: ${({ theme }) => theme.colors.bgColor};
-    border: 1px solid ${({ theme }) => theme.colors.border1};
-    box-shadow: none;
+  }
+
+  & .MuiList-root {
+    padding: 0;
   }
 `
 

@@ -12,12 +12,14 @@ export const ModalWrapper = styled.div`
 `
 
 export const StyledContainer = styled.div`
+  border-radius: inherit;
   padding: 20px;
   width: 420px;
   height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.16)};
 
   & .modal-title {
     font-size: 1.2rem;

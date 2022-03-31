@@ -85,8 +85,10 @@ const AppView = ({ children }: AppViewProps) => {
         </nav>
       </S.AppHeader>
       <S.FloatBox fold={fold}>
-        <Logo className="float-logo" />
-        <SearchBox className="float-search" windowWidth={windowWidth} />
+        <div className="floatbox-container">
+          <Logo className="float-logo" />
+          <SearchBox className="float-search" windowWidth={windowWidth} />
+        </div>
       </S.FloatBox>
       <S.AppContainer id="container" fold={fold}>
         <S.MainContent>{children}</S.MainContent>

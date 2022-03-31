@@ -2,20 +2,10 @@ import styled from 'styled-components'
 
 // App Wrapper
 export const AppWrapper = styled.div`
+  position: relative;
   max-width: 1920px;
   margin: 0;
   height: 100vh;
-  overflow-x: hidden;
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.38')};
-  }
 `
 
 export const Backdrop = styled.div<{ fold: boolean }>`
@@ -48,7 +38,7 @@ export const AppHeader = styled.header<{ fold: boolean }>`
   bottom: 81px;
   z-index: 100;
   transition: 0.3s ease width;
-  padding: 24px 0;
+  padding: 16px 0;
   width: ${({ fold }) => getHeaderWidth(fold)};
   border-right: 1px solid ${({ theme }) => theme.colors.border1};
   background-color: ${({ theme }) => theme.colors.bgColor};
@@ -129,20 +119,23 @@ export const MenuItem = styled.li<{ active: boolean }>`
     min-width: 20px;
   }
   & .menuItem-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: hidden;
     margin-left: 0.5rem;
   }
 `
 
-const floatBoxHeight = '72px'
+const floatBoxHeight = '65px'
 
 // App Container
 export const AppContainer = styled.div<{ fold: boolean }>`
-  min-height: 100vh;
-  height: 100%;
+  position: relative;
   transition: padding-left 0.3s ease;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
   background-color: ${({ theme }) => theme.colors.bgColor};
   padding-top: ${floatBoxHeight};
+  padding-bottom: 81px;
 
   /* media 1200px */
   ${({ theme }) => theme.device.desktop} {
@@ -156,23 +149,27 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
-  right: 8px;
+  right: 0;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.bgColor};
   transition: 0.3s ease padding-left;
 
-  & .float-logo {
-    position: absolute;
-    left: ${({ fold }) => getHeaderWidth(fold)};
-    transform: scale(75%);
-    display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
-  }
+  & .floatbox-container {
+    & .float-logo {
+      position: absolute;
+      left: ${({ fold }) => getHeaderWidth(fold)};
+      transform: scale(75%);
+      display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
+    }
 
-  & .float-search {
-    z-index: 49;
-    margin: 0 16px;
+    & .float-search {
+      z-index: 49;
+      margin: 0 16px;
+    }
   }
 
   /* media 1200px */
@@ -186,7 +183,8 @@ export const FloatBox = styled.div<{ fold: boolean }>`
 `
 
 export const MainContent = styled.main`
-  height: calc(100% - 81px);
+  height: 100%;
+  min-height: calc(100vh - ${floatBoxHeight} - 81px);
   box-sizing: border-box;
   position: relative;
   padding: 3rem;
