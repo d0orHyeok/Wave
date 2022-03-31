@@ -5,14 +5,22 @@ export const Wrapper = styled.div`
   position: fixed;
   bottom: 0;
   left: 0;
-  right: 8px;
+  right: 0;
   height: 81px;
   background-color: ${({ theme }) => theme.colors.bgColor};
 `
 
 export const Container = styled.div`
+  padding: 0 1em;
   background-color: ${({ theme }) => theme.colors.bgColorRGBA('0.12')};
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & > * {
+    flex-shrink: 0;
+  }
 `
 
 // 음악정보
@@ -34,8 +42,7 @@ export const InfoArea = styled.div`
     }
   }
 
-  .img-container {
-    margin-left: 1em;
+  & .img-container {
     position: relative;
     width: 50px;
     height: 50px;
@@ -44,13 +51,23 @@ export const InfoArea = styled.div`
       width: 100%;
       object-fit: cover;
       border-radius: 6px;
-      box-shadow: 0 5px 30px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    ${({ theme }) => theme.device.tablet} {
+      display: none;
     }
   }
 
-  .music-info {
+  & .music-info {
     font-size: 0.8em;
+    max-width: 200px;
 
+    & .uploader,
+    & .title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
     & .uploader {
       color: ${({ theme }) => theme.colors.bgTextRGBA('0.6')};
     }
@@ -60,6 +77,10 @@ export const InfoArea = styled.div`
     & .title:hover,
     & .uploader:hover {
       color: ${({ theme }) => theme.colors.bgText};
+    }
+
+    ${({ theme }) => theme.device.tablet} {
+      max-width: 150px;
     }
   }
 `
@@ -99,13 +120,18 @@ export const FollowBtn = styled(Btn)<{ isFollow: boolean }>`
 export const ControllBox = styled.div`
   position: absolute;
   top: 14px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  width: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  ${({ theme }) => theme.device.desktop} {
+    position: static;
+    transform: translateX(0);
+  }
 `
 
 export const ControllArea = styled.div`
+  display: inline-flex;
+  align-items: center;
   margin: 0 auto;
   & .btn {
     padding: 12px;
@@ -131,28 +157,31 @@ export const ControllArea = styled.div`
     }
   }
 
+  & .specialBtn,
   & .backwardBtn,
   & .fowardBtn {
-    transform: scale(85%);
+    height: 45px;
 
     &:hover {
-      transform: scale(90%);
+      height: 47.5px;
+    }
+  }
+
+  ${({ theme }) => theme.device.tablet} {
+    & .specialBtn {
+      display: none;
     }
   }
 `
 
 export const SubControllBox = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 14px 0;
-  padding-right: 1em;
-  height: 100%;
   display: flex;
   align-items: center;
 `
 
 export const DurationArea = styled.div`
+  width: 70px;
+  text-align: center;
   font-size: 0.75em;
   margin-right: 1em;
   color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
@@ -164,6 +193,10 @@ export const DurationArea = styled.div`
   }
   & .progressTime {
     color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
+  }
+
+  ${({ theme }) => theme.device.tablet} {
+    display: none;
   }
 `
 
@@ -206,6 +239,10 @@ export const VolumeControll = styled.div`
       transform: rotate(270deg);
     }
   }
+`
+
+export const PlaylistArea = styled.div`
+  margin-left: 0.5em;
 `
 
 export const ProgressBox = styled.div`
