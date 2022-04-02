@@ -12,6 +12,9 @@ const initialState: IUserState = {
   isLogin: false,
   userData: null,
   accessToken: null,
+  // temp
+  isLike: false,
+  isFollow: false,
 }
 
 export const userRegister = createAsyncThunk(
@@ -65,12 +68,12 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // toggleLogin: (state) => {
-    //   state.isLogin = !state.isLogin
-    // },
-    // setLogin: (state, action: PayloadAction<boolean>) => {
-    //   state.isLogin = action.payload
-    // },
+    toggleFollow: (state) => {
+      state.isFollow = !state.isFollow
+    },
+    toggleLike: (state) => {
+      state.isLike = !state.isLike
+    },
   },
   extraReducers: {
     // 로그인
@@ -126,7 +129,7 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {} = userSlice.actions
+export const { toggleFollow, toggleLike } = userSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.user

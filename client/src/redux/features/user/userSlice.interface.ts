@@ -5,7 +5,12 @@ export interface IUserData {
   image?: string
 }
 
-export interface IUserState {
+interface TempState {
+  isLike: boolean
+  isFollow: boolean
+}
+
+export interface IUserState extends TempState {
   isLogin: boolean
   accessToken?: string | null
   userData?: IUserData | null
