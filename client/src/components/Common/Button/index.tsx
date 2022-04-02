@@ -1,7 +1,27 @@
 import React from 'react'
 import styled from 'styled-components'
+import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io'
+import { BiShuffle } from 'react-icons/bi'
+import { RiRepeat2Line, RiRepeatOneLine } from 'react-icons/ri'
+import { BsPersonPlusFill, BsPersonPlus } from 'react-icons/bs'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
+
+export interface IShuffleButtonProps extends ButtonProps {
+  shuffle?: boolean
+}
+
+export interface IRepeatButtonProps extends ButtonProps {
+  repeat?: 'one' | 'all'
+}
+
+export interface ILikeButtonProps extends ButtonProps {
+  isLike?: boolean
+}
+
+export interface IFollowButtonProps extends ButtonProps {
+  isFollow?: boolean
+}
 
 const StyledButton = styled.button`
   padding: 0;
@@ -43,5 +63,87 @@ const SecondaryButton = (props: ButtonProps) => {
   )
 }
 
-export { PrimaryButton, SecondaryButton }
+const SvgBtn = styled.button`
+  padding: 0;
+  border: none;
+  background: none;
+
+  & svg {
+    width: 100%;
+    height: 100%;
+  }
+`
+
+const SpecialBtn = styled(SvgBtn)<{ active?: boolean }>`
+  color: ${({ theme, active }) =>
+    active ? theme.colors.bgText : theme.colors.bgTextRGBA(0.6)};
+  padding: 0;
+  border: none;
+  background: none;
+  width: 20px;
+  height: 20px;
+
+  & svg {
+    width: 100%;
+    height: 100%;
+  }
+`
+
+const ShuffleButton = ({ shuffle, ...props }: IShuffleButtonProps) => {
+  return (
+    <SpecialBtn {...props} active={shuffle}>
+      <BiShuffle />
+    </SpecialBtn>
+  )
+}
+
+const RepeatButton = ({ repeat, ...props }: IRepeatButtonProps) => {
+  return (
+    <SpecialBtn {...props} active={repeat !== undefined}>
+      {repeat === 'one' ? <RiRepeatOneLine /> : <RiRepeat2Line />}
+    </SpecialBtn>
+  )
+}
+
+const LikeBtn = styled(SvgBtn)<{ isLike?: boolean }>`
+  color: ${({ isLike, theme }) => isLike && theme.colors.errorColor};
+`
+
+const FollowBtn = styled(SvgBtn)<{ isFollow?: boolean }>`
+  color: ${({ isFollow, theme }) => isFollow && theme.colors.primaryColor};
+`
+
+const LikeButton = ({ isLike, ...props }: ILikeButtonProps) => {
+  return (
+    <LikeBtn isLike={isLike} {...props}>
+      {isLike ? <IoMdHeart /> : <IoMdHeartEmpty />}
+    </LikeBtn>
+  )
+}
+
+const LikeFilledButton = ({ isLike, ...props }: ILikeButtonProps) => {
+  return (
+    <LikeBtn isLike={isLike} {...props}>
+      <IoMdHeart />
+    </LikeBtn>
+  )
+}
+
+const FollowButton = ({ isFollow, ...props }: IFollowButtonProps) => {
+  return (
+    <FollowBtn isFollow={isFollow} {...props}>
+      {isFollow ? <BsPersonPlusFill /> : <BsPersonPlus />}
+    </FollowBtn>
+  )
+}
+
+export {
+  PrimaryButton,
+  SecondaryButton,
+  ShuffleButton,
+  RepeatButton,
+  LikeButton,
+  LikeFilledButton,
+  FollowButton,
+}
 export default Button
