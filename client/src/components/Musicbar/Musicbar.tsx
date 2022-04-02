@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import * as S from './Musicbar.style'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
-import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io'
 import {
-  BsPersonPlus,
-  BsPersonPlusFill,
   BsVolumeMuteFill,
   BsVolumeDownFill,
   BsVolumeUpFill,
@@ -12,156 +9,60 @@ import {
 import { FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa'
 import { RiPlayListFill } from 'react-icons/ri'
 import { Link } from 'react-router-dom'
-import MusicListDrawer from './section/MusicListDrawer'
-import { ShuffleButton, RepeatButton } from './section/SpecialButton'
-
-const musics = [
-  {
-    name: 'jacinto-1',
-    title: '0 Electric Chill Machine',
-    artist: 'Jacinto Design',
-  },
-  {
-    name: 'jacinto-2',
-    title: '1 Seven Nation Army (Remix)',
-    artist: 'Jacinto Design',
-  },
-  {
-    name: 'jacinto-3',
-    title: '2 Goodnight, Disco Queen',
-    artist: 'Jacinto Design',
-  },
-  {
-    name: 'metric-1',
-    title: '3 Front Row (Remix)',
-    artist: 'Metric/Jancinto Design',
-  },
-]
+import MusicListDrawer from './MusicListDrawer/MusicListDrawer'
+import {
+  ShuffleButton,
+  RepeatButton,
+  LikeButton,
+  FollowButton,
+} from '@components/Common/Button'
+import convertTimeToString from '@api/functions/convertTimeToString'
+import Progressbar, { DurationArea } from './section/Progressbar'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
+import {
+  nextMusic,
+  prevMusic,
+  setProgress,
+  togglePlay,
+  toggleRepeat,
+  toggleShuffle,
+} from '@redux/features/player/playerSlice'
+import Musiclist from './MusicListDrawer/section/Musiclist'
+import {
+  selectUser,
+  toggleFollow,
+  toggleLike,
+} from '@redux/features/user/userSlice'
 
 // 로컬스토리지에 저장된 볼륨값을 확인하여 가져오고 없다면 100을 리턴
 const getLocalVolume = () => {
   return parseInt(window.localStorage.getItem('volume') || '100')
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const shuffle = (array: any[]) => {
-  const arraySize = array.length
-  const indexArray = Array.from({ length: arraySize }, (_, i) => i)
-  musics.forEach((_, index) => {
-    if (index === arraySize - 1) {
-      return
-    }
-    const randomIndex = Math.floor(Math.random() * (arraySize - index) + index)
-    const temp = indexArray[index]
-    indexArray[index] = indexArray[randomIndex]
-    indexArray[randomIndex] = temp
-  })
-
-  return indexArray
-}
-
 const Musicbar = () => {
-  const [isPlay, setIsPlay] = useState(false)
-  const [isLike, setIsLike] = useState(false)
-  const [isFollow, setIsFollow] = useState(false)
-  const [isShuffle, setIsShuffle] = useState(false)
-  const [repeat, setRepeat] = useState<undefined | 'one' | 'all'>(undefined)
-  const [openMusicList, setOpenMusicList] = useState(false)
-  const [indexArray, setIndexArray] = useState(
-    Array.from({ length: musics.length }, (_, i) => i)
+  const dispatch = useAppDispatch()
+
+  const user = useAppSelector(selectUser)
+  const { isPlay, isShuffle, repeat } = useAppSelector(
+    (state) => state.player.controll
   )
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [progress, setProgress] = useState({
-    currentTime: '0:00',
-    durationTime: '0:00',
-    duration: 0,
-    percent: 0,
-  })
-  const [progressHover, setProgressHover] = useState({
-    hover: '',
-    left: 0,
-  })
+  const { musics, currentIndex, indexArray } = useAppSelector(
+    (state) => state.player.list
+  )
+
+  const [openDrawer, setOpenDrawer] = useState(false)
   const [volume, setVolume] = useState(getLocalVolume())
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
 
-  const toggleMusicList = () => {
-    setOpenMusicList(!openMusicList)
+  const toggleDrawer = () => {
+    setOpenDrawer(!openDrawer)
   }
 
-  const toggleLike = () => {
-    setIsLike(!isLike)
-  }
-
-  const toggleFollow = () => {
-    setIsFollow(!isFollow)
-  }
-
-  const playMusic = useCallback(async () => {
-    setIsPlay(true)
-    if (!audioRef.current) {
-      return
-    }
-
-    await audioRef.current.play()
+  const handleCloseDrawer = useCallback(() => {
+    setOpenDrawer(false)
   }, [])
-
-  const pauseMusic = () => {
-    audioRef.current?.pause()
-    setIsPlay(false)
-  }
-
-  const togglePlay = () => {
-    isPlay ? pauseMusic() : playMusic()
-  }
-
-  const toggleShuffle = async () => {
-    setIsShuffle(!isShuffle)
-    if (!isShuffle) {
-      setIndexArray(shuffle(indexArray))
-      setCurrentIndex(0)
-    } else {
-      const currentMusicIndex = musics.findIndex(
-        (item) => item === musics[indexArray[currentIndex]]
-      )
-      const currentTime = audioRef.current?.currentTime || 0
-      setCurrentIndex(currentMusicIndex)
-      setIndexArray(Array.from({ length: musics.length }, (_, i) => i))
-      audioRef.current && (audioRef.current.currentTime = currentTime)
-    }
-
-    if (isPlay) {
-      await audioRef.current?.play()
-    }
-  }
-
-  const toggleRepeat = () => {
-    switch (repeat) {
-      case undefined:
-        setRepeat('one')
-        break
-      case 'one':
-        setRepeat('all')
-        break
-      case 'all':
-        setRepeat(undefined)
-    }
-  }
-
-  const changeCurrentIndex = useCallback((changeIndex: number) => {
-    setCurrentIndex(changeIndex)
-  }, [])
-
-  const nextMusic = () => {
-    changeCurrentIndex((currentIndex + 1) % musics.length)
-  }
-
-  const prevMusic = () => {
-    const calcIndex = currentIndex - 1
-    const prevIndex = calcIndex < 0 ? musics.length - 1 : calcIndex
-    changeCurrentIndex(prevIndex)
-  }
 
   // 볼륨을 조절하고 변화된 볼륨값을 로컬스토리지에 저장한다.
   const handleChangeVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,18 +73,6 @@ const Musicbar = () => {
 
   const toggleMute = () => {
     setVolume(volume ? 0 : getLocalVolume())
-  }
-
-  // 초단위 시간을 0:00 의 형식의 문자로 반환
-  const convertTimeToString = (time: number) => {
-    const minutes = Math.floor(time / 60)
-    let seconds: number | string = Math.floor(time % 60)
-    if (seconds < 10) {
-      seconds = `0${seconds}`
-    }
-    const stringTime = `${minutes}:${seconds}`
-
-    return stringTime
   }
 
   // 재생중인 음악의 현재시간변화 감지하고 재생이 끝나면 다음 곡을 재생
@@ -200,76 +89,35 @@ const Musicbar = () => {
         return
       }
       if (!repeat && musics.length - 1 == currentIndex) {
-        return togglePlay()
+        return dispatch(togglePlay(false))
       }
-      return nextMusic()
+      return dispatch(nextMusic())
     }
 
-    const newcurrentTime = convertTimeToString(currentTime)
-    setProgress({
-      ...progress,
-      currentTime: newcurrentTime,
-      percent: (currentTime / duration) * 100,
-    })
+    const newCurrentStringTime = convertTimeToString(currentTime)
+
+    dispatch(
+      setProgress({
+        percent: (currentTime / duration) * 100,
+        currentStringTime: newCurrentStringTime,
+      })
+    )
   }
 
   // 새로운 음악을 불러오면 현재시간과 음악전체시간을 초기화
   const handleLoadedMetadata = (event: React.ChangeEvent<HTMLAudioElement>) => {
     const { duration } = event.currentTarget
-    const newDuration = convertTimeToString(duration)
-    console.log('load')
-    setProgress({
-      currentTime: '0:00',
-      durationTime: newDuration,
-      percent: 0,
-      duration,
-    })
-    isPlay && playMusic()
+    const newDurationStringTime = convertTimeToString(duration)
+
+    dispatch(
+      setProgress({
+        currentStringTime: '0:00',
+        durationStringTime: newDurationStringTime,
+        percent: 0,
+        duration,
+      })
+    )
   }
-
-  // 음악 재생막대에서 마우스 이동시 마우스위치에 해당하는 음악시간을 표시해준다.
-  const handleMouseMoveProgressbar = (
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
-    // 현재 마우스 위치
-    const clickX = event.nativeEvent.offsetX
-    // 현재 마우스 위치의 음악시간
-    const mouseTime =
-      progress.duration * (clickX / event.currentTarget.clientWidth)
-    const mouseStringTime = convertTimeToString(mouseTime)
-    setProgressHover({ left: clickX, hover: mouseStringTime })
-
-    return { currentTime: mouseTime, currentStringTime: mouseStringTime }
-  }
-
-  const handleMouseLeaveProgressbar = () => {
-    setProgressHover({ hover: '', left: 0 })
-  }
-
-  // 재생중인 음악을 클릭한 부분에 해당하는 시간에서 재생하도록 한다.
-  const handleClickProgressbar = (evnet: React.MouseEvent<HTMLDivElement>) => {
-    const { currentTime, currentStringTime } = handleMouseMoveProgressbar(evnet)
-    if (audioRef.current) {
-      audioRef.current.currentTime = currentTime
-    }
-    setProgress({
-      ...progress,
-      currentTime: currentStringTime,
-      percent: (currentTime / progress.duration) * 100,
-    })
-  }
-
-  const handleCloseDrawer = useCallback(() => {
-    setOpenMusicList(false)
-  }, [])
-
-  const handleChangeIndex = useCallback(
-    async (changeIndex: number) => {
-      await changeCurrentIndex(changeIndex)
-      await playMusic()
-    },
-    [changeCurrentIndex, playMusic]
-  )
 
   // volume state가 변화하면 audio 태그에 자동으로 적용
   useEffect(() => {
@@ -278,18 +126,25 @@ const Musicbar = () => {
     }
   }, [volume])
 
+  useEffect(() => {
+    if (audioRef.current) {
+      isPlay ? audioRef.current.play() : audioRef.current.pause()
+    }
+  }, [isPlay, currentIndex])
+
   return (
     <>
+      {/* <Progressbar audioRef={audioRef} /> */}
       <S.Wrapper id="player">
+        {/* <!-- Music --> */}
+        <audio
+          id="wave-music-player"
+          ref={audioRef}
+          src={`./music/${musics[indexArray[currentIndex]].name}.mp3`}
+          onTimeUpdate={handleChangeAudioTime}
+          onLoadedMetadata={handleLoadedMetadata}
+        ></audio>
         <S.Container>
-          <audio
-            ref={audioRef}
-            src={`./music/${musics[indexArray[currentIndex]].name}.mp3`}
-            onTimeUpdate={handleChangeAudioTime}
-            onLoadedMetadata={handleLoadedMetadata}
-          ></audio>
-
-          {/* <!-- Music --> */}
           <S.InfoBox>
             <S.InfoArea>
               {/* Music Image */}
@@ -310,15 +165,21 @@ const Musicbar = () => {
               </div>
               {/* Buttons */}
               <div className="music-btns">
-                <S.LikeBtn isLike={isLike} onClick={toggleLike}>
-                  {isLike ? <IoMdHeart /> : <IoMdHeartEmpty />}
-                </S.LikeBtn>
-                <S.FollowBtn isFollow={isFollow} onClick={toggleFollow}>
-                  {isFollow ? <BsPersonPlusFill /> : <BsPersonPlus />}
-                </S.FollowBtn>
-                <S.Btn>
+                <LikeButton
+                  className="svgBtn"
+                  isLike={user.isLike}
+                  onClick={() => dispatch(toggleLike())}
+                />
+
+                <FollowButton
+                  className="svgBtn"
+                  isFollow={user.isFollow}
+                  onClick={() => dispatch(toggleFollow())}
+                />
+
+                <button className="svgBtn">
                   <BiDotsHorizontalRounded />
-                </S.Btn>
+                </button>
               </div>
             </S.InfoArea>
           </S.InfoBox>
@@ -330,34 +191,36 @@ const Musicbar = () => {
               <ShuffleButton
                 className="btn specialBtn"
                 shuffle={isShuffle}
-                onClick={toggleShuffle}
+                onClick={() => dispatch(toggleShuffle())}
               />
-              <button className="btn backwardBtn" onClick={prevMusic}>
+              <button
+                className="btn backwardBtn"
+                onClick={() => dispatch(prevMusic())}
+              >
                 <FaStepBackward />
               </button>
-              <button className="btn playBtn" onClick={togglePlay}>
+              <button
+                className="btn playBtn"
+                onClick={() => dispatch(togglePlay())}
+              >
                 {!isPlay ? <FaPlay /> : <FaPause />}
               </button>
-              <button className="btn fowardBtn" onClick={nextMusic}>
+              <button
+                className="btn fowardBtn"
+                onClick={() => dispatch(nextMusic())}
+              >
                 <FaStepForward />
               </button>
               <RepeatButton
                 className="btn specialBtn"
                 repeat={repeat}
-                onClick={toggleRepeat}
+                onClick={() => dispatch(toggleRepeat())}
               />
             </S.ControllArea>
           </S.ControllBox>
           <S.SubControllBox>
             {/* Show duration */}
-            <S.DurationArea>
-              <span id="currentTime" className="currentTime">
-                {progress.currentTime}
-              </span>
-              <span id="duration" className="progressTime">
-                {progress.durationTime}
-              </span>
-            </S.DurationArea>
+            <DurationArea />
             {/* Volume Controll */}
             <S.VolumeArea>
               <S.VolumeControll className="volume-controll">
@@ -372,7 +235,7 @@ const Musicbar = () => {
                   />
                 </div>
               </S.VolumeControll>
-              <S.Btn onClick={toggleMute}>
+              <button className="svgBtn" onClick={toggleMute}>
                 {volume === 0 ? (
                   <BsVolumeMuteFill />
                 ) : volume > 50 ? (
@@ -380,49 +243,21 @@ const Musicbar = () => {
                 ) : (
                   <BsVolumeDownFill />
                 )}
-              </S.Btn>
+              </button>
             </S.VolumeArea>
             <S.PlaylistArea>
-              <S.Btn onClick={toggleMusicList}>
+              <button className="svgBtn" onClick={toggleDrawer}>
                 <RiPlayListFill />
-              </S.Btn>
+              </button>
             </S.PlaylistArea>
           </S.SubControllBox>
-
           {/* Progress bar */}
-          <S.ProgressBox
-            onClick={handleClickProgressbar}
-            onMouseMove={handleMouseMoveProgressbar}
-            onMouseLeave={handleMouseLeaveProgressbar}
-          >
-            <span
-              className="hoverTime"
-              style={{ left: `${progressHover.left}px` }}
-            >
-              {progressHover.hover}
-            </span>
-            <div
-              className="progress"
-              style={{ width: `${progress.percent}%` }}
-              data-current={progress.currentTime}
-            ></div>
-          </S.ProgressBox>
-          <S.ProgressBackDrop className="progress-backdrop"></S.ProgressBackDrop>
+          <Progressbar />
         </S.Container>
       </S.Wrapper>
-      <MusicListDrawer
-        open={openMusicList}
-        onClose={handleCloseDrawer}
-        shuffleBtnProps={{ shuffle: isShuffle, onClick: toggleShuffle }}
-        repeatBtnProps={{ repeat, onClick: toggleRepeat }}
-        playlistProps={{
-          currentIndex,
-          onChangeIndex: handleChangeIndex,
-          indexArray,
-          isPlay,
-          togglePlay,
-        }}
-      />
+      <MusicListDrawer open={openDrawer} onClose={handleCloseDrawer}>
+        <Musiclist />
+      </MusicListDrawer>
     </>
   )
 }
