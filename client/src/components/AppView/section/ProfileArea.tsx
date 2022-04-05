@@ -32,6 +32,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
     dispatch(userLogout())
     openAlert('로그아웃 되었습니다.')
     handleClose()
+    window.location.reload()
   }, [dispatch, handleClose, openAlert])
 
   return (
