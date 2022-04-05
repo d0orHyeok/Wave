@@ -66,7 +66,7 @@ export const SectionTerms = styled(Section)`
 `
 
 export const SectionSNS = styled(Section)`
-  top: -8px;
+  top: 0;
   right: 0;
   position: absolute;
   text-align: right;

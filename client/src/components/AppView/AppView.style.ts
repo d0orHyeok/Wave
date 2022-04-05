@@ -157,19 +157,16 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.bgColor};
   transition: 0.3s ease padding-left;
+  & .float-logo {
+    position: absolute;
+    left: ${({ fold }) => getHeaderWidth(fold)};
+    transform: scale(75%);
+    display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
+  }
 
-  & .floatbox-container {
-    & .float-logo {
-      position: absolute;
-      left: ${({ fold }) => getHeaderWidth(fold)};
-      transform: scale(75%);
-      display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
-    }
-
-    & .float-search {
-      z-index: 49;
-      margin: 0 16px;
-    }
+  & .float-search {
+    z-index: 49;
+    margin: 0 16px;
   }
 
   /* media 1200px */
