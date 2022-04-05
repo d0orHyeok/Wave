@@ -2,6 +2,7 @@ const path = require('path')
 const Dotenv = require('dotenv-webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 // const CopyPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = {
   entry: path.resolve(__dirname, '..', './src/index.tsx'),
@@ -52,6 +53,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', './src/index.html'),
     }),
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+      process: 'process/browser',
+    }),
+
     // new CopyPlugin({
     //   patterns: [{ from: 'source', to: 'dest' }],
     // }),
