@@ -75,9 +75,6 @@ export class AuthService {
       refreshToken,
       cookieOption: {
         httpOnly: true,
-        maxAge:
-          Number(this.config.get<number>('JWT_REFRESH_TOKEN_EXPIRATION_TIME')) *
-          1000,
       },
     };
   }
