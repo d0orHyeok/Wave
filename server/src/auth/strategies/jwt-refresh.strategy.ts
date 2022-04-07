@@ -41,9 +41,11 @@ export class JwtRefreshStrategy extends PassportStrategy(
       throw new UnauthorizedException("Can't find user");
     }
 
+    const { hashedRefreshToken } = user;
+
     await this.authService.compareRefreshToken(
       refreshToken,
-      user.hashedRefreshToken,
+      hashedRefreshToken,
     );
 
     return user;

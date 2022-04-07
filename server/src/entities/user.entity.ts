@@ -31,6 +31,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   profileImage: string;
 
+  @Column()
+  permaId: string;
+
   @ManyToMany(() => User, (user) => user.following)
   @JoinTable()
   followers: User[];

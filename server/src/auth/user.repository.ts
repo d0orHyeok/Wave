@@ -9,8 +9,26 @@ import {
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  generateRandomString() {
+    return (
+      Math.random().toString(36).substring(2, 9) +
+      Date.now().toString().substring(7)
+    );
+  }
+
   async createUser(authRegisterlDto: AuthRegisterDto): Promise<void> {
-    const user = this.create(authRegisterlDto);
+    let randomString = this.generateRandomString();
+
+    while (true) {
+      const findUser = await this.findOne({ permaId: randomString });
+      if (!findUser) {
+        break;
+      } else {
+        randomString = this.generateRandomString();
+      }
+    }
+
+    const user = this.create({ ...authRegisterlDto, permaId: randomString });
 
     try {
       await this.save(user);

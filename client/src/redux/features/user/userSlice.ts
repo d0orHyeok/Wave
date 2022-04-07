@@ -38,7 +38,6 @@ export const userLogin = createAsyncThunk(
   async (loginBody: IUserLoginBody, { rejectWithValue }) => {
     try {
       const response = await Axios.post('/api/auth/signin', loginBody)
-      console.log(response)
       return response.data.accessToken
     } catch (error) {
       if (axios.isAxiosError(error)) {

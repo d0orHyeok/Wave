@@ -1,8 +1,11 @@
 export interface IUserData {
+  id: number
   username: string
   email: string
   nickname?: string
-  image?: string
+  profileImage?: string
+  permaId: string
+  musics: string[]
 }
 
 interface TempState {
