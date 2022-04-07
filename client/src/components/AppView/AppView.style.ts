@@ -1,13 +1,5 @@
 import styled from 'styled-components'
 
-// App Wrapper
-export const AppWrapper = styled.div`
-  position: relative;
-  max-width: 1920px;
-  margin: 0;
-  height: 100vh;
-`
-
 export const Backdrop = styled.div<{ fold: boolean }>`
   position: fixed;
   top: 0;
@@ -130,12 +122,17 @@ const floatBoxHeight = '65px'
 
 // App Container
 export const AppContainer = styled.div<{ fold: boolean }>`
-  position: relative;
+  min-height: 100%;
+  height: 100%;
   transition: padding-left 0.3s ease;
   padding-left: ${({ fold }) => getHeaderWidth(fold)};
   background-color: ${({ theme }) => theme.colors.bgColor};
   padding-top: ${floatBoxHeight};
-  padding-bottom: 81px;
+
+  &,
+  & .app-footer {
+    padding-bottom: 81px;
+  }
 
   /* media 1200px */
   ${({ theme }) => theme.device.desktop} {
@@ -177,12 +174,4 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   ${({ theme }) => theme.device.tablet} {
     justify-content: right;
   }
-`
-
-export const MainContent = styled.main`
-  height: 100%;
-  min-height: calc(100vh - ${floatBoxHeight} - 81px);
-  box-sizing: border-box;
-  position: relative;
-  padding: 3rem;
 `

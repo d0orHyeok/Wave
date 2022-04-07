@@ -49,4 +49,7 @@ export const GlobalStyle = createGlobalStyle`
         background-color: inherit;
         border: 1px solid ${({ theme }) => theme.colors.border1};
     }
+    html, body, #root {
+        height: 100%;
+    }
 `

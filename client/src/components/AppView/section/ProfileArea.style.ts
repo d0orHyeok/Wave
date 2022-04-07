@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Menu } from '@components/Common'
 
 export const ProfileWrapper = styled.div<{ fold: boolean }>`
-  transform: ${({ fold }) => !fold && 'translateX(8px)'};
+  transform: ${({ fold }) => (!fold ? 'translateX(8px)' : 'translateX(0)')};
   max-width: 160px;
   border-left: none;
   border-right: none;
@@ -14,7 +14,7 @@ export const ProfileWrapper = styled.div<{ fold: boolean }>`
   transition: ease color 0.1s;
 
   & .profile-username {
-    display: ${({ fold }) => fold && 'none'};
+    display: ${({ fold }) => (fold ? 'none' : 'block')};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -45,7 +45,7 @@ export const MyMenu = styled(Menu)<{ fold: boolean }>`
     width: 160px;
     margin-left: 12px;
     margin-top: ${({ fold }) => (fold ? '-4px' : '4px')};
-    border-top: ${({ fold }) => !fold && 'none'};
+    border-top: ${({ fold }) => (!fold ? 'none' : 'block')};
     box-shadow: none;
   }
 

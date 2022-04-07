@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import * as S from './AppView.style'
 import { BiAlbum, BiLibrary } from 'react-icons/bi'
 import { MdOutlineAddchart } from 'react-icons/md'
@@ -7,6 +7,7 @@ import {
   AiOutlineMenuFold,
   AiOutlineMenuUnfold,
 } from 'react-icons/ai'
+import { RiUploadCloud2Line } from 'react-icons/ri'
 import { Link, useLocation } from 'react-router-dom'
 import SearchBox from '@components/AppView/section/SearchBox'
 import Logo from '@components/Logo/Logo'
@@ -24,6 +25,7 @@ const menuItems = [
   { name: 'Trend', path: '/trend', icon: <MdOutlineAddchart /> },
   { name: 'New Release ', path: '/newrelease', icon: <BiAlbum /> },
   { name: 'Library', path: '/library', icon: <BiLibrary /> },
+  { name: 'Upload', path: '/upload', icon: <RiUploadCloud2Line /> },
 ]
 
 const AppView = ({ children }: AppViewProps) => {
@@ -43,7 +45,7 @@ const AppView = ({ children }: AppViewProps) => {
     setWindowWidth(window.innerWidth)
   }, 100)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (windowWidth < 1200) {
       setFold(true)
     } else {
@@ -57,7 +59,7 @@ const AppView = ({ children }: AppViewProps) => {
   }, [windowWidth, location.pathname])
 
   return (
-    <S.AppWrapper>
+    <>
       <S.AppHeader id="header" fold={fold}>
         <div className="header-top">
           <S.FoldMenuArea className="header-fold">
@@ -89,8 +91,8 @@ const AppView = ({ children }: AppViewProps) => {
         <SearchBox className="float-search" windowWidth={windowWidth} />
       </S.FloatBox>
       <S.AppContainer id="container" fold={fold}>
-        <S.MainContent>{children}</S.MainContent>
-        <Footer />
+        {children}
+        <Footer id="app-footer" className="app-footer" />
       </S.AppContainer>
       <Musicbar />
       <S.Backdrop
@@ -99,7 +101,7 @@ const AppView = ({ children }: AppViewProps) => {
         className="app-backdrop"
         onClick={toggleFold}
       ></S.Backdrop>
-    </S.AppWrapper>
+    </>
   )
 }
 

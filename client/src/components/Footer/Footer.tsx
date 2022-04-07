@@ -2,6 +2,8 @@ import React from 'react'
 import * as S from './Footer.style'
 import { AiFillFacebook, AiFillInstagram, AiFillYoutube } from 'react-icons/ai'
 
+type FooterProps = React.HTMLAttributes<HTMLElement>
+
 interface ItemData {
   head: string
   content: string | JSX.Element
@@ -37,9 +39,9 @@ const makeFooterItem = (itemData: ItemData) => (
   </span>
 )
 
-const Footer = () => {
+const Footer = (props: FooterProps) => {
   return (
-    <S.Wrapper>
+    <S.Wrapper {...props}>
       <S.Container>
         <S.Section className="notice">
           <S.FooterLink to="#">공지사항</S.FooterLink>

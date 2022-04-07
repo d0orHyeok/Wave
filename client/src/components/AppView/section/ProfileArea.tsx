@@ -7,6 +7,7 @@ import { BiLogInCircle } from 'react-icons/bi'
 import LoginModal from '@components/LoginModal/LoginModal'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
 import { useAlert } from '@redux/context/alertProvider'
+import { useNavigate } from 'react-router-dom'
 
 interface ProfileAreaProps {
   className?: string
@@ -16,6 +17,7 @@ interface ProfileAreaProps {
 const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const openAlert = useAlert()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -32,8 +34,8 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
     dispatch(userLogout())
     openAlert('로그아웃 되었습니다.')
     handleClose()
-    window.location.reload()
-  }, [dispatch, handleClose, openAlert])
+    navigate('/home')
+  }, [dispatch, handleClose, navigate, openAlert])
 
   return (
     <>
