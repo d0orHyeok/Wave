@@ -1,31 +1,42 @@
-import React, { useRef } from 'react'
-import * as mmb from 'music-metadata-browser'
+import React, { useCallback, useState } from 'react'
+import EditMusic from '@components/EditMusic/EditMusic'
+import * as S from './Upload.style'
 
 const Upload = () => {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [musicFiles, setMusicFiles] = useState<FileList>()
 
-  const test = async () => {
-    const file = inputRef.current?.files[0]
-
-    if (file) {
-      console.log(`Parsing file "${file.name}" of type ${file.type}`)
-
-      const metadata = await mmb.parseBlob(file)
-      console.log(metadata)
+  const handleChangeFiles = useCallback((files: FileList) => {
+    if (files.length) {
+      setMusicFiles(files)
     }
-  }
+  }, [])
+
+  //   const uploadFile = () => {
+  //     if (!musicFile) {
+  //       return
+  //     }
+
+  //     const formData = new FormData()
+  //     formData.append('file', musicFile)
+
+  //     axios.post('/api/music/upload', formData, {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     })
+  //   }
+
   return (
     <>
-      <div>
-        <button onClick={test}>testbutton</button>
-        <br />
-        adsfs
-        <form>
-          <input type="file" accept="audio/*" ref={inputRef} />
-        </form>
-      </div>
+      <S.Wrapper
+        style={{ alignItems: musicFiles?.length ? 'flex-start' : 'center' }}
+      >
+        <S.StyledDropzone
+          hidden={musicFiles?.length ? true : false}
+          onChangeFiles={handleChangeFiles}
+        />
+        {musicFiles?.length && <EditMusic files={musicFiles} />}
+      </S.Wrapper>
     </>
   )
 }
 
-export default Upload
+export default React.memo(Upload)

@@ -1,3 +1,4 @@
 import convertTimeToString from './convertTimeToString'
+import { getCoverUrlFromMetadata, fileToUint8Array } from './fileFunction'
 
-export { convertTimeToString }
+export { convertTimeToString, getCoverUrlFromMetadata, fileToUint8Array }
