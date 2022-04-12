@@ -2,38 +2,38 @@ import React, {
   forwardRef,
   useCallback,
   useEffect,
-  useImperativeHandle,
   useRef,
   useState,
+  useImperativeHandle,
 } from 'react'
-import * as S from './EditContent.style'
-import { MetaData } from '../EditMusic'
+import * as S from './EditBasicInfo.style'
+import { IMusicMetadata } from '../EditMusic'
 import { useAppSelector } from '@redux/hook'
+import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import { MdOutlineEdit } from 'react-icons/md'
 import { AiFillCamera } from 'react-icons/ai'
-import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 
-export interface IEditContentHandle {
-  getData: () => IEditMetadataRetrunValue | void
+export interface IEditBasicInfoHandler {
+  getData: () => IEditBasicInfoValue | void
 }
 
-export interface IEditMetadataRetrunValue {
+export interface IEditBasicInfoValue {
   title: string
   permalink: string
   genre?: string
   description?: string
-  tag?: string
+  tags?: string[]
   newCover?: File
+  privacy: boolean
 }
 
-interface EditContentProps {
-  metadata?: MetaData
+interface EditBaiscInfoProps {
+  metadata?: IMusicMetadata
+  style?: React.CSSProperties
 }
 
-const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
-  ({ metadata }, ref) => {
-    const editNavItems = ['Basic Info', 'Metadata']
-
+const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
+  ({ metadata, style }, ref) => {
     const titleRef = useRef<HTMLInputElement>(null)
     const permalinkRef = useRef<HTMLInputElement>(null)
     const genreRef = useRef<HTMLInputElement>(null)
@@ -43,7 +43,7 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
 
     const permaId = useAppSelector((state) => state.user.userData?.permaId)
 
-    const [editNavIndex, setEditNavIndex] = useState(0)
+    const [privacy, setPrivacy] = useState(true)
     const [cover, setCover] = useState<string>('img/empty-cover.PNG')
 
     useImperativeHandle(
@@ -52,30 +52,39 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
         getData: () => {
           const title = titleRef.current?.value
           const permalink = permalinkRef.current?.value
-          const tags = tagRef.current?.value.split('#')
-          const newCoverFiles = coverInputRef.current?.files
+          const tags = tagRef.current?.value.split('#').splice(1)
+          const genre = !genreRef.current?.value
+            ? undefined
+            : genreRef.current.value
+          const description = !descriptionRef.current?.value
+            ? undefined
+            : descriptionRef.current.value
+          const newCover = !coverInputRef.current?.files
+            ? undefined
+            : coverInputRef.current.files[0]
 
           if (!title) {
             titleRef.current?.focus()
-            return alert('Please enter a title')
+            return alert('[Basic Info]\nPlease enter a title')
           }
           if (!permalink) {
             permalinkRef.current?.focus()
-            return alert('Please enter a permalink')
+            return alert('[Basic Info]\nPlease enter a permalink')
           }
 
           const data = {
             title,
             permalink,
-            tags,
-            genre: genreRef.current?.value,
-            description: descriptionRef.current?.value,
-            newCover: newCoverFiles?.length ? newCoverFiles[0] : undefined,
+            tags: tags?.length ? tags : undefined,
+            genre,
+            description,
+            newCover,
+            privacy,
           }
           return data
         },
       }),
-      []
+      [privacy]
     )
 
     const handleChangeCover = useCallback(
@@ -87,6 +96,14 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
           const url = getCoverUrlFromMetadata(data, files[0].type)
           setCover(url)
         }
+      },
+      []
+    )
+
+    const handleChangePrivacy = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget
+        setPrivacy(value === 'public' ? true : false)
       },
       []
     )
@@ -114,8 +131,6 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
 
     useEffect(() => {
       if (metadata) {
-        console.log(metadata)
-
         // 음악파일을 분석하고 앨범커버가 있으면 등록
         const { picture, title, genre, description } = metadata
         if (picture?.length) {
@@ -140,22 +155,7 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
 
     return (
       <>
-        <S.EditNav className="editNav">
-          {editNavItems.map((item, index) => (
-            <S.EditNavItem
-              key={item}
-              className="editNav-item"
-              onClick={() => setEditNavIndex(index)}
-              select={editNavIndex === index}
-            >
-              {item}
-            </S.EditNavItem>
-          ))}
-        </S.EditNav>
-
-        <S.EditBasicInfo
-          style={{ display: editNavIndex === 0 ? 'flex' : 'none' }}
-        >
+        <S.EditBasicInfo style={style}>
           <div className="imageBox">
             <label htmlFor="coverInput">
               <AiFillCamera />
@@ -176,9 +176,15 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
               <label className="label" htmlFor="title">
                 Title<span className="require">{' *'}</span>
               </label>
-              <input ref={titleRef} id="title" type="text" required />
+              <input
+                ref={titleRef}
+                id="title"
+                type="text"
+                required
+                placeholder="Title of music"
+              />
             </S.EditInputBox>
-            <S.EditInputBox>
+            <S.EditInputPermalink>
               <h2 className="label">
                 Permalink<span className="require">{' *'}</span>
               </h2>
@@ -192,12 +198,17 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
                   <MdOutlineEdit />
                 </button>
               </div>
-            </S.EditInputBox>
+            </S.EditInputPermalink>
             <S.EditInputBox>
               <label className="label" htmlFor="genre">
                 Genre
               </label>
-              <input ref={genreRef} id="genre" type="text" />
+              <input
+                ref={genreRef}
+                id="genre"
+                type="text"
+                placeholder="Genre of music"
+              />
             </S.EditInputBox>
             <S.EditInputBox>
               <label className="label" htmlFor="tag">
@@ -208,14 +219,42 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
                 id="tag"
                 type="text"
                 onBlur={handleChangeTag}
+                placeholder="Add tags to describe the genre and mood of your music"
               />
             </S.EditInputBox>
             <S.EditInputBox>
               <label className="label" htmlFor="description">
                 Description
               </label>
-              <textarea ref={descriptionRef} id="description" rows={5} />
+              <textarea
+                ref={descriptionRef}
+                id="description"
+                rows={5}
+                placeholder="Describe your music"
+              />
             </S.EditInputBox>
+            <S.EditInputPrivacy>
+              <h2 className="label">Privacy</h2>
+              <input
+                type="radio"
+                id="privacy-public"
+                name="privacy"
+                value="public"
+                checked={privacy}
+                onChange={handleChangePrivacy}
+              />
+              <label htmlFor="privacy-public">Public</label>
+              <input
+                type="radio"
+                id="privacy-private"
+                name="privacy"
+                style={{ marginLeft: '0.5rem' }}
+                value="private"
+                checked={!privacy}
+                onChange={handleChangePrivacy}
+              />
+              <label htmlFor="privacy-private">Private</label>
+            </S.EditInputPrivacy>
           </S.EditBasicInfoForm>
         </S.EditBasicInfo>
       </>
@@ -223,6 +262,6 @@ const EditContent = forwardRef<IEditContentHandle, EditContentProps>(
   }
 )
 
-EditContent.displayName = 'EditContent'
+EditBasicInfo.displayName = 'EditBasicInfo'
 
-export default EditContent
+export default EditBasicInfo

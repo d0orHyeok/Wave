@@ -1,52 +1,7 @@
 import styled from 'styled-components'
 
-export const EditNav = styled.div`
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.bgColorRGBA(0.03)};
-`
-
-export const EditNavItem = styled.span<{ select?: boolean }>`
-  padding: 0.5rem 0 1rem 0;
-  font-size: 1.3rem;
-  position: relative;
-  margin-right: 1rem;
-  cursor: pointer;
-  color: ${({ theme, select }) =>
-    select ? theme.colors.primaryColor : theme.colors.bgText};
-
-  &:last-child {
-    margin-right: 0;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 2px;
-    background-color: ${({ theme, select }) =>
-      select ? theme.colors.primaryColor : theme.colors.bgText};
-    display: ${({ select }) => (select ? 'block' : 'none')};
-  }
-
-  &:hover {
-    &::after {
-      display: block;
-    }
-  }
-
-  ${({ theme }) => theme.device.tablet} {
-    font-size: 1.1rem;
-  }
-`
-
-const EditContent = styled.div`
+export const EditBasicInfo = styled.div`
   padding: 1rem 0;
-`
-
-export const EditBasicInfo = styled(EditContent)`
   display: flex;
 
   ${({ theme }) => theme.device.tablet} {
@@ -138,7 +93,9 @@ export const EditInputBox = styled.div`
   & textarea {
     resize: vertical;
   }
+`
 
+export const EditInputPermalink = styled(EditInputBox)`
   & .inputwrap {
     display: flex;
     height: 1.5rem;
@@ -166,5 +123,11 @@ export const EditInputBox = styled.div`
         color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
       }
     }
+  }
+`
+
+export const EditInputPrivacy = styled(EditInputBox)`
+  & input {
+    width: auto;
   }
 `

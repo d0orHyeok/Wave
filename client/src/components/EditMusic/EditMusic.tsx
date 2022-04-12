@@ -4,20 +4,29 @@ import * as mmb from 'music-metadata-browser'
 import { ICommonTagsResult } from 'music-metadata/lib/type'
 import axios from 'axios'
 import EditHead from './EditHead/EditHead'
-import EditContent, { IEditContentHandle } from './EditContent/EditContent'
+import EditBasicInfo, {
+  IEditBasicInfoHandler,
+} from './EditBasicInfo/EditBasicInfo'
+import EditMetadata, { IEditMetadataHandler } from './EditMetadata/EditMetadata'
 
 interface EditMusicProps {
   files?: FileList
 }
 
-export interface MetaData extends ICommonTagsResult {
+export interface IMusicMetadata extends ICommonTagsResult {
   duration?: number
 }
 
 const EditMusic = ({ files }: EditMusicProps) => {
-  const editContentRef = useRef<IEditContentHandle>(null)
+  const editNavItems = ['Basic Info', 'Metadata']
 
-  const [musicMetadata, setMusicMetadata] = useState<MetaData | undefined>()
+  const editBasicInfoRef = useRef<IEditBasicInfoHandler>(null)
+  const editMetadataRef = useRef<IEditMetadataHandler>(null)
+
+  const [editNavIndex, setEditNavIndex] = useState(0)
+  const [musicMetadata, setMusicMetadata] = useState<
+    IMusicMetadata | undefined
+  >()
 
   const uploadFile = useCallback(() => {
     if (!files) {
@@ -36,6 +45,16 @@ const EditMusic = ({ files }: EditMusicProps) => {
       })
       .catch((error) => console.log(error))
   }, [files])
+
+  const handleGetData = useCallback(() => {
+    const basicInfoData = editBasicInfoRef.current?.getData()
+    console.log('basicInfoData', basicInfoData)
+    if (!basicInfoData) {
+      setEditNavIndex(0)
+    }
+    const metadataData = editMetadataRef.current?.getData()
+    console.log('metadataData', metadataData)
+  }, [])
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -72,9 +91,30 @@ const EditMusic = ({ files }: EditMusicProps) => {
       <S.Container>
         <EditHead files={files} />
         <S.EditMain className="editMain">
-          <EditContent ref={editContentRef} metadata={musicMetadata} />
+          <S.EditNav className="editNav">
+            {editNavItems.map((item, index) => (
+              <S.EditNavItem
+                key={item}
+                className="editNav-item"
+                onClick={() => setEditNavIndex(index)}
+                select={editNavIndex === index}
+              >
+                {item}
+              </S.EditNavItem>
+            ))}
+          </S.EditNav>
+          <EditBasicInfo
+            metadata={musicMetadata}
+            ref={editBasicInfoRef}
+            style={{ display: editNavIndex === 0 ? 'flex' : 'none' }}
+          />
+          <EditMetadata
+            metadata={musicMetadata}
+            ref={editMetadataRef}
+            style={{ display: editNavIndex === 1 ? 'block' : 'none' }}
+          />
           <div>
-            <button>Cancel</button>
+            <button onClick={handleGetData}>Cancel</button>
             <button onClick={uploadFile}>Save</button>
           </div>
         </S.EditMain>
