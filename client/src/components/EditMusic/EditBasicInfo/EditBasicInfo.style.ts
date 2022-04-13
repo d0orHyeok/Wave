@@ -78,7 +78,7 @@ export const EditInputBox = styled.div`
     border: 1px solid ${({ theme }) => theme.colors.border1};
     border-radius: 4px;
     background-color: inherit;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
     width: 100%;
     font-size: 0.85rem;
     padding: 4px 8px;
@@ -86,7 +86,6 @@ export const EditInputBox = styled.div`
     &:hover,
     &:focus {
       outline: none;
-      color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
       border-color: ${({ theme }) => theme.colors.border2};
     }
   }
@@ -99,7 +98,7 @@ export const EditInputPermalink = styled(EditInputBox)`
   & .inputwrap {
     display: flex;
     height: 1.5rem;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
 
     & input {
       padding: 4px 0;

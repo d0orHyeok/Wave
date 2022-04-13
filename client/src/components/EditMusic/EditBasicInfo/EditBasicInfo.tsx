@@ -23,8 +23,8 @@ export interface IEditBasicInfoValue {
   genre?: string
   description?: string
   tags?: string[]
-  newCover?: File
-  privacy: boolean
+  cover?: File
+  status: 'PRIVATE' | 'PUBLIC' | string
 }
 
 interface EditBaiscInfoProps {
@@ -43,8 +43,9 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
 
     const permaId = useAppSelector((state) => state.user.userData?.permaId)
 
-    const [privacy, setPrivacy] = useState(true)
+    const [status, setStatus] = useState(true)
     const [cover, setCover] = useState<string>('img/empty-cover.PNG')
+    const [originalCover, setOriginalCover] = useState<File | undefined>()
 
     useImperativeHandle(
       ref,
@@ -53,12 +54,8 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
           const title = titleRef.current?.value
           const permalink = permalinkRef.current?.value
           const tags = tagRef.current?.value.split('#').splice(1)
-          const genre = !genreRef.current?.value
-            ? undefined
-            : genreRef.current.value
-          const description = !descriptionRef.current?.value
-            ? undefined
-            : descriptionRef.current.value
+          const genre = genreRef.current?.value
+          const description = descriptionRef.current?.value
           const newCover = !coverInputRef.current?.files
             ? undefined
             : coverInputRef.current.files[0]
@@ -74,17 +71,17 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
 
           const data = {
             title,
-            permalink,
+            permalink: `${permaId}/${permalink}`,
             tags: tags?.length ? tags : undefined,
             genre,
             description,
-            newCover,
-            privacy,
+            cover: newCover || originalCover,
+            status: status ? 'PUBLIC' : 'PRIVATE',
           }
           return data
         },
       }),
-      [privacy]
+      [originalCover, permaId, status]
     )
 
     const handleChangeCover = useCallback(
@@ -100,10 +97,21 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
       []
     )
 
+    const handleChangePermalink = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget
+
+        event.currentTarget.value = value
+          .trim()
+          .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
+      },
+      []
+    )
+
     const handleChangePrivacy = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget
-        setPrivacy(value === 'public' ? true : false)
+        setStatus(value === 'public' ? true : false)
       },
       []
     )
@@ -132,11 +140,20 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
     useEffect(() => {
       if (metadata) {
         // 음악파일을 분석하고 앨범커버가 있으면 등록
-        const { picture, title, genre, description } = metadata
+        const { picture, title, genre, comment } = metadata
         if (picture?.length) {
           const { data, format } = picture[0]
           const url = getCoverUrlFromMetadata(data, format)
           setCover(url)
+
+          const origin = new File(
+            [data],
+            `cover.${format.split('/')[1] || 'jpg'}`,
+            {
+              type: format,
+            }
+          )
+          setOriginalCover(origin)
         } else {
           setCover('img/empty-cover.PNG')
         }
@@ -147,8 +164,8 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
         if (genre?.length && genreRef.current) {
           genreRef.current.value = genre.join(' ')
         }
-        if (description?.length && descriptionRef.current) {
-          descriptionRef.current.value = description.join()
+        if (comment?.length && descriptionRef.current) {
+          descriptionRef.current.value = comment.join()
         }
       }
     }, [metadata])
@@ -190,7 +207,14 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
               </h2>
               <div className="inputwrap">
                 <label htmlFor="permalink">{`${window.location.hostname}/${permaId}/`}</label>
-                <input ref={permalinkRef} id="permalink" type="text" required />
+                <input
+                  ref={permalinkRef}
+                  id="permalink"
+                  type="text"
+                  placeholder="Your link"
+                  required
+                  onChange={handleChangePermalink}
+                />
                 <button
                   className="permalinkBtn"
                   onClick={handleClickEditPermal}
@@ -240,7 +264,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 id="privacy-public"
                 name="privacy"
                 value="public"
-                checked={privacy}
+                checked={status}
                 onChange={handleChangePrivacy}
               />
               <label htmlFor="privacy-public">Public</label>
@@ -250,7 +274,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 name="privacy"
                 style={{ marginLeft: '0.5rem' }}
                 value="private"
-                checked={!privacy}
+                checked={!status}
                 onChange={handleChangePrivacy}
               />
               <label htmlFor="privacy-private">Private</label>

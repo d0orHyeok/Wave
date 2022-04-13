@@ -1,4 +1,3 @@
-import Axios from '@api/Axios'
 import { RootState } from '@redux/store'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
@@ -21,7 +20,7 @@ export const userRegister = createAsyncThunk(
   'REGISTER',
   async (registerInfo: IUserRegisterBody, { rejectWithValue }) => {
     try {
-      const response = await Axios.post('/api/auth/signup', registerInfo)
+      const response = await axios.post('/api/auth/signup', registerInfo)
       return response
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -37,7 +36,7 @@ export const userLogin = createAsyncThunk(
   'LOGIN',
   async (loginBody: IUserLoginBody, { rejectWithValue }) => {
     try {
-      const response = await Axios.post('/api/auth/signin', loginBody)
+      const response = await axios.post('/api/auth/signin', loginBody)
       return response.data.accessToken
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -50,17 +49,17 @@ export const userLogin = createAsyncThunk(
 )
 
 export const userAuth = createAsyncThunk('AUTH', async () => {
-  const response = await Axios.get('/api/auth/info')
+  const response = await axios.get('/api/auth/info')
   return response.data
 })
 
 export const silentRefresh = createAsyncThunk('SILENT_REFRESH', async () => {
-  const response = await Axios.post('/api/auth/refresh')
+  const response = await axios.post('/api/auth/refresh')
   return response.data
 })
 
 export const userLogout = createAsyncThunk('LOGOUT', async () => {
-  await Axios.post('/api/auth/signout')
+  await axios.post('/api/auth/signout')
 })
 
 export const userSlice = createSlice({
@@ -87,7 +86,7 @@ export const userSlice = createSlice({
     // 유저인증
     [userAuth.pending.type]: (state) => {
       // 인증전에 accessToken을 헤더 Authorization Bearer에 담아준다.
-      Axios.defaults.headers.common[
+      axios.defaults.headers.common[
         'Authorization'
       ] = `Bearer ${state.accessToken}`
     },
