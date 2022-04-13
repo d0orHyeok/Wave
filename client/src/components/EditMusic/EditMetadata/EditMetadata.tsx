@@ -14,7 +14,7 @@ export interface IEditMetadataHandler {
 
 export interface IEditMetadataValue {
   artist?: string
-  albumtitle?: string
+  album?: string
   albumartist?: string
   composer?: string
   year?: string
@@ -38,69 +38,26 @@ const EditMetadata = forwardRef<IEditMetadataHandler, IEditMetadataProps>(
     const handleChangeYear = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget
-        let numberValue = value.replaceAll(/[^\d]/g, '')
-        if (numberValue.length > 4) {
-          numberValue = numberValue.slice(0, 4)
-        }
 
-        if (numberValue.length === 4) {
-          const currentYear = new Date(Date.now()).getFullYear()
-          if (Number(numberValue) > currentYear) {
-            numberValue = currentYear.toString()
-          } else if (Number(numberValue) < 1900) {
-            numberValue = '1900'
-          }
-        }
-        event.currentTarget.value = numberValue
+        event.currentTarget.value = value.replaceAll(/[^\d]/g, '')
       },
       []
     )
-
-    const handleCheckValidYear = useCallback(() => {
-      if (yearRef.current) {
-        const { value } = yearRef.current
-
-        const currentYear = new Date(Date.now()).getFullYear()
-
-        if (
-          value.length !== 4 ||
-          Number(value) < 1900 ||
-          Number(value) > currentYear
-        ) {
-          yearRef.current.focus()
-          return alert('Year must be between 1900 and ' + currentYear)
-        }
-      }
-    }, [])
 
     useImperativeHandle(
       ref,
       () => ({
         getData: () => {
-          const artist = !artistRef.current?.value
-            ? undefined
-            : artistRef.current.value
-          const albumtitle = !albumTitleRef.current?.value
-            ? undefined
-            : albumTitleRef.current.value
-          const albumartist = !albumArtistRef.current?.value
-            ? undefined
-            : albumArtistRef.current.value
-          const composer = !composerRef.current?.value
-            ? undefined
-            : composerRef.current.value
-          const year = !yearRef.current?.value
-            ? undefined
-            : yearRef.current.value
-          const lyrics = !lyricsRef.current?.value
-            ? undefined
-            : lyricsRef.current.value
-
-          year && handleCheckValidYear()
+          const artist = artistRef.current?.value
+          const album = albumTitleRef.current?.value
+          const albumartist = albumArtistRef.current?.value
+          const composer = composerRef.current?.value
+          const year = yearRef.current?.value
+          const lyrics = lyricsRef.current?.value
 
           const data = {
             artist,
-            albumtitle,
+            album,
             albumartist,
             composer,
             year,
@@ -110,7 +67,7 @@ const EditMetadata = forwardRef<IEditMetadataHandler, IEditMetadataProps>(
           return data
         },
       }),
-      [handleCheckValidYear]
+      []
     )
 
     useEffect(() => {

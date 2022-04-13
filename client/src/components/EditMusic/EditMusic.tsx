@@ -10,14 +10,15 @@ import EditBasicInfo, {
 import EditMetadata, { IEditMetadataHandler } from './EditMetadata/EditMetadata'
 
 interface EditMusicProps {
-  files?: FileList
+  files: FileList
+  resetFiles: () => void
 }
 
 export interface IMusicMetadata extends ICommonTagsResult {
   duration?: number
 }
 
-const EditMusic = ({ files }: EditMusicProps) => {
+const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
   const editNavItems = ['Basic Info', 'Metadata']
 
   const editBasicInfoRef = useRef<IEditBasicInfoHandler>(null)
@@ -33,8 +34,33 @@ const EditMusic = ({ files }: EditMusicProps) => {
       return
     }
 
+    const basicInfoData = editBasicInfoRef.current?.getData()
+    const metadataData = editMetadataRef.current?.getData()
+
+    if (!(basicInfoData && metadataData)) {
+      setEditNavIndex(0)
+      return
+    }
+    const { cover, ...musicData } = basicInfoData
+    const { title, genre, description } = musicData
+    const data = [
+      {
+        musicData,
+        metadata: { title, genre, description, ...metadataData },
+      },
+    ]
+
     const formData = new FormData()
-    formData.append('file', files[0])
+    formData.append('music', files[0])
+
+    if (cover) {
+      formData.append('cover', cover)
+    }
+
+    formData.append(
+      'data',
+      new Blob([JSON.stringify(data)], { type: 'application/json' })
+    )
 
     axios
       .post('/api/music/upload', formData, {
@@ -46,15 +72,17 @@ const EditMusic = ({ files }: EditMusicProps) => {
       .catch((error) => console.log(error))
   }, [files])
 
-  const handleGetData = useCallback(() => {
-    const basicInfoData = editBasicInfoRef.current?.getData()
-    console.log('basicInfoData', basicInfoData)
-    if (!basicInfoData) {
+  const handleClickCancel = useCallback(() => {
+    if (
+      confirm(
+        'Are you sure you want to stop your upload? Any unsaved changes will be lost.'
+      )
+    ) {
       setEditNavIndex(0)
+      setMusicMetadata(undefined)
+      resetFiles()
     }
-    const metadataData = editMetadataRef.current?.getData()
-    console.log('metadataData', metadataData)
-  }, [])
+  }, [resetFiles])
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -114,7 +142,7 @@ const EditMusic = ({ files }: EditMusicProps) => {
             style={{ display: editNavIndex === 1 ? 'block' : 'none' }}
           />
           <div>
-            <button onClick={handleGetData}>Cancel</button>
+            <button onClick={handleClickCancel}>Cancel</button>
             <button onClick={uploadFile}>Save</button>
           </div>
         </S.EditMain>

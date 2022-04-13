@@ -11,6 +11,10 @@ const Upload = () => {
     }
   }, [])
 
+  const handleResetFiles = useCallback(() => {
+    setMusicFiles(undefined)
+  }, [])
+
   //   const uploadFile = () => {
   //     if (!musicFile) {
   //       return
@@ -33,7 +37,9 @@ const Upload = () => {
           hidden={musicFiles?.length ? true : false}
           onChangeFiles={handleChangeFiles}
         />
-        {musicFiles?.length && <EditMusic files={musicFiles} />}
+        {musicFiles?.length && (
+          <EditMusic files={musicFiles} resetFiles={handleResetFiles} />
+        )}
       </S.Wrapper>
     </>
   )
