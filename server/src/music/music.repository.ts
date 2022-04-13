@@ -1,8 +1,7 @@
 import { User } from 'src/entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Music, MusicStatus } from 'src/entities/music.entity';
+import { IMusicData, Music, MusicStatus } from 'src/entities/music.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { CreateMusicDto } from './dto/create-music.dto';
 
 @EntityRepository(Music)
 export class MusicRepository extends Repository<Music> {
@@ -10,15 +9,14 @@ export class MusicRepository extends Repository<Music> {
     return this.find();
   }
 
-  async createMusic(
-    createMusicDto: CreateMusicDto,
-    user: User,
-  ): Promise<Music> {
-    const { title, description } = createMusicDto;
+  async createMusic(createMusicData: IMusicData, user: User): Promise<Music> {
+    const { permalink } = createMusicData;
+
+    const existMusics = await this.find({ id: user.id, permalink });
 
     const music = this.create({
-      title,
-      description,
+      ...createMusicData,
+      permalink: !existMusics.length ? permalink : `${permalink}${Date.now()}`,
       user,
     });
     await this.save(music);
