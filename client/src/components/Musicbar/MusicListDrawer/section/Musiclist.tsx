@@ -10,7 +10,12 @@ import { BiDotsHorizontalRounded, BiRepost } from 'react-icons/bi'
 import { IoMdClose, IoMdLink, IoMdHeart } from 'react-icons/io'
 import { MdPlaylistAdd } from 'react-icons/md'
 import { FaPlay, FaPause } from 'react-icons/fa'
-import { setCurrentIndex, togglePlay } from '@redux/features/player/playerSlice'
+import {
+  setCurrentIndex,
+  togglePlay,
+  toggleRepeat,
+  toggleShuffle,
+} from '@redux/features/player/playerSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 
 const Musiclist = () => {
@@ -25,6 +30,36 @@ const Musiclist = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const openMenu = Boolean(anchorEl)
+
+  const handleClickPlay = useCallback(
+    (index: number) => (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+
+      if (index === currentIndex) {
+        dispatch(togglePlay())
+      } else {
+        dispatch(setCurrentIndex(index))
+        dispatch(togglePlay(true))
+      }
+    },
+    [dispatch, currentIndex]
+  )
+
+  const handleClickShuffle = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+      dispatch(toggleShuffle())
+    },
+    [dispatch]
+  )
+
+  const handleClickRepeat = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+      dispatch(toggleRepeat())
+    },
+    [dispatch]
+  )
 
   const handleClickItem = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,8 +88,16 @@ const Musiclist = () => {
         <S.PlaylistHead>
           <h2>이어지는 노래</h2>
           <div className="button-wrap">
-            <ShuffleButton shuffle={isShuffle} className="btn" />
-            <RepeatButton repeat={repeat} className="btn" />
+            <ShuffleButton
+              shuffle={isShuffle}
+              className="btn"
+              onClick={handleClickShuffle}
+            />
+            <RepeatButton
+              repeat={repeat}
+              className="btn"
+              onClick={handleClickRepeat}
+            />
           </div>
         </S.PlaylistHead>
         <S.PlaylistContainer>
@@ -62,13 +105,8 @@ const Musiclist = () => {
             {indexArray.map((indexItem, index) => (
               <S.PlaylistItem key={index} select={index === currentIndex}>
                 <S.ItemImageBox
-                  onClick={() =>
-                    dispatch(
-                      index === currentIndex
-                        ? togglePlay()
-                        : setCurrentIndex(indexItem)
-                    )
-                  }
+                  onClick={handleClickPlay(index)}
+                  aria-valuenow={indexItem}
                 >
                   <img
                     className="image"
