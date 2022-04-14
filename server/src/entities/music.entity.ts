@@ -34,13 +34,8 @@ export interface IMusicData {
   tags?: string[];
   cover?: string;
   status: MusicStatus;
-  metaData?: IMusicMetadata;
+  metaData: IMusicMetadata;
 }
-
-// permalink: string
-//   genre?: string
-//   description?: string
-//   tags?: string[]
 
 @Entity()
 export class Music extends BaseEntity {
@@ -74,12 +69,18 @@ export class Music extends BaseEntity {
   @Column('text', { array: true, nullable: true })
   tags: string[];
 
-  @Column('simple-json', { nullable: true })
+  @Column('simple-json')
   metadata: IMusicMetadata;
 
   @Column()
   status: MusicStatus;
 
-  @ManyToOne(() => User, (user) => user.musics, { onDelete: 'SET NULL' })
+  @Column({ nullable: true })
+  userId: number;
+
+  @ManyToOne(() => User, (user) => user.musics, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   user: User;
 }

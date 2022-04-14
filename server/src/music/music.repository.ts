@@ -14,10 +14,14 @@ export class MusicRepository extends Repository<Music> {
 
     const existMusics = await this.find({ id: user.id, permalink });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { hashedRefreshToken, password, ...userData } = user;
+
     const music = this.create({
       ...createMusicData,
       permalink: !existMusics.length ? permalink : `${permalink}${Date.now()}`,
-      user,
+      userId: user.id,
+      user: userData,
     });
     await this.save(music);
 
