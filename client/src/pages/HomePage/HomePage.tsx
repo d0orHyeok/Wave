@@ -1,7 +1,7 @@
 import { useAppTheme } from '@redux/context/appThemeProvider'
 import React from 'react'
 
-const Home = () => {
+const HomePage = () => {
   const [ThemeMode, toggleTheme] = useAppTheme()
   return (
     <div style={{ height: '100%' }}>
@@ -12,4 +12,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HomePage

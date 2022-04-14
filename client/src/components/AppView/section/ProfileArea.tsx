@@ -7,7 +7,7 @@ import { BiLogInCircle } from 'react-icons/bi'
 import LoginModal from '@components/LoginModal/LoginModal'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
 import { useAlert } from '@redux/context/alertProvider'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 interface ProfileAreaProps {
   className?: string
@@ -47,10 +47,10 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
         <S.ImageArea>
           {!user.isLogin ? (
             <BiLogInCircle className="empty-image" />
-          ) : user.userData && user.userData.image ? (
+          ) : user.userData && user.userData.profileImage ? (
             <img
               className="user-image"
-              src={user.userData.image}
+              src={user.userData.profileImage}
               alt="profile"
             />
           ) : (
@@ -81,7 +81,9 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
             }}
           >
             <MenuItem onClick={handleClose}>보관함</MenuItem>
-            <MenuItem onClick={handleClose}>계정설정</MenuItem>
+            <MenuItem onClick={handleClose}>
+              <Link to="/settings">설정</Link>
+            </MenuItem>
             <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
           </S.MyMenu>
         </>

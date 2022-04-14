@@ -1,13 +1,14 @@
 import React, { useLayoutEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import AppView from '@components/AppView/AppView'
-import Home from '@pages/HomePage/Home'
-import Register from '@pages/RegisterPage/Register'
+import HomePage from '@pages/HomePage/HomePage'
+import RegisterPage from '@pages/RegisterPage/RegisterPage'
 import withUser from './authHOC'
-import NotFound from '@pages/404'
+import NotFoundPage from '@pages/NotFoundPage'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { silentRefresh, userAuth } from '@redux/features/user/userSlice'
-import Upload from '@pages/UploadPage/Upload'
+import UploadPage from '@pages/UploadPage/UploadPage'
+import SettingsPage from '@pages/SettingsPage/SettingsPage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -40,11 +41,12 @@ const Router = () => {
   return (
     <AppView>
       <Routes>
-        <Route path="*" element={<NotFound />} />
-        <Route path="/" element={withUser(Home, null)} />
-        <Route path="/home" element={withUser(Home, null)} />
-        <Route path="/register" element={withUser(Register, false)} />
-        <Route path="/upload" element={withUser(Upload, true)} />
+        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={withUser(HomePage, null)} />
+        <Route path="/home" element={withUser(HomePage, null)} />
+        <Route path="/register" element={withUser(RegisterPage, false)} />
+        <Route path="/upload" element={withUser(UploadPage, true)} />
+        <Route path="/settings" element={withUser(SettingsPage, true)} />
       </Routes>
     </AppView>
   )

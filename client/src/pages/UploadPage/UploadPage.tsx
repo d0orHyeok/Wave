@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import EditMusic from '@components/EditMusic/EditMusic'
-import * as S from './Upload.style'
+import * as S from './UploadPage.style'
 
-const Upload = () => {
+const UploadPage = () => {
   const [musicFiles, setMusicFiles] = useState<FileList>()
 
   const handleChangeFiles = useCallback((files: FileList) => {
@@ -45,4 +45,4 @@ const Upload = () => {
   )
 }
 
-export default React.memo(Upload)
+export default React.memo(UploadPage)

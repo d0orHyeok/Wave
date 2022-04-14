@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   }
 `
 
-const NotFound = () => {
+const NotFoundPage = () => {
   return (
     <StyledContainer>
       <Logo />
@@ -27,4 +27,4 @@ const NotFound = () => {
   )
 }
 
-export default NotFound
+export default NotFoundPage

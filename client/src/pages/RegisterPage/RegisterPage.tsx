@@ -1,4 +1,4 @@
-import * as S from './Register.style'
+import * as S from './RegisterPage.style'
 import * as regex from './regex'
 import React, { useState } from 'react'
 import TextField from '@components/Common/TextField'
@@ -7,7 +7,7 @@ import { userRegister } from '@redux/features/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '@redux/context/alertProvider'
 
-const Register = () => {
+const RegisterPage = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const openAlert = useAlert()
@@ -264,4 +264,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default RegisterPage
