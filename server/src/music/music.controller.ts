@@ -1,6 +1,6 @@
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { IMusicData, IMusicMetadata } from './../entities/music.entity';
 import { User } from 'src/entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { MusicStatusValidationPipe } from './pipes/music-status-validation.pipe';
 import { MusicService } from './music.service';
 import {
@@ -30,17 +30,18 @@ interface IUploadData {
 }
 
 @Controller('music')
-@UseGuards(AuthGuard())
 export class MusicController {
   constructor(private musicService: MusicService) {}
   private logger = new Logger('MusicController');
 
   @Get('/')
-  getAllMusic(): Promise<Music[]> {
-    return this.musicService.getAllMusic();
+  async getAllMusic() {
+    const musics = await this.musicService.getAllMusic();
+    return { musics };
   }
 
   @Post('/upload')
+  @UseGuards(JwtAuthGuard)
   @Bind(UploadedFiles(), GetUser())
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -108,6 +109,7 @@ export class MusicController {
   }
 
   @Delete('/:id')
+  @UseGuards(JwtAuthGuard)
   deleteMusic(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
@@ -116,6 +118,7 @@ export class MusicController {
   }
 
   @Patch('/:id/status')
+  @UseGuards(JwtAuthGuard)
   updateMusicStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body('status', MusicStatusValidationPipe) status: MusicStatus,
