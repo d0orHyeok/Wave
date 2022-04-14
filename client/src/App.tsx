@@ -7,13 +7,6 @@ import './styles/font.css'
 import { AppThemeProvider } from '@redux/context/appThemeProvider'
 import { AlertProvider } from '@redux/context/alertProvider'
 import { BrowserRouter } from 'react-router-dom'
-import axios from 'axios'
-
-axios.defaults.baseURL =
-  process.env.NODE_ENV === 'development'
-    ? '/'
-    : `${process.env.REACT_APP_API_URL}`
-axios.defaults.withCredentials = true
 
 function App() {
   return (

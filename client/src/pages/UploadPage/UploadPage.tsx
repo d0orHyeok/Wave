@@ -15,19 +15,6 @@ const UploadPage = () => {
     setMusicFiles(undefined)
   }, [])
 
-  //   const uploadFile = () => {
-  //     if (!musicFile) {
-  //       return
-  //     }
-
-  //     const formData = new FormData()
-  //     formData.append('file', musicFile)
-
-  //     axios.post('/api/music/upload', formData, {
-  //       headers: { 'Content-Type': 'multipart/form-data' },
-  //     })
-  //   }
-
   return (
     <>
       <S.Wrapper

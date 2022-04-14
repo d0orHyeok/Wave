@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useRef } from 'react'
 import * as S from './EditMusic.style'
 import * as mmb from 'music-metadata-browser'
 import { ICommonTagsResult } from 'music-metadata/lib/type'
-import axios from 'axios'
+import Axios from '@api/Axios'
 import EditHead from './EditHead/EditHead'
 import EditBasicInfo, {
   IEditBasicInfoHandler,
@@ -62,10 +62,9 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
       new Blob([JSON.stringify(data)], { type: 'application/json' })
     )
 
-    axios
-      .post('/api/music/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+    Axios.post('/api/music/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
       .then((response) => {
         console.log(response)
       })
