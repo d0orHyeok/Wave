@@ -46,9 +46,10 @@ const Musicbar = () => {
   const { isPlay, isShuffle, repeat } = useAppSelector(
     (state) => state.player.controll
   )
-  const { musics, currentIndex, indexArray } = useAppSelector(
-    (state) => state.player.list
+  const { currentIndex, indexArray } = useAppSelector(
+    (state) => state.player.indexing
   )
+  const currentMusic = useAppSelector((state) => state.player.currentMusic)
 
   const [openDrawer, setOpenDrawer] = useState(false)
   const [volume, setVolume] = useState(getLocalVolume())
@@ -56,9 +57,12 @@ const Musicbar = () => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
 
-  const toggleDrawer = () => {
+  const toggleDrawer = useCallback(() => {
+    if (!indexArray.length) {
+      return
+    }
     setOpenDrawer(!openDrawer)
-  }
+  }, [indexArray, openDrawer])
 
   const handleCloseDrawer = useCallback(() => {
     setOpenDrawer(false)
@@ -88,7 +92,7 @@ const Musicbar = () => {
         event.currentTarget.play()
         return
       }
-      if (!repeat && musics.length - 1 == currentIndex) {
+      if (!repeat && indexArray.length - 1 == currentIndex) {
         return dispatch(togglePlay(false))
       }
       return dispatch(nextMusic())
@@ -132,6 +136,12 @@ const Musicbar = () => {
     }
   }, [isPlay, currentIndex])
 
+  useEffect(() => {
+    if (!indexArray.length) {
+      setOpenDrawer(false)
+    }
+  }, [indexArray])
+
   return (
     <>
       {/* <Progressbar audioRef={audioRef} /> */}
@@ -140,47 +150,51 @@ const Musicbar = () => {
         <audio
           id="wave-music-player"
           ref={audioRef}
-          src={`./music/${musics[indexArray[currentIndex]].name}.mp3`}
           onTimeUpdate={handleChangeAudioTime}
           onLoadedMetadata={handleLoadedMetadata}
-        ></audio>
+        >
+          <source src={currentMusic?.link} />
+        </audio>
         <S.Container>
           <S.InfoBox>
             <S.InfoArea>
-              {/* Music Image */}
-              <div className="img-container">
-                <img
-                  src={`./img/${musics[indexArray[currentIndex]].name}.jpg`}
-                  alt="Album Art"
-                />
-              </div>
-              {/* Music Info */}
-              <div className="music-info">
-                <h3 id="music-uploader" className="uploader">
-                  <Link to="#">{musics[indexArray[currentIndex]].artist}</Link>
-                </h3>
-                <h2 id="music-title" className="title">
-                  <Link to="#">{musics[indexArray[currentIndex]].title}</Link>
-                </h2>
-              </div>
-              {/* Buttons */}
-              <div className="music-btns">
-                <LikeButton
-                  className="svgBtn"
-                  isLike={user.isLike}
-                  onClick={() => dispatch(toggleLike())}
-                />
+              {currentMusic ? (
+                <>
+                  {/* Music Image */}
+                  <div className="img-container">
+                    <img src={currentMusic?.cover} alt="Album Art" />
+                  </div>
+                  {/* Music Info */}
+                  <div className="music-info">
+                    <h3 id="music-uploader" className="uploader">
+                      <Link to="#">{currentMusic?.metaData?.artist || ''}</Link>
+                    </h3>
+                    <h2 id="music-title" className="title">
+                      <Link to="#">{currentMusic?.title || ''}</Link>
+                    </h2>
+                  </div>
+                  {/* Buttons */}
+                  <div className="music-btns">
+                    <LikeButton
+                      className="svgBtn"
+                      isLike={user.isLike}
+                      onClick={() => dispatch(toggleLike())}
+                    />
 
-                <FollowButton
-                  className="svgBtn"
-                  isFollow={user.isFollow}
-                  onClick={() => dispatch(toggleFollow())}
-                />
+                    <FollowButton
+                      className="svgBtn"
+                      isFollow={user.isFollow}
+                      onClick={() => dispatch(toggleFollow())}
+                    />
 
-                <button className="svgBtn">
-                  <BiDotsHorizontalRounded />
-                </button>
-              </div>
+                    <button className="svgBtn">
+                      <BiDotsHorizontalRounded />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </S.InfoArea>
           </S.InfoBox>
 
@@ -246,13 +260,18 @@ const Musicbar = () => {
               </button>
             </S.VolumeArea>
             <S.PlaylistArea>
-              <button className="svgBtn" onClick={toggleDrawer}>
+              <button
+                className={`svgBtn drawerBtn ${
+                  indexArray.length ? '' : 'block'
+                }`}
+                onClick={toggleDrawer}
+              >
                 <RiPlayListFill />
               </button>
             </S.PlaylistArea>
           </S.SubControllBox>
           {/* Progress bar */}
-          <Progressbar />
+          {currentMusic ? <Progressbar /> : <></>}
         </S.Container>
       </S.Wrapper>
       <MusicListDrawer open={openDrawer} onClose={handleCloseDrawer}>

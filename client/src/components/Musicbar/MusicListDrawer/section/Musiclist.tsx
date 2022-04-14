@@ -20,13 +20,15 @@ import { useAppDispatch, useAppSelector } from '@redux/hook'
 
 const Musiclist = () => {
   const dispatch = useAppDispatch()
+
   const { isPlay, isShuffle, repeat } = useAppSelector(
     (state) => state.player.controll
   )
-
-  const { musics, currentIndex, indexArray } = useAppSelector(
-    (state) => state.player.list
+  const { currentIndex, indexArray } = useAppSelector(
+    (state) => state.player.indexing
   )
+  const currentMusic = useAppSelector((state) => state.player.currentMusic)
+  const musics = useAppSelector((state) => state.player.musics)
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const openMenu = Boolean(anchorEl)
@@ -78,10 +80,14 @@ const Musiclist = () => {
     <>
       <S.AreaImage className="area-image">
         <S.MusicImage>
-          <img
-            src={`./img/${musics[indexArray[currentIndex]].name}.jpg`}
-            alt="Album Art"
-          />
+          {currentMusic ? (
+            <img
+              src={currentMusic?.cover || 'img/empty-cover.PNG'}
+              alt="Album Art"
+            />
+          ) : (
+            <></>
+          )}
         </S.MusicImage>
       </S.AreaImage>
       <S.AreaPlaylist className="area-playlist">
@@ -110,7 +116,7 @@ const Musiclist = () => {
                 >
                   <img
                     className="image"
-                    src={`./img/${musics[indexItem].name}.jpg`}
+                    src={musics[indexItem].cover}
                     alt="Album Art"
                   />
 
@@ -124,7 +130,7 @@ const Musiclist = () => {
                 </S.ItemImageBox>
                 <S.ItemInfoBox>
                   <h3 id="music-uploader" className="uploader">
-                    <Link to="#">{musics[indexItem].artist}</Link>
+                    <Link to="#">{musics[indexItem].metaData.artist}</Link>
                   </h3>
                   <h2 id="music-title" className="title">
                     <Link to="#">{musics[indexItem].title}</Link>

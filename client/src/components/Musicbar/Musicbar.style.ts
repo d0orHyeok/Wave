@@ -169,6 +169,10 @@ export const ControllArea = styled.div`
 export const SubControllBox = styled.div`
   display: flex;
   align-items: center;
+
+  & .drawerBtn.block {
+    cursor: not-allowed;
+  }
 `
 
 export const VolumeArea = styled.div`
