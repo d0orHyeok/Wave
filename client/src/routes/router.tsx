@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useLayoutEffect, useEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import AppView from '@components/AppView/AppView'
 import HomePage from '@pages/HomePage/HomePage'
@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { silentRefresh, userAuth } from '@redux/features/user/userSlice'
 import UploadPage from '@pages/UploadPage/UploadPage'
 import SettingsPage from '@pages/SettingsPage/SettingsPage'
+import TrackPage from '@pages/TrackPage/TrackPage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -16,17 +17,11 @@ const Router = () => {
   const navigate = useNavigate()
   const isLogin = useAppSelector((state) => state.user.isLogin)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (location.pathname === '/') {
       navigate('/home')
     }
-
     dispatch(userAuth())
-      // 유저인증
-      .unwrap()
-      .catch(() => {
-        dispatch(silentRefresh())
-      })
   }, [navigate, dispatch, location.pathname])
 
   useLayoutEffect(() => {
@@ -47,6 +42,7 @@ const Router = () => {
         <Route path="/register" element={withUser(RegisterPage, false)} />
         <Route path="/upload" element={withUser(UploadPage, true)} />
         <Route path="/settings" element={withUser(SettingsPage, true)} />
+        <Route path="/track/*" element={withUser(TrackPage, null)} />
       </Routes>
     </AppView>
   )
