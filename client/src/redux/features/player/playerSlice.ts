@@ -44,19 +44,22 @@ export const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
+    // 재생할 음악을 선택
     setCurrentMusic: (state, action: PayloadAction<IMusic>) => {
-      const setMusic = action.payload
+      const setMusic = action.payload // 변경할 음악
       state.currentMusic = setMusic
       const findIndex = state.musics.findIndex(
         (music) => music.id === setMusic.id
       )
 
       if (findIndex === -1) {
+        // 재생목록에 변경할 음악이 없다면 추가
         const length = state.musics.length
         state.musics.push(setMusic)
         state.indexing.indexArray.push(length)
         state.indexing.currentIndex = length
       } else {
+        // 음악이 있는경우 인덱스 수정
         if (state.controll.isShuffle) {
           const changeIndex = state.indexing.indexArray.findIndex(
             (value) => value === findIndex
@@ -67,48 +70,63 @@ export const playerSlice = createSlice({
         }
       }
     },
+    // 재생목록에 음악을 추가
     addMusic: (state, action: PayloadAction<IMusic | IMusic[]>) => {
-      const add = action.payload
+      const addMusics = !Array.isArray(action.payload)
+        ? [action.payload]
+        : action.payload
       const musicLength = state.musics.length
-      if (Array.isArray(add)) {
-        state.musics = [...state.musics, ...add]
-        const addIndex = Array.from(
-          { length: add.length },
-          (_, i) => i + musicLength
-        )
-        state.indexing.indexArray = [...state.indexing.indexArray, ...addIndex]
-      } else {
-        state.musics.push(add)
-        state.indexing.indexArray.push(musicLength)
-      }
+
+      state.musics = [...state.musics, ...addMusics]
+      const addIndexies = Array.from(
+        { length: addMusics.length },
+        (_, i) => i + musicLength
+      )
+      state.indexing.indexArray = [...state.indexing.indexArray, ...addIndexies]
     },
+    // 재생목록에서 음악을 삭제
     removeMusic: (state, action: PayloadAction<number>) => {
-      const removeId = action.payload
-      const findIndex = state.musics.findIndex((music) => music.id === removeId)
+      const findIndex = action.payload
+      const changedMusics = state.musics.filter(
+        (_, index) => index !== findIndex
+      )
 
       if (findIndex !== -1) {
-        const currentIndex = state.indexing.currentIndex
+        const { currentIndex } = state.indexing
+        let changedIndex = currentIndex
 
-        state.musics = state.musics.filter((_, index) => index !== findIndex)
-        state.indexing.indexArray = state.indexing.indexArray.filter(
-          (value, index) => {
-            if (value !== findIndex) {
-              if (index <= currentIndex) {
-                state.indexing.currentIndex -= 1
-                if (index === currentIndex) {
-                  state.currentMusic =
-                    state.musics[state.indexing.indexArray[index - 1]]
-                }
-              }
+        const changedIndexArray: number[] = []
+        state.indexing.indexArray.map((item, index) => {
+          if (item === findIndex) {
+            if (index <= currentIndex) {
+              changedIndex -= 1
             }
-            return true
+            return
           }
-        )
+          changedIndexArray.push(item >= findIndex ? item - 1 : item)
+        })
 
-        if (state.indexing.currentIndex === state.musics.length - 1) {
-          state.indexing.currentIndex -= 1
+        changedIndex = changedIndex < 0 ? 0 : changedIndex
+
+        if (changedMusics.length) {
+          state.currentMusic = changedMusics[changedIndexArray[changedIndex]]
+        } else {
+          state.currentMusic = null
+          state.controll.isPlay = false
         }
+        state.indexing = {
+          indexArray: changedIndexArray,
+          currentIndex: changedIndex,
+        }
+        state.musics = changedMusics
       }
+    },
+    // 재생목록 초기화
+    clearMusics: (state) => {
+      state.controll.isPlay = false
+      state.currentMusic = null
+      state.indexing = { currentIndex: 0, indexArray: [] }
+      state.musics = []
     },
     setCurrentIndex: (state, action: PayloadAction<number>) => {
       if (!state.musics.length) {
@@ -154,16 +172,20 @@ export const playerSlice = createSlice({
           state.controll.repeat = undefined
       }
     },
+    // 랜덤재생이면 재생목록을 섞는다
     toggleShuffle: (state) => {
       const { indexArray, currentIndex } = state.indexing
-      const changedShuffle = !state.controll.isShuffle
-      state.controll.isShuffle = changedShuffle
-      if (changedShuffle) {
+      const changedIsShuffle = !state.controll.isShuffle
+      state.controll.isShuffle = changedIsShuffle
+      if (changedIsShuffle) {
+        // 랜덤재생일 경우
         const shuffledArray = shuffle(state.indexing.indexArray)
         state.indexing.indexArray = shuffledArray
         state.indexing.currentIndex = 0
         state.currentMusic = state.musics[shuffledArray[0]]
       } else {
+        // 랜덤재생 풀렸을 경우
+        // 재생중인 음악은 유지하며 재생목록을 원상태로 복구
         const { musics } = state
         const currentMusicIndex = musics.findIndex(
           (item) => item === musics[indexArray[currentIndex]]
@@ -176,8 +198,18 @@ export const playerSlice = createSlice({
         state.currentMusic = state.musics[currentIndex]
       }
     },
+    // 재생중인 음악의 진행상태를 설정
     setProgress: (state, action: PayloadAction<IProgressPayload>) => {
-      state.progress = { ...state.progress, ...action.payload }
+      if (state.currentMusic) {
+        state.progress = { ...state.progress, ...action.payload }
+      } else {
+        state.progress = {
+          currentStringTime: '0:00',
+          durationStringTime: '0:00',
+          percent: 0,
+          duration: 0,
+        }
+      }
     },
   },
   extraReducers: {},
@@ -188,6 +220,7 @@ export const {
   setCurrentMusic,
   addMusic,
   removeMusic,
+  clearMusics,
   setCurrentIndex,
   nextMusic,
   prevMusic,
