@@ -1,8 +1,7 @@
-import React from 'react'
 import styled from 'styled-components'
-import { Menu as MuiMenu, MenuProps } from '@mui/material'
+import { Menu as MuiMenu } from '@mui/material'
 
-const StyledMenu = styled(MuiMenu)`
+const Menu = styled(MuiMenu)`
   & .MuiPaper-root {
     border-radius: 2px;
     border: none;
@@ -15,8 +14,17 @@ const StyledMenu = styled(MuiMenu)`
   }
 `
 
-const Menu = (props: MenuProps) => {
-  return <StyledMenu {...props}>{props.children}</StyledMenu>
-}
+export const MusicMenu = styled(Menu)`
+  & .MuiPaper-root {
+    border-radius: 2px;
+    border: none;
+    width: 160px;
+  }
+
+  & .MuiList-root {
+    padding: 0;
+    background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.12)};
+  }
+`
 
 export default Menu

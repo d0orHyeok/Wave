@@ -1,4 +1,3 @@
-import { Menu, MenuItem } from '@components/Common'
 import styled from 'styled-components'
 
 export const AreaImage = styled.div`
@@ -50,8 +49,6 @@ export const PlaylistHead = styled.div`
   }
 
   & .btn {
-    width: 1.25em;
-    height: 1.25em;
     margin-right: 1rem;
     font-size: inherit;
 
@@ -62,6 +59,14 @@ export const PlaylistHead = styled.div`
 
   ${({ theme }) => theme.device.tablet} {
     font-size: 1.2rem;
+  }
+`
+
+export const ClearBtn = styled.button`
+  border: none;
+  color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+  &:hover {
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
   }
 `
 
@@ -171,35 +176,4 @@ export const ItemControlBox = styled.div`
 
 export const LikeBtn = styled.button<{ like?: boolean }>`
   color: ${({ theme, like }) => like && theme.colors.errorColor};
-`
-
-export const MyMenu = styled(Menu)`
-  & .MuiPaper-root {
-    border-radius: 2px;
-    border: none;
-    width: 160px;
-  }
-
-  & .MuiList-root {
-    padding: 0;
-    background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.12)};
-  }
-`
-
-export const MyMenuItem = styled(MenuItem)`
-  &.MuiMenuItem-root {
-    padding: 8px 0;
-    font-size: 0.75rem;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-
-  & .icon {
-    margin: 0 8px;
-    width: 16px;
-    height: 16px;
-  }
 `

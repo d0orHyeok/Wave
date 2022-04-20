@@ -1,15 +1,28 @@
-import React from 'react'
 import styled from 'styled-components'
-import { MenuItem as MuiMenuItem, MenuItemProps } from '@mui/material'
+import { MenuItem as MuiMenuItem } from '@mui/material'
 
-export const MyMenuItem = styled(MuiMenuItem)`
+const MenuItem = styled(MuiMenuItem)`
   &.MuiMenuItem-root:hover {
     background-color: ${({ theme }) => theme.colors.border1};
   }
 `
 
-const MenuItem = (props: MenuItemProps) => {
-  return <MyMenuItem {...props}>{props.children}</MyMenuItem>
-}
+const MusicMenuItem = styled(MenuItem)`
+  &.MuiMenuItem-root {
+    padding: 8px 0;
+    font-size: 0.75rem;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
 
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  & .icon {
+    margin: 0 8px;
+    width: 16px;
+    height: 16px;
+  }
+`
+export { MusicMenuItem }
 export default MenuItem
