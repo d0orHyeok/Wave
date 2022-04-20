@@ -15,10 +15,16 @@ import {
   togglePlay,
   toggleRepeat,
   toggleShuffle,
+  removeMusic,
+  clearMusics,
 } from '@redux/features/player/playerSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
+import { MusicMenuItem } from '@components/Common/MenuItem'
+import { MusicMenu } from '@components/Common/Menu'
 
 const Musiclist = () => {
+  const backendURI = process.env.REACT_APP_API_URL
+
   const dispatch = useAppDispatch()
 
   const { isPlay, isShuffle, repeat } = useAppSelector(
@@ -30,16 +36,19 @@ const Musiclist = () => {
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const musics = useAppSelector((state) => state.player.musics)
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null)
   const openMenu = Boolean(anchorEl)
 
   const handleClickPlay = useCallback(
+    // 재생목록에서 음악 재생버튼을 누르면 동작
     (index: number) => (event: React.MouseEvent<HTMLElement>) => {
       event.preventDefault()
 
       if (index === currentIndex) {
+        // 재생중인 음악인 경우
         dispatch(togglePlay())
       } else {
+        // 재생목록 인덱스를 변경하고 음악을 재생
         dispatch(setCurrentIndex(index))
         dispatch(togglePlay(true))
       }
@@ -63,7 +72,16 @@ const Musiclist = () => {
     [dispatch]
   )
 
+  const handleClickClear = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+      dispatch(clearMusics())
+    },
+    [dispatch]
+  )
+
   const handleClickItem = useCallback(
+    // ...버튼을 누르면 메뉴가 나올 anchor를 설정
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (event.currentTarget.id === 'playlist-moreBtn') {
         setAnchorEl(event.currentTarget)
@@ -76,13 +94,26 @@ const Musiclist = () => {
     setAnchorEl(null)
   }, [])
 
+  const handleClickRemove = () => {
+    // 재생목록에서 선택한 음악을 제거
+    if (anchorEl) {
+      dispatch(removeMusic(Number(anchorEl.value)))
+    }
+    handleCloseMenu()
+  }
+
   return (
     <>
+      {/* 앨범커버 크게보기 */}
       <S.AreaImage className="area-image">
         <S.MusicImage>
           {currentMusic ? (
             <img
-              src={currentMusic?.cover || 'img/empty-cover.PNG'}
+              src={
+                currentMusic?.cover
+                  ? `${backendURI}/${currentMusic.cover}`
+                  : 'img/empty-cover.PNG'
+              }
               alt="Album Art"
             />
           ) : (
@@ -90,9 +121,10 @@ const Musiclist = () => {
           )}
         </S.MusicImage>
       </S.AreaImage>
+      {/* 재생목록 영역 */}
       <S.AreaPlaylist className="area-playlist">
         <S.PlaylistHead>
-          <h2>이어지는 노래</h2>
+          <h2>재생목록</h2>
           <div className="button-wrap">
             <ShuffleButton
               shuffle={isShuffle}
@@ -104,19 +136,21 @@ const Musiclist = () => {
               className="btn"
               onClick={handleClickRepeat}
             />
+            <S.ClearBtn onClick={handleClickClear}>Clear</S.ClearBtn>
           </div>
         </S.PlaylistHead>
         <S.PlaylistContainer>
           <ul>
             {indexArray.map((indexItem, index) => (
               <S.PlaylistItem key={index} select={index === currentIndex}>
-                <S.ItemImageBox
-                  onClick={handleClickPlay(index)}
-                  aria-valuenow={indexItem}
-                >
+                <S.ItemImageBox onClick={handleClickPlay(index)}>
                   <img
                     className="image"
-                    src={musics[indexItem].cover}
+                    src={
+                      musics[indexItem]?.cover
+                        ? `${backendURI}/${musics[indexItem].cover}`
+                        : 'img/empty-cover.PNG'
+                    }
                     alt="Album Art"
                   />
 
@@ -130,10 +164,14 @@ const Musiclist = () => {
                 </S.ItemImageBox>
                 <S.ItemInfoBox>
                   <h3 id="music-uploader" className="uploader">
-                    <Link to="#">{musics[indexItem].metaData.artist}</Link>
+                    <Link to="#">
+                      {musics[indexItem]?.metaData?.artist
+                        ? musics[indexItem].metaData?.artist
+                        : ''}
+                    </Link>
                   </h3>
                   <h2 id="music-title" className="title">
-                    <Link to="#">{musics[indexItem].title}</Link>
+                    <Link to="#">{musics[indexItem]?.title}</Link>
                   </h2>
                 </S.ItemInfoBox>
                 <S.ItemControlBox>
@@ -143,6 +181,7 @@ const Musiclist = () => {
                     id="playlist-moreBtn"
                     className="btn moreBtn"
                     onClick={handleClickItem}
+                    value={indexItem}
                   >
                     <BiDotsHorizontalRounded />
                   </button>
@@ -152,7 +191,7 @@ const Musiclist = () => {
           </ul>
         </S.PlaylistContainer>
       </S.AreaPlaylist>
-      <S.MyMenu
+      <MusicMenu
         anchorEl={anchorEl}
         open={openMenu}
         onClose={handleCloseMenu}
@@ -166,27 +205,27 @@ const Musiclist = () => {
         }}
         style={{ zIndex: 99999 }}
       >
-        <S.MyMenuItem onClick={handleCloseMenu}>
+        <MusicMenuItem onClick={handleCloseMenu}>
           <IoMdHeart className="icon" />
           <span>Like</span>
-        </S.MyMenuItem>
-        <S.MyMenuItem onClick={handleCloseMenu}>
+        </MusicMenuItem>
+        <MusicMenuItem onClick={handleCloseMenu}>
           <BiRepost className="icon" />
           <span>가져오기</span>
-        </S.MyMenuItem>
-        <S.MyMenuItem onClick={handleCloseMenu}>
+        </MusicMenuItem>
+        <MusicMenuItem onClick={handleCloseMenu}>
           <IoMdLink className="icon" />
           <span>링크 복사</span>
-        </S.MyMenuItem>
-        <S.MyMenuItem onClick={handleCloseMenu}>
+        </MusicMenuItem>
+        <MusicMenuItem onClick={handleCloseMenu}>
           <MdPlaylistAdd className="icon" />
           <span>플레이리스트에 추가</span>
-        </S.MyMenuItem>
-        <S.MyMenuItem onClick={handleCloseMenu}>
+        </MusicMenuItem>
+        <MusicMenuItem onClick={handleClickRemove}>
           <IoMdClose className="icon" />
           <span>재생목록에서 제거</span>
-        </S.MyMenuItem>
-      </S.MyMenu>
+        </MusicMenuItem>
+      </MusicMenu>
     </>
   )
 }

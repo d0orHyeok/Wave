@@ -40,6 +40,8 @@ const getLocalVolume = () => {
 }
 
 const Musicbar = () => {
+  const backendURI = process.env.REACT_APP_API_URL
+
   const dispatch = useAppDispatch()
 
   const user = useAppSelector(selectUser)
@@ -132,7 +134,13 @@ const Musicbar = () => {
 
   useEffect(() => {
     if (audioRef.current) {
-      isPlay ? audioRef.current.play() : audioRef.current.pause()
+      setTimeout(
+        () =>
+          isPlay
+            ? audioRef.current?.play().catch((err) => console.log(err))
+            : audioRef.current?.pause(),
+        100
+      )
     }
   }, [isPlay, currentIndex])
 
@@ -150,11 +158,10 @@ const Musicbar = () => {
         <audio
           id="wave-music-player"
           ref={audioRef}
+          src={currentMusic?.link}
           onTimeUpdate={handleChangeAudioTime}
           onLoadedMetadata={handleLoadedMetadata}
-        >
-          <source src={currentMusic?.link} />
-        </audio>
+        ></audio>
         <S.Container>
           <S.InfoBox>
             <S.InfoArea>
@@ -162,12 +169,23 @@ const Musicbar = () => {
                 <>
                   {/* Music Image */}
                   <div className="img-container">
-                    <img src={currentMusic?.cover} alt="Album Art" />
+                    <img
+                      src={
+                        currentMusic?.cover
+                          ? `${backendURI}/${currentMusic.cover}`
+                          : 'img/empty-cover.PNG'
+                      }
+                      alt="Album Art"
+                    />
                   </div>
                   {/* Music Info */}
                   <div className="music-info">
                     <h3 id="music-uploader" className="uploader">
-                      <Link to="#">{currentMusic?.metaData?.artist || ''}</Link>
+                      <Link to="#">
+                        {currentMusic?.metaData?.artist
+                          ? currentMusic?.metaData?.artist
+                          : ''}
+                      </Link>
                     </h3>
                     <h2 id="music-title" className="title">
                       <Link to="#">{currentMusic?.title || ''}</Link>
