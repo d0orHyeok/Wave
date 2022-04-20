@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import * as S from './MusicListDrawer.style'
 
 interface IMusicListDrawer {
@@ -9,12 +9,32 @@ interface IMusicListDrawer {
 }
 
 const MusicListDrawer = ({ open, onClose, children }: IMusicListDrawer) => {
-  const handleClose = (event: React.MouseEvent<HTMLElement>) => {
-    if (event.target !== event.currentTarget) {
-      return
+  const handleClose = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (event.target !== event.currentTarget) {
+        return
+      }
+      onClose()
+    },
+    [onClose]
+  )
+
+  const keyboardEvent = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    },
+    [onClose]
+  )
+
+  useEffect(() => {
+    if (open) {
+      window.addEventListener('keydown', keyboardEvent)
+    } else {
+      window.removeEventListener('keydown', keyboardEvent)
     }
-    onClose()
-  }
+  }, [keyboardEvent, open])
 
   useEffect(() => {
     const body = document.body
