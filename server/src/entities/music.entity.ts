@@ -3,6 +3,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -45,7 +46,7 @@ export class Music extends BaseEntity {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   permalink: string;
 
   @Column()
@@ -75,12 +76,14 @@ export class Music extends BaseEntity {
   @Column()
   status: MusicStatus;
 
-  @Column({ nullable: true })
-  userId: number;
+  @Column({ name: 'uploader' })
+  uploader: string;
 
   @ManyToOne(() => User, (user) => user.musics, {
+    cascade: true,
     onDelete: 'SET NULL',
     nullable: true,
   })
+  @JoinColumn([{ name: 'uploader', referencedColumnName: 'username' }])
   user: User;
 }

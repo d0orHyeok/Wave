@@ -51,4 +51,20 @@ export class UserRepository extends Repository<User> {
 
     return user;
   }
+
+  async pushLikes(user: User, musicId: number) {
+    if (!user.likes.includes(musicId)) {
+      user.likes.push(musicId);
+      const updatedUser = await this.save(user);
+      return updatedUser;
+    } else {
+      return user;
+    }
+  }
+
+  async pullLikes(user: User, musicId: number) {
+    user.likes = user.likes.filter((id) => id !== musicId);
+    const updatedUser = await this.save(user);
+    return updatedUser;
+  }
 }

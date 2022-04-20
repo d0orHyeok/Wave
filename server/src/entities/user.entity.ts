@@ -34,6 +34,9 @@ export class User extends BaseEntity {
   @Column()
   permaId: string;
 
+  @Column('int', { array: true, default: [] })
+  likes: number[];
+
   @ManyToMany(() => User, (user) => user.following)
   @JoinTable()
   followers: User[];

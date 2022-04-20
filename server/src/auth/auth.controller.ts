@@ -7,6 +7,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Res,
   UseGuards,
   ValidationPipe,
@@ -15,6 +16,7 @@ import { AuthCredentailDto } from './dto/auth-credential.dto';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { Response } from 'express';
+import { AuthLikesDto } from './dto/auth-likes.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -64,16 +66,29 @@ export class AuthController {
   refreshAccessToken(@GetUser() user: User) {
     const payload = { id: user.id };
     const accessToken = this.authService.getAccessToken(payload);
-    const userData = this.authService.getUserData(user);
-
-    return { accessToken, userData };
+    return { accessToken };
   }
 
   @Get('/info')
   @UseGuards(JwtAuthGuard)
-  test(@GetUser() user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getUserData(@GetUser() user: User) {
     const userData = this.authService.getUserData(user);
+    return { userData };
+  }
+
+  @Put('/musics/like')
+  @UseGuards(JwtAuthGuard)
+  async pushLikes(@GetUser() user: User, @Body() body: AuthLikesDto) {
+    const { musicId } = body;
+    const userData = await this.authService.pushLikes(user, musicId);
+    return { userData };
+  }
+
+  @Put('/musics/unlike')
+  @UseGuards(JwtAuthGuard)
+  async pullLikes(@GetUser() user: User, @Body() body: AuthLikesDto) {
+    const { musicId } = body;
+    const userData = await this.authService.pullLikes(user, musicId);
     return { userData };
   }
 }

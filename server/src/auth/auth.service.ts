@@ -117,4 +117,14 @@ export class AuthService {
     const { password, hashedRefreshToken, ...userData } = user;
     return userData;
   }
+
+  async pushLikes(user: User, musicId: number) {
+    const updatedUser = await this.userRepository.pushLikes(user, musicId);
+    return this.getUserData(updatedUser);
+  }
+
+  async pullLikes(user: User, musicId: number) {
+    const updatedUser = await this.userRepository.pullLikes(user, musicId);
+    return this.getUserData(updatedUser);
+  }
 }
