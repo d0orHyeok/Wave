@@ -7,7 +7,7 @@ interface IAlertProps extends SnackbarProps {
   alertText: string
 }
 
-const CMuiAlert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+const MyAlert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ) {
@@ -17,11 +17,11 @@ const CMuiAlert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 const Alert = ({ alertText, severity, ...props }: IAlertProps) => {
   return (
     <Snackbar {...props}>
-      <CMuiAlert severity={severity} sx={{ width: '100%' }}>
+      <MyAlert severity={severity} sx={{ width: '100%' }}>
         {alertText}
-      </CMuiAlert>
+      </MyAlert>
     </Snackbar>
   )
 }
 
-export default React.memo(Alert)
+export default Alert

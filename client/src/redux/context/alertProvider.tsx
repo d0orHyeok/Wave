@@ -30,7 +30,7 @@ const AlertContext = createContext<any>({})
 export const AlertProvider = ({ children }: IAlertProviderProps) => {
   const [alertOption, setAlertOption] = useState<IAlertOpion>({
     severity: 'success',
-    anchorOrigin: { horizontal: 'right', vertical: 'bottom' },
+    anchorOrigin: { horizontal: 'center', vertical: 'top' },
     alertText: 'alert',
     open: false,
   })
@@ -42,7 +42,12 @@ export const AlertProvider = ({ children }: IAlertProviderProps) => {
   return (
     <AlertContext.Provider value={{ alertOption, setAlertOption }}>
       {children}
-      <Alert {...alertOption} onClose={onClose} />
+      <Alert
+        sx={{ zIndex: '99999' }}
+        autoHideDuration={2000}
+        {...alertOption}
+        onClose={onClose}
+      />
     </AlertContext.Provider>
   )
 }
