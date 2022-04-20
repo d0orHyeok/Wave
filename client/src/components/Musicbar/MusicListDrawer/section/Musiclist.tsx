@@ -165,8 +165,8 @@ const Musiclist = () => {
                 <S.ItemInfoBox>
                   <h3 id="music-uploader" className="uploader">
                     <Link to="#">
-                      {musics[indexItem]?.metaData?.artist
-                        ? musics[indexItem].metaData?.artist
+                      {musics[indexItem]?.uploader
+                        ? musics[indexItem].uploader
                         : ''}
                     </Link>
                   </h3>

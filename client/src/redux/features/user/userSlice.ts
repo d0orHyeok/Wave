@@ -1,6 +1,6 @@
 import { RootState } from '@redux/store'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import Axios from '@api/Axios'
+import Axios, { interceptWithAccessToken } from '@api/Axios'
 import axios from 'axios'
 import {
   IUserLoginBody,
@@ -13,7 +13,6 @@ const initialState: IUserState = {
   userData: null,
   accessToken: null,
   // temp
-  isLike: false,
   isFollow: false,
 }
 
@@ -63,6 +62,30 @@ export const userLogout = createAsyncThunk('LOGOUT', async () => {
   await Axios.post('/api/auth/signout')
 })
 
+export const userPushLikes = createAsyncThunk(
+  'PUSH_LIKES',
+  async (musicId: number, { rejectWithValue }) => {
+    try {
+      const response = await Axios.put('/api/auth/musics/like', { musicId })
+      return response.data
+    } catch (error) {
+      return rejectWithValue('Like Fail')
+    }
+  }
+)
+
+export const userPullLikes = createAsyncThunk(
+  'PULL_LIKES',
+  async (musicId: number, { rejectWithValue }) => {
+    try {
+      const response = await Axios.put('/api/auth/musics/unlike', { musicId })
+      return response.data
+    } catch (error) {
+      return rejectWithValue('Unlike Fail')
+    }
+  }
+)
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -70,26 +93,17 @@ export const userSlice = createSlice({
     toggleFollow: (state) => {
       state.isFollow = !state.isFollow
     },
-    toggleLike: (state) => {
-      state.isLike = !state.isLike
-    },
   },
   extraReducers: {
     // 로그인
     [userLogin.fulfilled.type]: (state, action) => {
-      state.accessToken = action.payload
+      state.isLogin = true
+      interceptWithAccessToken(action.payload)
     },
     [userLogin.rejected.type]: (state) => {
       state.isLogin = false
       state.accessToken = null
       state.userData = null
-    },
-    // 유저인증
-    [userAuth.pending.type]: (state) => {
-      // 인증전에 accessToken을 헤더 Authorization Bearer에 담아준다.
-      Axios.defaults.headers.common[
-        'Authorization'
-      ] = `Bearer ${state.accessToken}`
     },
     [userAuth.fulfilled.type]: (state, action) => {
       const { userData } = action.payload
@@ -107,11 +121,9 @@ export const userSlice = createSlice({
       state.accessToken = null
     },
     [silentRefresh.fulfilled.type]: (state, action) => {
-      const { accessToken, userData } = action.payload
-
+      const { accessToken } = action.payload
       state.isLogin = true
       state.accessToken = accessToken
-      state.userData = userData
     },
     [silentRefresh.rejected.type]: (state) => {
       state.isLogin = false
@@ -124,11 +136,19 @@ export const userSlice = createSlice({
       state.accessToken = null
       state.userData = null
     },
+    [userPushLikes.fulfilled.type]: (state, action) => {
+      const { userData } = action.payload
+      state.userData = userData
+    },
+    [userPullLikes.fulfilled.type]: (state, action) => {
+      const { userData } = action.payload
+      state.userData = userData
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { toggleFollow, toggleLike } = userSlice.actions
+export const { toggleFollow } = userSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.user

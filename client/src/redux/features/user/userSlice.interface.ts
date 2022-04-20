@@ -6,10 +6,10 @@ export interface IUserData {
   profileImage?: string
   permaId: string
   musics: string[]
+  likes: number[]
 }
 
 interface TempState {
-  isLike: boolean
   isFollow: boolean
 }
 

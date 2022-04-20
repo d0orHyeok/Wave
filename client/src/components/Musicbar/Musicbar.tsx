@@ -31,7 +31,8 @@ import Musiclist from './MusicListDrawer/section/Musiclist'
 import {
   selectUser,
   toggleFollow,
-  toggleLike,
+  userPullLikes,
+  userPushLikes,
 } from '@redux/features/user/userSlice'
 
 // 로컬스토리지에 저장된 볼륨값을 확인하여 가져오고 없다면 100을 리턴
@@ -55,6 +56,7 @@ const Musicbar = () => {
 
   const [openDrawer, setOpenDrawer] = useState(false)
   const [volume, setVolume] = useState(getLocalVolume())
+  const [isLike, setIsLike] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
@@ -71,15 +73,18 @@ const Musicbar = () => {
   }, [])
 
   // 볼륨을 조절하고 변화된 볼륨값을 로컬스토리지에 저장한다.
-  const handleChangeVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = event.currentTarget.value
-    setVolume(parseInt(newVolume))
-    window.localStorage.setItem('volume', newVolume)
-  }
+  const handleChangeVolume = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newVolume = event.currentTarget.value
+      setVolume(parseInt(newVolume))
+      window.localStorage.setItem('volume', newVolume)
+    },
+    []
+  )
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     setVolume(volume ? 0 : getLocalVolume())
-  }
+  }, [volume])
 
   // 재생중인 음악의 현재시간변화 감지하고 재생이 끝나면 다음 곡을 재생
   const handleChangeAudioTime = (
@@ -111,18 +116,29 @@ const Musicbar = () => {
   }
 
   // 새로운 음악을 불러오면 현재시간과 음악전체시간을 초기화
-  const handleLoadedMetadata = (event: React.ChangeEvent<HTMLAudioElement>) => {
-    const { duration } = event.currentTarget
-    const newDurationStringTime = convertTimeToString(duration)
+  const handleLoadedMetadata = useCallback(
+    (event: React.ChangeEvent<HTMLAudioElement>) => {
+      const { duration } = event.currentTarget
+      const newDurationStringTime = convertTimeToString(duration)
 
-    dispatch(
-      setProgress({
-        currentStringTime: '0:00',
-        durationStringTime: newDurationStringTime,
-        percent: 0,
-        duration,
-      })
-    )
+      dispatch(
+        setProgress({
+          currentStringTime: '0:00',
+          durationStringTime: newDurationStringTime,
+          percent: 0,
+          duration,
+        })
+      )
+    },
+    [dispatch]
+  )
+
+  const handleClickLike = () => {
+    if (currentMusic) {
+      !isLike
+        ? dispatch(userPushLikes(currentMusic.id))
+        : dispatch(userPullLikes(currentMusic.id))
+    }
   }
 
   // volume state가 변화하면 audio 태그에 자동으로 적용
@@ -149,6 +165,18 @@ const Musicbar = () => {
       setOpenDrawer(false)
     }
   }, [indexArray])
+
+  useEffect(() => {
+    if (
+      user.userData?.likes.length &&
+      currentMusic &&
+      user.userData.likes.includes(currentMusic.id)
+    ) {
+      setIsLike(true)
+    } else {
+      setIsLike(false)
+    }
+  }, [currentMusic, user.userData?.likes])
 
   return (
     <>
@@ -182,9 +210,7 @@ const Musicbar = () => {
                   <div className="music-info">
                     <h3 id="music-uploader" className="uploader">
                       <Link to="#">
-                        {currentMusic?.metaData?.artist
-                          ? currentMusic?.metaData?.artist
-                          : ''}
+                        {currentMusic?.uploader ? currentMusic?.uploader : ''}
                       </Link>
                     </h3>
                     <h2 id="music-title" className="title">
@@ -195,8 +221,8 @@ const Musicbar = () => {
                   <div className="music-btns">
                     <LikeButton
                       className="svgBtn"
-                      isLike={user.isLike}
-                      onClick={() => dispatch(toggleLike())}
+                      isLike={isLike}
+                      onClick={handleClickLike}
                     />
 
                     <FollowButton
