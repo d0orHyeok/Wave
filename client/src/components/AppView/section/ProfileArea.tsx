@@ -11,7 +11,7 @@ import { useNavigate, Link } from 'react-router-dom'
 
 interface ProfileAreaProps {
   className?: string
-  fold: boolean
+  fold: string
 }
 
 const ProfileArea = ({ className, fold }: ProfileAreaProps) => {

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Backdrop = styled.div<{ fold: boolean }>`
+export const Backdrop = styled.div<{ fold: string }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -24,20 +24,20 @@ const getHeaderWidth = (fold: boolean) => {
   return !fold ? headerWidth[0] : headerWidth[1]
 }
 
-export const AppHeader = styled.header<{ fold: boolean }>`
+export const AppHeader = styled.header<{ fold: string }>`
   position: fixed;
   top: 0;
   bottom: 81px;
   z-index: 100;
   transition: 0.3s ease width;
   padding: 16px 0;
-  width: ${({ fold }) => getHeaderWidth(fold)};
+  width: ${({ fold }) => getHeaderWidth(fold === 'true')};
   border-right: 1px solid ${({ theme }) => theme.colors.border1};
   background-color: ${({ theme }) => theme.colors.bgColor};
 
   & .header-top,
   & .header-nav ul {
-    padding: ${({ fold }) => (!fold ? '0 24px' : '0 12px')};
+    padding: ${({ fold }) => (fold === 'false' ? '0 24px' : '0 12px')};
   }
   & .header-top {
     height: 200px;
@@ -59,11 +59,11 @@ export const AppHeader = styled.header<{ fold: boolean }>`
   & .header-logo {
     margin-top: 30px;
     margin-bottom: 45px;
-    visibility: ${({ fold }) => (fold ? 'hidden' : 'visible')};
+    visibility: ${({ fold }) => (fold === 'true' ? 'hidden' : 'visible')};
   }
   & .header-fold,
   & .menuItem-link {
-    justify-content: ${({ fold }) => fold && 'center'};
+    justify-content: ${({ fold }) => fold === 'true' && 'center'};
   }
 `
 
@@ -121,11 +121,11 @@ export const MenuItem = styled.li<{ active: boolean }>`
 const floatBoxHeight = '65px'
 
 // App Container
-export const AppContainer = styled.div<{ fold: boolean }>`
+export const AppContainer = styled.div<{ fold: string }>`
   min-height: 100%;
   height: 100%;
   transition: padding-left 0.3s ease;
-  padding-left: ${({ fold }) => getHeaderWidth(fold)};
+  padding-left: ${({ fold }) => getHeaderWidth(fold === 'true')};
   background-color: ${({ theme }) => theme.colors.bgColor};
   padding-top: ${floatBoxHeight};
 
@@ -140,14 +140,14 @@ export const AppContainer = styled.div<{ fold: boolean }>`
   }
 `
 
-export const FloatBox = styled.div<{ fold: boolean }>`
+export const FloatBox = styled.div<{ fold: string }>`
   height: ${floatBoxHeight};
   z-index: 48;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  padding-left: ${({ fold }) => getHeaderWidth(fold)};
+  padding-left: ${({ fold }) => getHeaderWidth(fold === 'true')};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,7 +156,7 @@ export const FloatBox = styled.div<{ fold: boolean }>`
   transition: 0.3s ease padding-left;
   & .float-logo {
     position: absolute;
-    left: ${({ fold }) => getHeaderWidth(fold)};
+    left: ${({ fold }) => getHeaderWidth(fold === 'true')};
     transform: scale(75%);
     display: ${({ fold }) => (!fold ? 'none' : 'bloack')};
   }

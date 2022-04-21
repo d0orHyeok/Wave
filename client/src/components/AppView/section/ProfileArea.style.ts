@@ -1,20 +1,21 @@
 import styled from 'styled-components'
 import { Menu } from '@components/Common'
 
-export const ProfileWrapper = styled.div<{ fold: boolean }>`
-  transform: ${({ fold }) => (!fold ? 'translateX(8px)' : 'translateX(0)')};
+export const ProfileWrapper = styled.div<{ fold: string }>`
+  transform: ${({ fold }) =>
+    fold === 'false' ? 'translateX(8px)' : 'translateX(0)'};
   max-width: 160px;
   border-left: none;
   border-right: none;
   display: flex;
   align-items: center;
   cursor: pointer;
-  margin-left: ${({ fold }) => (fold ? '0' : '-3px')};
+  margin-left: ${({ fold }) => (fold === 'true' ? '0' : '-3px')};
   justify-content: ${({ fold }) => (fold ? 'center' : 'left')};
   transition: ease color 0.1s;
 
   & .profile-username {
-    display: ${({ fold }) => (fold ? 'none' : 'block')};
+    display: ${({ fold }) => (fold === 'true' ? 'none' : 'block')};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -40,12 +41,12 @@ export const ImageArea = styled.div`
   }
 `
 
-export const MyMenu = styled(Menu)<{ fold: boolean }>`
+export const MyMenu = styled(Menu)<{ fold: string }>`
   & .MuiPaper-root {
     width: 160px;
     margin-left: 12px;
-    margin-top: ${({ fold }) => (fold ? '-4px' : '4px')};
-    border-top: ${({ fold }) => (!fold ? 'none' : 'block')};
+    margin-top: ${({ fold }) => (fold === 'true' ? '-4px' : '4px')};
+    border-top: ${({ fold }) => (fold === 'false' ? 'none' : 'block')};
     box-shadow: none;
   }
 

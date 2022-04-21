@@ -33,12 +33,13 @@ const AppView = ({ children }: AppViewProps) => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [fold, setFold] = useState(
-    window.localStorage.getItem('fold') === 'true'
+    window.localStorage.getItem('fold') || 'false'
   )
 
   const toggleFold = () => {
-    window.localStorage.setItem('fold', `${!fold}`)
-    setFold(!fold)
+    const changeFold = fold === 'false' ? 'true' : 'false'
+    window.localStorage.setItem('fold', changeFold)
+    setFold(changeFold)
   }
 
   const handleResize = debounce(() => {
@@ -47,9 +48,9 @@ const AppView = ({ children }: AppViewProps) => {
 
   useLayoutEffect(() => {
     if (windowWidth < 1200) {
-      setFold(true)
+      setFold('true')
     } else {
-      setFold(window.localStorage.getItem('fold') === 'true')
+      setFold(window.localStorage.getItem('fold') || 'false')
     }
     window.addEventListener('resize', handleResize)
     return () => {
