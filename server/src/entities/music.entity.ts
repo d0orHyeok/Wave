@@ -2,10 +2,12 @@ import { User } from 'src/entities/user.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum MusicStatus {
@@ -76,14 +78,30 @@ export class Music extends BaseEntity {
   @Column()
   status: MusicStatus;
 
-  @Column({ name: 'uploader' })
+  @Column({ default: 0 })
+  count: number;
+
+  @Column({ name: 'userId', nullable: true })
+  userId: number;
+
+  @Column({ name: 'uploader', nullable: true })
   uploader: string;
 
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,
     onDelete: 'SET NULL',
     nullable: true,
+    createForeignKeyConstraints: false,
   })
-  @JoinColumn([{ name: 'uploader', referencedColumnName: 'username' }])
+  @JoinColumn([
+    { name: 'userId', referencedColumnName: 'id' },
+    { name: 'uploader', referencedColumnName: 'username' },
+  ])
   user: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

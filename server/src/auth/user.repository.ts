@@ -42,11 +42,11 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async findUserById(id: string): Promise<User> {
-    const user = await this.findOne({ username: id });
+  async findUserByUsername(username: string): Promise<User> {
+    const user = await this.findOne({ username });
 
     if (!user) {
-      throw new UnauthorizedException(`Can't find User with id ${id}`);
+      throw new UnauthorizedException(`Can't find User with id ${username}`);
     }
 
     return user;

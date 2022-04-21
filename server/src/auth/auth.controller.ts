@@ -6,8 +6,10 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Res,
   UseGuards,
   ValidationPipe,
@@ -16,7 +18,6 @@ import { AuthCredentailDto } from './dto/auth-credential.dto';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { Response } from 'express';
-import { AuthLikesDto } from './dto/auth-likes.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -71,24 +72,46 @@ export class AuthController {
 
   @Get('/info')
   @UseGuards(JwtAuthGuard)
-  getUserData(@GetUser() user: User) {
-    const userData = this.authService.getUserData(user);
+  async getUserData(@GetUser() user: User) {
+    const userData = await this.authService.getUserData(user);
     return { userData };
   }
 
-  @Put('/musics/like')
+  @Patch('/:musicId/like')
   @UseGuards(JwtAuthGuard)
-  async pushLikes(@GetUser() user: User, @Body() body: AuthLikesDto) {
-    const { musicId } = body;
-    const userData = await this.authService.pushLikes(user, musicId);
-    return { userData };
+  async pushLikes(
+    @GetUser() user: User,
+    @Param('musicId', ParseIntPipe) musicId: number,
+  ) {
+    const updateUser = await this.authService.pushLikes(user, musicId);
+    return { likes: updateUser.likes };
   }
 
-  @Put('/musics/unlike')
+  @Patch('/:musicId/unlike')
   @UseGuards(JwtAuthGuard)
-  async pullLikes(@GetUser() user: User, @Body() body: AuthLikesDto) {
-    const { musicId } = body;
-    const userData = await this.authService.pullLikes(user, musicId);
-    return { userData };
+  async pullLikes(
+    @GetUser() user: User,
+    @Param('musicId', ParseIntPipe) musicId: number,
+  ) {
+    const updateUser = await this.authService.pullLikes(user, musicId);
+    return { likes: updateUser.likes };
+  }
+
+  @Patch('/:followerId/follow')
+  @UseGuards(JwtAuthGuard)
+  async followUser(
+    @GetUser() user: User,
+    @Param('followerId', ParseIntPipe) followerId: number,
+  ) {
+    return this.authService.followUser(user, followerId);
+  }
+
+  @Patch('/:followerId/unfollow')
+  @UseGuards(JwtAuthGuard)
+  async unfollowUser(
+    @GetUser() user: User,
+    @Param('followerId', ParseIntPipe) followerId: number,
+  ) {
+    return this.authService.unfollowUser(user, followerId);
   }
 }

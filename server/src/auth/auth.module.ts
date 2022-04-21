@@ -1,3 +1,4 @@
+import { FollowRepository } from './follow.repository';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -11,7 +12,7 @@ import { UserRepository } from './user.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmModule.forFeature([UserRepository, FollowRepository]),
     // JWT Module
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({

@@ -1,3 +1,4 @@
+import { FollowRepository } from './follow.repository';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { ConfigService } from '@nestjs/config';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
+    private followRepository: FollowRepository,
     private jwtService: JwtService,
     private config: ConfigService,
   ) {}
@@ -33,7 +35,7 @@ export class AuthService {
   async validateUser(authCredentailDto: AuthCredentailDto): Promise<User> {
     const { username, password } = authCredentailDto;
 
-    const user = await this.userRepository.findUserById(username);
+    const user = await this.userRepository.findUserByUsername(username);
     await this.comparePassword(password, user.password);
 
     return user;
@@ -112,19 +114,30 @@ export class AuthService {
     };
   }
 
-  getUserData(user: User) {
+  async getUserData(user: User) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, hashedRefreshToken, ...userData } = user;
-    return userData;
+    const followData = await this.followRepository.getFollow(user);
+    return { ...userData, ...followData };
   }
 
   async pushLikes(user: User, musicId: number) {
-    const updatedUser = await this.userRepository.pushLikes(user, musicId);
-    return this.getUserData(updatedUser);
+    return this.userRepository.pushLikes(user, musicId);
   }
 
   async pullLikes(user: User, musicId: number) {
-    const updatedUser = await this.userRepository.pullLikes(user, musicId);
-    return this.getUserData(updatedUser);
+    return this.userRepository.pullLikes(user, musicId);
+  }
+
+  async followUser(user: User, followerId: number) {
+    const follower = await this.userRepository.findOne({ id: followerId });
+    await this.followRepository.createFollow(user, follower);
+    return this.followRepository.getFollow(user);
+  }
+
+  async unfollowUser(user: User, followerId: number) {
+    const follower = await this.userRepository.findOne({ id: followerId });
+    await this.followRepository.deleteFollow(user, follower);
+    return this.followRepository.getFollow(user);
   }
 }

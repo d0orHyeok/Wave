@@ -143,6 +143,10 @@ export class MusicService {
     return `${uploadPath}/${fileName}`;
   }
 
+  async updateMusicCount(id: number) {
+    return this.musicRepository.updateMusicCount(id);
+  }
+
   async test() {
     const bucket = getStorage().bucket();
     const file = bucket.file(

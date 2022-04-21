@@ -43,11 +43,19 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async updateMusicStatus(id: number, status: MusicStatus): Promise<Music> {
-    const board = await this.getMusicById(id);
+    const music = await this.getMusicById(id);
 
-    board.status = status;
-    await this.save(board);
+    music.status = status;
+    await this.save(music);
 
-    return board;
+    return music;
+  }
+
+  async updateMusicCount(id: number) {
+    const music = await this.getMusicById(id);
+    music.count += 1;
+    await this.save(music);
+
+    return music;
   }
 }

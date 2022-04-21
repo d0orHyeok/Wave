@@ -125,4 +125,9 @@ export class MusicController {
   ) {
     return this.musicService.updateMusicStatus(id, status);
   }
+
+  @Patch('/:id/count')
+  updateMusicCount(@Param('id', ParseIntPipe) id: number) {
+    return this.musicService.updateMusicCount(id);
+  }
 }
