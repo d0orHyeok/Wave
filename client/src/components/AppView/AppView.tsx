@@ -80,7 +80,9 @@ const AppView = ({ children }: AppViewProps) => {
               >
                 <Link className="menuItem-link" to={item.path}>
                   {item.icon}
-                  {!fold && <span className="menuItem-name">{item.name}</span>}
+                  {fold === 'false' && (
+                    <span className="menuItem-name">{item.name}</span>
+                  )}
                 </Link>
               </S.MenuItem>
             ))}

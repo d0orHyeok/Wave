@@ -7,13 +7,18 @@ export interface IUserData {
   permaId: string
   musics: string[]
   likes: number[]
+  followers: IFollowState[]
+  following: IFollowState[]
+  createdAt: string
 }
 
-interface TempState {
-  isFollow: boolean
+export interface IFollowState {
+  id: number
+  name: string
+  image: string
 }
 
-export interface IUserState extends TempState {
+export interface IUserState {
   isLogin: boolean
   userData?: IUserData | null
 }
@@ -28,4 +33,14 @@ export interface IUserRegisterBody {
 export interface IUserLoginBody {
   username: string
   password: string
+}
+
+export interface IToggleMusicLikeParams {
+  musicId: number
+  isLike: boolean
+}
+
+export interface IToggleFollowParams {
+  followerId: number
+  isFollow: boolean
 }

@@ -3,6 +3,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import Axios, { interceptWithAccessToken } from '@api/Axios'
 import axios from 'axios'
 import {
+  IToggleFollowParams,
+  IToggleMusicLikeParams,
   IUserLoginBody,
   IUserRegisterBody,
   IUserState,
@@ -11,8 +13,6 @@ import {
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
-  // temp
-  isFollow: false,
 }
 
 export const userRegister = createAsyncThunk(
@@ -56,26 +56,31 @@ export const userLogout = createAsyncThunk('LOGOUT', async () => {
   await Axios.post('/api/auth/signout')
 })
 
-export const userPushLikes = createAsyncThunk(
-  'PUSH_LIKES',
-  async (musicId: number, { rejectWithValue }) => {
+export const userToggleLikeMusic = createAsyncThunk(
+  'TOGGLE_LIKES',
+  async ({ musicId, isLike }: IToggleMusicLikeParams, { rejectWithValue }) => {
+    const routePath = isLike ? 'like' : 'unlike'
     try {
-      const response = await Axios.put('/api/auth/musics/like', { musicId })
+      const response = await Axios.patch(`/api/auth/${musicId}/${routePath}`)
       return response.data
     } catch (error) {
-      return rejectWithValue('Like Fail')
+      return rejectWithValue(`Failed to ${routePath} music`)
     }
   }
 )
 
-export const userPullLikes = createAsyncThunk(
-  'PULL_LIKES',
-  async (musicId: number, { rejectWithValue }) => {
+export const userToggleFollow = createAsyncThunk(
+  'TOGGLE_FOLLOW',
+  async (
+    { followerId, isFollow }: IToggleFollowParams,
+    { rejectWithValue }
+  ) => {
+    const routePath = isFollow ? 'follow' : 'unfollow'
     try {
-      const response = await Axios.put('/api/auth/musics/unlike', { musicId })
+      const response = await Axios.patch(`/api/auth/${followerId}/${routePath}`)
       return response.data
     } catch (error) {
-      return rejectWithValue('Unlike Fail')
+      return rejectWithValue(`Failed to ${routePath}`)
     }
   }
 )
@@ -83,11 +88,7 @@ export const userPullLikes = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {
-    toggleFollow: (state) => {
-      state.isFollow = !state.isFollow
-    },
-  },
+  reducers: {},
   extraReducers: {
     // 로그인
     [userLogin.fulfilled.type]: (state, action) => {
@@ -113,19 +114,24 @@ export const userSlice = createSlice({
       state.isLogin = false
       state.userData = null
     },
-    [userPushLikes.fulfilled.type]: (state, action) => {
-      const { userData } = action.payload
-      state.userData = userData
+    [userToggleLikeMusic.fulfilled.type]: (state, action) => {
+      const { likes } = action.payload
+      if (state.userData) {
+        state.userData.likes = likes
+      }
     },
-    [userPullLikes.fulfilled.type]: (state, action) => {
-      const { userData } = action.payload
-      state.userData = userData
+    [userToggleFollow.fulfilled.type]: (state, action) => {
+      const { followers, following } = action.payload
+      if (state.userData) {
+        state.userData.followers = followers
+        state.userData.following = following
+      }
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { toggleFollow } = userSlice.actions
+export const {} = userSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUser = (state: RootState) => state.user

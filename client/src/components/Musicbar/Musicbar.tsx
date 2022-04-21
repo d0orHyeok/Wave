@@ -28,8 +28,8 @@ import {
   toggleShuffle,
 } from '@redux/features/player/playerSlice'
 import Musiclist from './MusicListDrawer/section/Musiclist'
-import { selectUser, toggleFollow } from '@redux/features/user/userSlice'
-import { useToggleLikeMusic } from '@api/ApiUserHooks'
+import { selectUser } from '@redux/features/user/userSlice'
+import { useToggleFollow, useToggleLikeMusic } from '@api/ApiUserHooks'
 
 // 로컬스토리지에 저장된 볼륨값을 확인하여 가져오고 없다면 100을 리턴
 const getLocalVolume = () => {
@@ -41,6 +41,7 @@ const Musicbar = () => {
 
   const dispatch = useAppDispatch()
   const toggleLikeMusic = useToggleLikeMusic()
+  const toggleFollow = useToggleFollow()
 
   const user = useAppSelector(selectUser)
   const { isPlay, isShuffle, repeat } = useAppSelector(
@@ -54,6 +55,7 @@ const Musicbar = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [volume, setVolume] = useState(getLocalVolume())
   const [isLike, setIsLike] = useState(false)
+  const [isFollow, setIsFollow] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
@@ -136,6 +138,12 @@ const Musicbar = () => {
     }
   }
 
+  const handleClickFollow = () => {
+    if (currentMusic) {
+      toggleFollow(currentMusic.userId)
+    }
+  }
+
   // volume state가 변화하면 audio 태그에 자동으로 적용
   useEffect(() => {
     if (audioRef.current) {
@@ -172,6 +180,17 @@ const Musicbar = () => {
       setIsLike(false)
     }
   }, [currentMusic, user.userData?.likes])
+
+  useEffect(() => {
+    let bol = false
+    if (user.userData?.following && currentMusic) {
+      bol =
+        user.userData.following.findIndex(
+          (f) => f.id === currentMusic.userId
+        ) !== -1
+    }
+    setIsFollow(bol)
+  }, [currentMusic, user.userData?.following])
 
   return (
     <>
@@ -219,13 +238,11 @@ const Musicbar = () => {
                       isLike={isLike}
                       onClick={handleClickLike}
                     />
-
                     <FollowButton
                       className="svgBtn"
-                      isFollow={user.isFollow}
-                      onClick={() => dispatch(toggleFollow())}
+                      isFollow={isFollow}
+                      onClick={handleClickFollow}
                     />
-
                     <button className="svgBtn">
                       <BiDotsHorizontalRounded />
                     </button>
