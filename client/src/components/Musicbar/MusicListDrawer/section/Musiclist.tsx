@@ -21,12 +21,15 @@ import {
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
+import { useToggleLikeMusic } from '@api/ApiUserHooks'
 
 const Musiclist = () => {
   const backendURI = process.env.REACT_APP_API_URL
 
   const dispatch = useAppDispatch()
+  const toggleLikeMusic = useToggleLikeMusic()
 
+  const likes = useAppSelector((state) => state.user.userData?.likes || [])
   const { isPlay, isShuffle, repeat } = useAppSelector(
     (state) => state.player.controll
   )
@@ -98,8 +101,20 @@ const Musiclist = () => {
     // 재생목록에서 선택한 음악을 제거
     if (anchorEl) {
       dispatch(removeMusic(Number(anchorEl.value)))
+      setAnchorEl(null)
     }
-    handleCloseMenu()
+  }
+
+  const handleClickLike = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (anchorEl) {
+      const musicId = musics[Number(anchorEl.value)].id
+      toggleLikeMusic(musicId)
+      setAnchorEl(null)
+    } else {
+      toggleLikeMusic(Number(event.currentTarget.ariaValueText))
+    }
   }
 
   return (
@@ -176,7 +191,12 @@ const Musiclist = () => {
                 </S.ItemInfoBox>
                 <S.ItemControlBox>
                   <span className="duration">0:00</span>
-                  <LikeFilledButton className="btn" />
+                  <LikeFilledButton
+                    isLike={likes.includes(musics[indexItem].id)}
+                    className="btn"
+                    onClick={handleClickLike}
+                    aria-valuetext={`${musics[indexItem].id}`}
+                  />
                   <button
                     id="playlist-moreBtn"
                     className="btn moreBtn"
@@ -205,7 +225,7 @@ const Musiclist = () => {
         }}
         style={{ zIndex: 99999 }}
       >
-        <MusicMenuItem onClick={handleCloseMenu}>
+        <MusicMenuItem onClick={handleClickLike}>
           <IoMdHeart className="icon" />
           <span>Like</span>
         </MusicMenuItem>

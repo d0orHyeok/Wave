@@ -1,5 +1,5 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as S from './MusicCard.style'
 import { FaPlay, FaPause } from 'react-icons/fa'
@@ -14,6 +14,7 @@ import { MusicMenu } from '@components/Common/Menu'
 import { MdPlaylistPlay, MdPlaylistAdd } from 'react-icons/md'
 import { IoMdHeart } from 'react-icons/io'
 import { BiDotsHorizontalRounded } from 'react-icons/bi'
+import { useToggleLikeMusic } from '@api/ApiUserHooks'
 
 interface IMusicCardProps {
   music: IMusic
@@ -22,6 +23,7 @@ interface IMusicCardProps {
 
 const MusicCard = ({ music, style }: IMusicCardProps) => {
   const dispatch = useAppDispatch()
+  const toggleLikeMusic = useToggleLikeMusic()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
@@ -31,9 +33,9 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
 
   const openMenu = Boolean(anchorEl)
 
-  const handleCloseMenu = useCallback(() => {
+  const handleCloseMenu = () => {
     setAnchorEl(null)
-  }, [])
+  }
 
   const handleClickPlay = async (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault()
@@ -46,19 +48,21 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
     }
   }
 
-  const handleClickMore = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      event.stopPropagation()
-      event.preventDefault()
-      setAnchorEl(event.currentTarget)
-    },
-    []
-  )
+  const handleClickMore = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation()
+    event.preventDefault()
+    setAnchorEl(event.currentTarget)
+  }
 
-  const handleClickPushMusic = useCallback(() => {
+  const handleClickPushMusic = () => {
     dispatch(addMusic(music))
     setAnchorEl(null)
-  }, [dispatch, music])
+  }
+
+  const handleClickLike = () => {
+    toggleLikeMusic(music.id)
+    setAnchorEl(null)
+  }
 
   useEffect(() => {
     if (music.id === currentMusic?.id) {
@@ -111,7 +115,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
           open={openMenu}
           onClose={handleCloseMenu}
         >
-          <MusicMenuItem onClick={handleCloseMenu}>
+          <MusicMenuItem onClick={handleClickLike}>
             <IoMdHeart className="icon" />
             <span>Like</span>
           </MusicMenuItem>
