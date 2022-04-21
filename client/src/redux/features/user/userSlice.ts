@@ -11,7 +11,6 @@ import {
 const initialState: IUserState = {
   isLogin: false,
   userData: null,
-  accessToken: null,
   // temp
   isFollow: false,
 }
@@ -50,11 +49,6 @@ export const userLogin = createAsyncThunk(
 
 export const userAuth = createAsyncThunk('AUTH', async () => {
   const response = await Axios.get('/api/auth/info')
-  return response.data
-})
-
-export const silentRefresh = createAsyncThunk('SILENT_REFRESH', async () => {
-  const response = await Axios.post('/api/auth/refresh')
   return response.data
 })
 
@@ -102,7 +96,6 @@ export const userSlice = createSlice({
     },
     [userLogin.rejected.type]: (state) => {
       state.isLogin = false
-      state.accessToken = null
       state.userData = null
     },
     [userAuth.fulfilled.type]: (state, action) => {
@@ -113,27 +106,11 @@ export const userSlice = createSlice({
     },
     [userAuth.rejected.type]: (state) => {
       state.isLogin = false
-      state.accessToken = null
-      state.userData = null
-    },
-    [silentRefresh.pending.type]: (state) => {
-      // 재발급 전에 기존의 accessToken을 폐기
-      state.accessToken = null
-    },
-    [silentRefresh.fulfilled.type]: (state, action) => {
-      const { accessToken } = action.payload
-      state.isLogin = true
-      state.accessToken = accessToken
-    },
-    [silentRefresh.rejected.type]: (state) => {
-      state.isLogin = false
-      state.accessToken = null
       state.userData = null
     },
     [userLogout.pending.type]: (state) => {
       // 재발급 전에 기존의 accessToken을 폐기
       state.isLogin = false
-      state.accessToken = null
       state.userData = null
     },
     [userPushLikes.fulfilled.type]: (state, action) => {

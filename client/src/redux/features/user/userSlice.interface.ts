@@ -15,7 +15,6 @@ interface TempState {
 
 export interface IUserState extends TempState {
   isLogin: boolean
-  accessToken?: string | null
   userData?: IUserData | null
 }
 
