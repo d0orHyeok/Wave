@@ -12,15 +12,16 @@ export class Follow {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'followingId', nullable: true })
   followingId: number;
 
-  @Column({ nullable: true })
+  @Column({ name: 'followerId', nullable: true })
   followerId: number;
 
   @ManyToOne(() => User, (user) => user.following, {
     cascade: true,
     eager: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'followingId', referencedColumnName: 'id' })
   following: User;
@@ -28,6 +29,7 @@ export class Follow {
   @ManyToOne(() => User, (user) => user.followers, {
     cascade: true,
     eager: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'followerId', referencedColumnName: 'id' })
   follower: User;

@@ -79,22 +79,22 @@ export class AuthController {
 
   @Patch('/:musicId/like')
   @UseGuards(JwtAuthGuard)
-  async pushLikes(
+  async likeMusic(
     @GetUser() user: User,
     @Param('musicId', ParseIntPipe) musicId: number,
   ) {
-    const updateUser = await this.authService.pushLikes(user, musicId);
-    return { likes: updateUser.likes };
+    const likes = await this.authService.likeMusic(user, musicId);
+    return { likes };
   }
 
   @Patch('/:musicId/unlike')
   @UseGuards(JwtAuthGuard)
-  async pullLikes(
+  async unlikeMusic(
     @GetUser() user: User,
     @Param('musicId', ParseIntPipe) musicId: number,
   ) {
-    const updateUser = await this.authService.pullLikes(user, musicId);
-    return { likes: updateUser.likes };
+    const likes = await this.authService.unlikeMusic(user, musicId);
+    return { likes };
   }
 
   @Patch('/:followerId/follow')

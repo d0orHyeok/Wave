@@ -1,3 +1,4 @@
+import { Like } from './like.entity';
 import { User } from 'src/entities/user.entity';
 import {
   BaseEntity,
@@ -6,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -86,6 +88,9 @@ export class Music extends BaseEntity {
 
   @Column({ name: 'uploader', nullable: true })
   uploader: string;
+
+  @OneToMany(() => Like, (like) => like.music)
+  likes: Like[];
 
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,

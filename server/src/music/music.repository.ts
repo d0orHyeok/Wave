@@ -12,11 +12,11 @@ export class MusicRepository extends Repository<Music> {
   async createMusic(createMusicData: IMusicData, user: User): Promise<Music> {
     const { permalink } = createMusicData;
 
-    const existMusics = await this.find({ id: user.id, permalink });
+    const existMusics = await this.findOne({ permalink });
 
     const music = this.create({
       ...createMusicData,
-      permalink: !existMusics.length ? permalink : `${permalink}_${Date.now()}`,
+      permalink: !existMusics ? permalink : `${permalink}_${Date.now()}`,
       user,
     });
     await this.save(music);

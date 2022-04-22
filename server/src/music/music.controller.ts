@@ -73,6 +73,7 @@ export class MusicController {
     const uploadMusicFile = this.musicService.changeMusicMetadata(
       musicFile,
       metadata,
+      coverImage,
     );
 
     let coverUrl: string | undefined;
@@ -80,7 +81,7 @@ export class MusicController {
     if (coverImage) {
       coverUrl = this.musicService.uploadFileDisk(
         coverImage,
-        `${fileBase}${extname(coverImage.originalname)}`,
+        `${fileBase}cover${extname(coverImage.originalname)}`,
         'cover',
       );
     }

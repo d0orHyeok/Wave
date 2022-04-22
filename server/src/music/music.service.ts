@@ -85,7 +85,12 @@ export class MusicService {
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {
-    return this.musicRepository.deleteMusic(id, user);
+    const music = await this.musicRepository.findOne({ id, user });
+    if (music) {
+      const { filename } = music;
+      await this.deleteFileFirebase(filename);
+      return this.musicRepository.deleteMusic(id, user);
+    }
   }
 
   async updateMusicStatus(id: number, status: MusicStatus): Promise<Music> {
@@ -147,13 +152,10 @@ export class MusicService {
     return this.musicRepository.updateMusicCount(id);
   }
 
-  async test() {
+  async deleteFileFirebase(filename: string) {
     const bucket = getStorage().bucket();
-    const file = bucket.file(
-      'Crush - Endorphin (Feat. Penomeco, Punchnello).mp3',
-    );
+    await bucket.file(filename).delete();
 
-    const data = await file.get();
-    console.log(data);
+    console.log(`${filename} deleted`);
   }
 }

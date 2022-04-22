@@ -1,3 +1,4 @@
+import { Like } from './like.entity';
 import { Music } from 'src/entities/music.entity';
 import {
   BaseEntity,
@@ -34,14 +35,14 @@ export class User extends BaseEntity {
   @Column()
   permaId: string;
 
-  @Column('int', { array: true, default: [] })
-  likes: number[];
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
 
   @OneToMany(() => Follow, (follow) => follow.follower)
-  followers: User[];
+  followers: Follow[];
 
   @OneToMany(() => Follow, (follow) => follow.following)
-  following: User[];
+  following: Follow[];
 
   @Column({ nullable: true })
   hashedRefreshToken: string;
