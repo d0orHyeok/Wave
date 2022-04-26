@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import * as S from './Musicbar.style'
-import { BiDotsHorizontalRounded } from 'react-icons/bi'
 import {
   BsVolumeMuteFill,
   BsVolumeDownFill,
@@ -15,6 +14,7 @@ import {
   RepeatButton,
   LikeButton,
   FollowButton,
+  MoreButton,
 } from '@components/Common/Button'
 import convertTimeToString from '@api/functions/convertTimeToString'
 import Progressbar, { DurationArea } from './section/Progressbar'
@@ -243,9 +243,7 @@ const Musicbar = () => {
                       isFollow={isFollow}
                       onClick={handleClickFollow}
                     />
-                    <button className="svgBtn">
-                      <BiDotsHorizontalRounded />
-                    </button>
+                    <MoreButton className="svgBtn" />
                   </div>
                 </>
               ) : (

@@ -3,12 +3,12 @@ import {
   ShuffleButton,
   RepeatButton,
   LikeFilledButton,
+  MoreButton,
 } from '@components/Common/Button'
 import * as S from './Musiclist.style'
 import { Link } from 'react-router-dom'
-import { BiDotsHorizontalRounded, BiRepost } from 'react-icons/bi'
+import { BiRepost } from 'react-icons/bi'
 import { IoMdClose, IoMdLink, IoMdHeart } from 'react-icons/io'
-import { MdPlaylistAdd } from 'react-icons/md'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import {
   setCurrentIndex,
@@ -19,7 +19,7 @@ import {
   clearMusics,
 } from '@redux/features/player/playerSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
-import { MusicMenuItem } from '@components/Common/MenuItem'
+import { AddPlaylistMenuItem, MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/ApiUserHooks'
 import { useCopyLink } from '@api/MusicHooks'
@@ -209,14 +209,13 @@ const Musiclist = () => {
                     onClick={handleClickLike}
                     aria-valuetext={`${musics[indexItem].id}`}
                   />
-                  <button
+                  <MoreButton
                     id="playlist-moreBtn"
                     className="btn moreBtn"
                     onClick={handleClickItem}
                     value={indexItem}
-                  >
-                    <BiDotsHorizontalRounded />
-                  </button>
+                    style={{ fontSize: '1.2em' }}
+                  />
                 </S.ItemControlBox>
               </S.PlaylistItem>
             ))}
@@ -249,10 +248,7 @@ const Musiclist = () => {
           <IoMdLink className="icon" />
           <span>링크 복사</span>
         </MusicMenuItem>
-        <MusicMenuItem onClick={handleCloseMenu}>
-          <MdPlaylistAdd className="icon" />
-          <span>플레이리스트에 추가</span>
-        </MusicMenuItem>
+        <AddPlaylistMenuItem onClose={handleCloseMenu} />
         <MusicMenuItem onClick={handleClickRemove}>
           <IoMdClose className="icon" />
           <span>재생목록에서 제거</span>

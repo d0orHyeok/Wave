@@ -2,16 +2,33 @@ import styled from 'styled-components'
 
 export const CardContainer = styled.div`
   display: inline-block;
+  width: 170px;
+  font-size: 0.9rem;
+  line-height: 0.9rem;
+
+  ${({ theme }) => theme.device.tablet} {
+    width: 140px;
+    font-size: 0.85rem;
+  }
+
+  ${({ theme }) => theme.device.mobile} {
+    width: 110px;
+    font-size: 0.8rem;
+  }
 `
 
 export const ImageBox = styled.div`
   position: relative;
-  min-width: 100px;
-  min-height: 100px;
-  max-width: 200px;
-  max-height: 200px;
   width: 100%;
-  height: 100%;
+  height: 170px;
+
+  ${({ theme }) => theme.device.tablet} {
+    height: 140px;
+  }
+
+  ${({ theme }) => theme.device.mobile} {
+    height: 110px;
+  }
 
   & img {
     width: 100%;
@@ -20,7 +37,8 @@ export const ImageBox = styled.div`
     transition: ease 0.2s all;
   }
 
-  & .cardHoverBtn {
+  & .cardHoverBtn,
+  & .cardHoverControl {
     display: none;
   }
 
@@ -32,26 +50,36 @@ export const ImageBox = styled.div`
     & .cardHoverBtn {
       display: block;
     }
+    & .cardHoverControl {
+      display: flex;
+    }
   }
 `
 
-export const CardButton = styled.button`
+export const CardHoverControl = styled.div`
   position: absolute;
-  border: none;
-  font-size: 20px;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
   color: white;
+
+  & button {
+    margin-right: 8px;
+  }
 `
 
-export const CardPlayButton = styled(CardButton)`
+export const CardPlayButton = styled.button<{ isPlay: string }>`
+  position: absolute;
+  border: none;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 0;
-`
-
-export const CardMoreButton = styled(CardButton)`
-  bottom: 0;
-  right: 0;
+  color: ${({ theme, isPlay }) =>
+    isPlay === 'true' ? theme.colors.primaryColor : 'white'};
+  font-size: 2em;
 `
 
 export const CardControlBox = styled.div`
@@ -63,14 +91,21 @@ export const CardControlBox = styled.div`
 `
 
 export const CartInfoBox = styled.div`
-  max-width: 200px;
   width: 100%;
-  font-size: 0.9rem;
-  padding: 6px 0;
-  & .musicCard-title {
+  font-size: inherit;
+  padding: 6px 3px;
+  & .musicCard-title,
+  & .musicCard-uploader {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    cursor: pointer;
+  }
+
+  & .musicCard-uploader a {
+    font-size: 0.85em;
+    opacity: 0.6;
+    &:hover {
+      opacity: 1;
+    }
   }
 `

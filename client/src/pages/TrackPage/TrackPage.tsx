@@ -15,6 +15,8 @@ const TrackPage = () => {
       .catch(() => navigate('/track/notfound'))
   }, [navigate, permalink])
 
+  console.log(music)
+
   return (
     <>
       <div style={{ minHeight: '100%' }}>{JSON.stringify(music)}</div>

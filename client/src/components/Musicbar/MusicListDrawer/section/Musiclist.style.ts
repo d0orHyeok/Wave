@@ -159,7 +159,8 @@ export const ItemInfoBox = styled.div`
 `
 
 export const ItemControlBox = styled.div`
-  position: relative;
+  display: flex;
+  align-items: center;
   text-align: right;
   width: 60px;
   & .duration {

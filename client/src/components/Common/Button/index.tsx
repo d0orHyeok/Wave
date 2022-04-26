@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io'
-import { BiShuffle } from 'react-icons/bi'
+import { BiShuffle, BiDotsHorizontalRounded } from 'react-icons/bi'
 import { RiRepeat2Line, RiRepeatOneLine } from 'react-icons/ri'
 import { BsPersonPlusFill, BsPersonPlus } from 'react-icons/bs'
 
@@ -67,6 +67,7 @@ const SvgBtn = styled.button`
   padding: 0;
   border: none;
   background: none;
+  font-size: inherit;
 
   & svg {
     width: 100%;
@@ -82,11 +83,6 @@ const SpecialBtn = styled(SvgBtn)<{ active?: boolean }>`
   background: none;
   width: 20px;
   height: 20px;
-
-  & svg {
-    width: 100%;
-    height: 100%;
-  }
 `
 
 const ShuffleButton = ({ shuffle, ...props }: IShuffleButtonProps) => {
@@ -137,6 +133,14 @@ const FollowButton = ({ isFollow, ...props }: IFollowButtonProps) => {
   )
 }
 
+const MoreButton = (props: ButtonProps) => {
+  return (
+    <SvgBtn {...props}>
+      <BiDotsHorizontalRounded />
+    </SvgBtn>
+  )
+}
+
 export {
   PrimaryButton,
   SecondaryButton,
@@ -145,5 +149,6 @@ export {
   LikeButton,
   LikeFilledButton,
   FollowButton,
+  MoreButton,
 }
 export default Button

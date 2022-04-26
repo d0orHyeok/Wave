@@ -4,17 +4,14 @@ import { Link } from 'react-router-dom'
 import * as S from './MusicCard.style'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
+import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
 import {
-  addMusic,
-  setCurrentMusic,
-  togglePlay,
-} from '@redux/features/player/playerSlice'
-import { MusicMenuItem } from '@components/Common/MenuItem'
+  AddMusicMenuItem,
+  AddPlaylistMenuItem,
+} from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { MdPlaylistPlay, MdPlaylistAdd } from 'react-icons/md'
-import { IoMdHeart } from 'react-icons/io'
-import { BiDotsHorizontalRounded } from 'react-icons/bi'
 import { useToggleLikeMusic } from '@api/ApiUserHooks'
+import { LikeFilledButton, MoreButton } from '@components/Common/Button'
 
 interface IMusicCardProps {
   music: IMusic
@@ -27,6 +24,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
+  const likes = useAppSelector((state) => state.user.userData?.likes) || []
 
   const [cardIsCurrentMusic, setCardIsCurrentMusic] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -54,14 +52,10 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
     setAnchorEl(event.currentTarget)
   }
 
-  const handleClickPushMusic = () => {
-    dispatch(addMusic(music))
-    setAnchorEl(null)
-  }
-
-  const handleClickLike = () => {
+  const handleClickLike = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation()
+    event.preventDefault()
     toggleLikeMusic(music.id)
-    setAnchorEl(null)
   }
 
   useEffect(() => {
@@ -75,8 +69,8 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
   return (
     <>
       <S.CardContainer style={style}>
-        <Link to={`/track/${music.permalink}`}>
-          <S.ImageBox>
+        <S.ImageBox>
+          <Link to={`/track/${music.permalink}`}>
             <img
               src={
                 music?.cover
@@ -86,6 +80,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
               alt="cover"
             />
             <S.CardPlayButton
+              isPlay={cardIsCurrentMusic.toString()}
               className="cardHoverBtn"
               onClick={handleClickPlay}
             >
@@ -95,42 +90,32 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
                 <FaPause />
               )}
             </S.CardPlayButton>
-            <S.CardMoreButton
-              className="cardHoverBtn"
-              onClick={handleClickMore}
-            >
-              <BiDotsHorizontalRounded />
-            </S.CardMoreButton>
-          </S.ImageBox>
-        </Link>
-        <S.CartInfoBox>
-          <Link to={`/track/${music.permalink}`}>
-            <div className="musicCard-title">{music.title}</div>
+            <S.CardHoverControl className="cardHoverControldd">
+              <LikeFilledButton
+                isLike={likes.includes(music.id)}
+                onClick={handleClickLike}
+              />
+              <MoreButton
+                onClick={handleClickMore}
+                style={{ fontSize: '1.2em' }}
+              />
+            </S.CardHoverControl>
           </Link>
+        </S.ImageBox>
+        <S.CartInfoBox>
+          <div className="musicCard-title">
+            <Link to={`/track/${music.permalink}`}>{music.title} </Link>
+          </div>
+          <div className="musicCard-uploader">
+            <Link to={`/people/${music.uploader}`}>{music.uploader} </Link>
+          </div>
         </S.CartInfoBox>
       </S.CardContainer>
-      {openMenu ? (
-        <MusicMenu
-          anchorEl={anchorEl}
-          open={openMenu}
-          onClose={handleCloseMenu}
-        >
-          <MusicMenuItem onClick={handleClickLike}>
-            <IoMdHeart className="icon" />
-            <span>Like</span>
-          </MusicMenuItem>
-          <MusicMenuItem onClick={handleClickPushMusic}>
-            <MdPlaylistPlay className="icon" />
-            <span>재생목록에 추가</span>
-          </MusicMenuItem>
-          <MusicMenuItem onClick={handleCloseMenu}>
-            <MdPlaylistAdd className="icon" />
-            <span>플레이리스트에 추가</span>
-          </MusicMenuItem>
-        </MusicMenu>
-      ) : (
-        <></>
-      )}
+
+      <MusicMenu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
+        <AddMusicMenuItem music={music} onClose={handleCloseMenu} />
+        <AddPlaylistMenuItem onClose={handleCloseMenu} />
+      </MusicMenu>
     </>
   )
 }
