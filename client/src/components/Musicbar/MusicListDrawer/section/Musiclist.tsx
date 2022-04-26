@@ -22,10 +22,12 @@ import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/ApiUserHooks'
+import { useCopyLink } from '@api/MusicHooks'
 
 const Musiclist = () => {
   const backendURI = process.env.REACT_APP_API_URL
 
+  const copyLink = useCopyLink()
   const dispatch = useAppDispatch()
   const toggleLikeMusic = useToggleLikeMusic()
 
@@ -115,6 +117,16 @@ const Musiclist = () => {
     } else {
       toggleLikeMusic(Number(event.currentTarget.ariaValueText))
     }
+  }
+
+  const handleClickCopy = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (anchorEl) {
+      const permalink = musics[Number(anchorEl.value)].permalink
+      copyLink(`${window.location.origin}/track/${permalink}`)
+    }
+    setAnchorEl(null)
   }
 
   return (
@@ -233,7 +245,7 @@ const Musiclist = () => {
           <BiRepost className="icon" />
           <span>가져오기</span>
         </MusicMenuItem>
-        <MusicMenuItem onClick={handleCloseMenu}>
+        <MusicMenuItem onClick={handleClickCopy}>
           <IoMdLink className="icon" />
           <span>링크 복사</span>
         </MusicMenuItem>

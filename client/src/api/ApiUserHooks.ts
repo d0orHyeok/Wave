@@ -1,4 +1,4 @@
-import useToggleFollow from './User/useToggleFollow'
-import useToggleLikeMusic from './User/useToggleLikeMusic'
+import useToggleFollow from './Hooks/useToggleFollow'
+import useToggleLikeMusic from './Hooks/useToggleLikeMusic'
 
 export { useToggleLikeMusic, useToggleFollow }
