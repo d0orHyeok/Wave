@@ -84,6 +84,10 @@ export class MusicService {
     return this.musicRepository.getMusicById(id);
   }
 
+  async getMusicByPermalink(permalink: string) {
+    return this.musicRepository.findOne({ permalink });
+  }
+
   async deleteMusic(id: number, user: User): Promise<void> {
     const music = await this.musicRepository.findOne({ id, user });
     if (music) {

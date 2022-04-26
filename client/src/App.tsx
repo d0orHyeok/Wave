@@ -7,6 +7,7 @@ import './styles/font.css'
 import { AppThemeProvider } from '@redux/context/appThemeProvider'
 import { AlertProvider } from '@redux/context/alertProvider'
 import { BrowserRouter } from 'react-router-dom'
+import AppView from '@components/AppView/AppView'
 
 function App() {
   return (
@@ -15,7 +16,9 @@ function App() {
         <AlertProvider>
           <GlobalStyle />
           <BrowserRouter>
-            <Router />
+            <AppView>
+              <Router />
+            </AppView>
           </BrowserRouter>
         </AlertProvider>
       </AppThemeProvider>

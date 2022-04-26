@@ -109,6 +109,14 @@ export class MusicController {
     return this.musicService.getMusicById(id);
   }
 
+  @Get('/:permaId/:link')
+  getMusicByPermalink(
+    @Param('permaId') permaId: string,
+    @Param('link') link: string,
+  ): Promise<Music> {
+    return this.musicService.getMusicByPermalink(`${permaId}/${link}`);
+  }
+
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   deleteMusic(

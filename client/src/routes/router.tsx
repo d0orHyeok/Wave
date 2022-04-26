@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import AppView from '@components/AppView/AppView'
 import HomePage from '@pages/HomePage/HomePage'
 import RegisterPage from '@pages/RegisterPage/RegisterPage'
 import withUser from './authHOC'
@@ -24,17 +23,16 @@ const Router = () => {
   }, [navigate, dispatch, location.pathname])
 
   return (
-    <AppView>
-      <Routes>
-        <Route path="*" element={<NotFoundPage />} />
-        <Route path="/" element={withUser(HomePage, null)} />
-        <Route path="/home" element={withUser(HomePage, null)} />
-        <Route path="/register" element={withUser(RegisterPage, false)} />
-        <Route path="/upload" element={withUser(UploadPage, true)} />
-        <Route path="/settings" element={withUser(SettingsPage, true)} />
-        <Route path="/track/*" element={withUser(TrackPage, null)} />
-      </Routes>
-    </AppView>
+    <Routes>
+      <Route path="*" element={<NotFoundPage />} />
+      <Route path="/" element={withUser(HomePage, null)} />
+      <Route path="/home" element={withUser(HomePage, null)} />
+      <Route path="/register" element={withUser(RegisterPage, false)} />
+      <Route path="/upload" element={withUser(UploadPage, true)} />
+      <Route path="/settings" element={withUser(SettingsPage, true)} />
+      <Route path="/track/*" element={withUser(TrackPage, null)} />
+      <Route path="/track/notfound" element={<NotFoundPage />} />
+    </Routes>
   )
 }
 
