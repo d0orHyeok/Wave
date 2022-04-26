@@ -161,7 +161,7 @@ export const ItemInfoBox = styled.div`
 export const ItemControlBox = styled.div`
   display: flex;
   align-items: center;
-  text-align: right;
+  justify-content: center;
   width: 60px;
   & .duration {
     font-size: 0.8rem;

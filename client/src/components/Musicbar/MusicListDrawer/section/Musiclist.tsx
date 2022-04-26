@@ -23,6 +23,7 @@ import { AddPlaylistMenuItem, MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/ApiUserHooks'
 import { useCopyLink } from '@api/MusicHooks'
+import { convertTimeToString } from '@api/functions'
 
 const Musiclist = () => {
   const backendURI = process.env.REACT_APP_API_URL
@@ -202,7 +203,9 @@ const Musiclist = () => {
                   </h2>
                 </S.ItemInfoBox>
                 <S.ItemControlBox>
-                  <span className="duration">0:00</span>
+                  <span className="duration">
+                    {convertTimeToString(Number(musics[indexItem].duration))}
+                  </span>
                   <LikeFilledButton
                     isLike={likes.includes(musics[indexItem].id)}
                     className="btn"

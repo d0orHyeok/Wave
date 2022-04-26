@@ -30,13 +30,13 @@ const AlertContext = createContext<any>({})
 export const AlertProvider = ({ children }: IAlertProviderProps) => {
   const [alertOption, setAlertOption] = useState<IAlertOpion>({
     severity: 'success',
-    anchorOrigin: { horizontal: 'center', vertical: 'top' },
+    anchorOrigin: { horizontal: 'right', vertical: 'top' },
     alertText: 'alert',
     open: false,
   })
 
   function onClose() {
-    setAlertOption({ ...alertOption, open: false })
+    setAlertOption({ ...alertOption, open: false, severity: 'success' })
   }
 
   return (

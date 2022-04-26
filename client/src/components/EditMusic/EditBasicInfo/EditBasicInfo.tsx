@@ -102,7 +102,8 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
         const { value } = event.currentTarget
 
         event.currentTarget.value = value
-          .trim()
+          .trimStart()
+          .replaceAll(/[\s]/g, '-')
           .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
       },
       []
@@ -160,6 +161,12 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
 
         if (title && titleRef.current) {
           titleRef.current.value = title
+          if (permalinkRef.current) {
+            permalinkRef.current.value = title
+              .trim()
+              .replaceAll(/[\s]/g, '-')
+              .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
+          }
         }
         if (genre?.length && genreRef.current) {
           genreRef.current.value = genre.join(' ')

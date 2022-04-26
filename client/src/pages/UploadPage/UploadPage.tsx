@@ -24,9 +24,7 @@ const UploadPage = () => {
           hidden={musicFiles?.length ? true : false}
           onChangeFiles={handleChangeFiles}
         />
-        {musicFiles?.length && (
-          <EditMusic files={musicFiles} resetFiles={handleResetFiles} />
-        )}
+        <EditMusic files={musicFiles} resetFiles={handleResetFiles} />
       </S.Wrapper>
     </>
   )

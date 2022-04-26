@@ -4,6 +4,7 @@ import Dropzone from '@components/Dropzone/Dropzone'
 export const Wrapper = styled.div`
   padding: 3rem 0;
   min-height: 100%;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,5 +15,7 @@ export const StyledDropzone = styled(Dropzone)<{ hidden?: boolean }>`
   min-width: 240px;
   max-width: 600px;
   border-style: dotted;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.1)};
   display: ${({ hidden }) => (hidden ? 'none' : 'flex')};
 `

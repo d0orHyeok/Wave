@@ -8,9 +8,11 @@ import EditBasicInfo, {
   IEditBasicInfoHandler,
 } from './EditBasicInfo/EditBasicInfo'
 import EditMetadata, { IEditMetadataHandler } from './EditMetadata/EditMetadata'
+import { useAlert } from '@redux/context/alertProvider'
+import { useNavigate } from 'react-router-dom'
 
 interface EditMusicProps {
-  files: FileList
+  files?: FileList
   resetFiles: () => void
 }
 
@@ -19,57 +21,67 @@ export interface IMusicMetadata extends ICommonTagsResult {
 }
 
 const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
+  const openAlert = useAlert()
+  const navigate = useNavigate()
+
   const editNavItems = ['Basic Info', 'Metadata']
 
   const editBasicInfoRef = useRef<IEditBasicInfoHandler>(null)
   const editMetadataRef = useRef<IEditMetadataHandler>(null)
 
   const [editNavIndex, setEditNavIndex] = useState(0)
-  const [musicMetadata, setMusicMetadata] = useState<
-    IMusicMetadata | undefined
-  >()
+  const [musicMetadata, setMusicMetadata] = useState<IMusicMetadata>()
 
-  const uploadFile = useCallback(() => {
-    if (!files) {
-      return
+  const uploadFile = () => {
+    if (!files || !musicMetadata) {
+      // 파일과 메타데이터가 없다면 재업로드 요청
+      return resetFiles()
     }
 
     const basicInfoData = editBasicInfoRef.current?.getData()
     const metadataData = editMetadataRef.current?.getData()
 
     if (!(basicInfoData && metadataData)) {
+      // 데이터를 가져오지 못한경우 업로드 취소
       setEditNavIndex(0)
       return
     }
+    openAlert('업로드를 시작합니다.', { severity: 'info' })
+
     const { cover, ...musicData } = basicInfoData
     const { title, genre, description } = musicData
     const data = [
       {
-        musicData,
+        musicData: { ...musicData, duration: musicMetadata?.duration },
         metadata: { title, genre, description, ...metadataData },
       },
     ]
 
+    // 음악파일, 커버이미지, 음악데이터 저장
     const formData = new FormData()
     formData.append('music', files[0])
-
     if (cover) {
       formData.append('cover', cover)
     }
-
     formData.append(
       'data',
       new Blob([JSON.stringify(data)], { type: 'application/json' })
     )
 
+    // 서버에 업로드 요청
     Axios.post('/api/music/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
-      .then((response) => {
-        console.log(response)
+      .then(() => {
+        openAlert('업로드에 성공하였습니다.')
+        if (window.confirm('계속해서 업로드 하시겠습니까?')) {
+          resetFiles()
+        } else {
+          navigate('/')
+        }
       })
-      .catch((error) => console.log(error))
-  }, [files])
+      .catch(() => openAlert('업로드에 실패하였습니다', { severity: 'error' }))
+  }
 
   const handleClickCancel = useCallback(() => {
     if (
@@ -115,7 +127,7 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
 
   return (
     <>
-      <S.Container>
+      <S.Container style={{ display: files ? 'block' : 'none' }}>
         <EditHead files={files} />
         <S.EditMain className="editMain">
           <S.EditNav className="editNav">

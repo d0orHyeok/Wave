@@ -56,6 +56,7 @@ export interface IMusic {
   permalink: string
   filename: string
   link: string
+  duration: string
   genre?: string
   description?: string
   tags?: string[]

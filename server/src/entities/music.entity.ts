@@ -59,6 +59,9 @@ export class Music extends BaseEntity {
   @Column()
   link: string;
 
+  @Column()
+  duration: string;
+
   @Column({ nullable: true })
   cover: string;
 

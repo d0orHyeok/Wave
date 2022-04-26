@@ -90,7 +90,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
                 <FaPause />
               )}
             </S.CardPlayButton>
-            <S.CardHoverControl className="cardHoverControldd">
+            <S.CardHoverControl className="cardHoverControl">
               <LikeFilledButton
                 isLike={likes.includes(music.id)}
                 onClick={handleClickLike}
