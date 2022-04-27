@@ -10,6 +10,7 @@ import UploadPage from '@pages/UploadPage/UploadPage'
 import SettingsPage from '@pages/SettingsPage/SettingsPage'
 import TrackPage from '@pages/TrackPage/TrackPage'
 import ProfilePage from '@pages/ProfilePage/ProfilePage'
+import SearchPage from '@pages/SearchPage/SearchPage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -37,6 +38,7 @@ const Router = () => {
         path="/profile/:permaId"
         element={withUser(ProfilePage, true)}
       ></Route>
+      <Route path="/search" element={<SearchPage />}></Route>
     </Routes>
   )
 }
