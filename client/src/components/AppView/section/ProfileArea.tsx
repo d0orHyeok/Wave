@@ -30,6 +30,15 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
     setAnchorEl(null)
   }, [])
 
+  const handleClickAndNavigate = useCallback(
+    (path: string) => (event: React.MouseEvent<HTMLElement>) => {
+      event.preventDefault()
+      navigate(path)
+      handleClose()
+    },
+    [handleClose, navigate]
+  )
+
   const handleClickLogout = useCallback(() => {
     dispatch(userLogout())
     openAlert('로그아웃 되었습니다.')
@@ -80,8 +89,14 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
               horizontal: fold ? 'left' : 'right',
             }}
           >
-            <MenuItem onClick={handleClose}>보관함</MenuItem>
-            <MenuItem onClick={handleClose}>
+            <MenuItem
+              onClick={handleClickAndNavigate(
+                `/profile/${user.userData?.permaId}`
+              )}
+            >
+              프로필
+            </MenuItem>
+            <MenuItem onClick={handleClickAndNavigate('/settings')}>
               <Link to="/settings">설정</Link>
             </MenuItem>
             <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>

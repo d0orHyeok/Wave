@@ -157,4 +157,8 @@ export class AuthService {
     }
     return this.followRepository.getFollow(user);
   }
+
+  async getUserByPermaId(permaId: string) {
+    return this.userRepository.findUserByPermaId(permaId);
+  }
 }

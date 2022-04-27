@@ -77,6 +77,13 @@ export class AuthController {
     return { userData };
   }
 
+  @Get('/:permaId')
+  async getUserByPermaId(@Param('permaId') permaId: string) {
+    const user = await this.authService.getUserByPermaId(permaId);
+    const userData = await this.authService.getUserData(user);
+    return { userData };
+  }
+
   @Patch('/:musicId/like')
   @UseGuards(JwtAuthGuard)
   async likeMusic(

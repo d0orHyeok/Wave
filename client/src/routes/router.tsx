@@ -9,6 +9,7 @@ import { userAuth } from '@redux/features/user/userSlice'
 import UploadPage from '@pages/UploadPage/UploadPage'
 import SettingsPage from '@pages/SettingsPage/SettingsPage'
 import TrackPage from '@pages/TrackPage/TrackPage'
+import ProfilePage from '@pages/ProfilePage/ProfilePage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -29,9 +30,13 @@ const Router = () => {
       <Route path="/home" element={withUser(HomePage, null)} />
       <Route path="/register" element={withUser(RegisterPage, false)} />
       <Route path="/upload" element={withUser(UploadPage, true)} />
-      <Route path="/settings" element={withUser(SettingsPage, true)} />
+      <Route path="/settings" element={withUser(SettingsPage, true)}></Route>
       <Route path="/track/*" element={withUser(TrackPage, null)} />
       <Route path="/track/notfound" element={<NotFoundPage />} />
+      <Route
+        path="/profile/:permaId"
+        element={withUser(ProfilePage, true)}
+      ></Route>
     </Routes>
   )
 }

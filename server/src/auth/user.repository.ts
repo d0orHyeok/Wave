@@ -4,6 +4,7 @@ import { EntityRepository, Repository } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -46,7 +47,17 @@ export class UserRepository extends Repository<User> {
     const user = await this.findOne({ username });
 
     if (!user) {
-      throw new UnauthorizedException(`Can't find User with id ${username}`);
+      throw new UnauthorizedException(`Can't find User with id: ${username}`);
+    }
+
+    return user;
+  }
+
+  async findUserByPermaId(permaId: string) {
+    const user = await this.findOne({ permaId });
+
+    if (!user) {
+      throw new NotFoundException(`Can't find User with permaId: ${permaId}`);
     }
 
     return user;
