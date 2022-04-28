@@ -1,6 +1,7 @@
+import { MusicMetadataDto } from './dto/music-metadata.dto';
+import { MusicDataDto } from './dto/music-data.dto';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/entities/user.entity';
-import { IMusicMetadata, IMusicData } from './../entities/music.entity';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MusicRepository } from 'src/music/music.repository';
@@ -23,13 +24,13 @@ export class MusicService {
     return this.musicRepository.getAllMusic();
   }
 
-  async createMusic(createMusicData: IMusicData, user: User): Promise<Music> {
+  async createMusic(createMusicData: MusicDataDto, user: User): Promise<Music> {
     return this.musicRepository.createMusic(createMusicData, user);
   }
 
   changeMusicMetadata(
     file: Express.Multer.File,
-    metadata: IMusicMetadata,
+    metadata: MusicMetadataDto,
     image?: Express.Multer.File,
   ) {
     const { description, lyrics } = metadata;
@@ -81,7 +82,7 @@ export class MusicService {
     return !newBuffer ? file : { ...file, buffer: newBuffer };
   }
 
-  async getMusicById(id: number): Promise<Music> {
+  async findMusicById(id: number): Promise<Music> {
     return this.musicRepository.findMusicById(id);
   }
 

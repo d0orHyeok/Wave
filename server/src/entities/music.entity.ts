@@ -1,3 +1,4 @@
+import { MusicMetadataDto } from './../music/dto/music-metadata.dto';
 import { PlaylistMusic } from './playlistMusic.entity';
 import { Like } from './like.entity';
 import { User } from 'src/entities/user.entity';
@@ -13,31 +14,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { EntityStatus } from './common.types';
-
-export interface IMusicMetadata {
-  title: string;
-  genre?: string;
-  description?: string;
-  artist?: string;
-  album: string;
-  albumartist?: string;
-  composer?: string;
-  year?: string;
-  lyrics?: string;
-}
-
-export interface IMusicData {
-  title: string;
-  permalink: string;
-  filename: string;
-  link: string;
-  genre?: string;
-  description?: string;
-  tags?: string[];
-  cover?: string;
-  status: EntityStatus;
-  metaData: IMusicMetadata;
-}
 
 @Entity()
 export class Music extends BaseEntity {
@@ -57,7 +33,7 @@ export class Music extends BaseEntity {
   link: string;
 
   @Column()
-  duration: string;
+  duration: number;
 
   @Column({ nullable: true })
   cover: string;
@@ -75,7 +51,7 @@ export class Music extends BaseEntity {
   tags: string[];
 
   @Column('simple-json')
-  metadata: IMusicMetadata;
+  metadata: MusicMetadataDto;
 
   @Column({ default: EntityStatus.PUBLIC })
   status: EntityStatus;

@@ -50,12 +50,11 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
 
     const { cover, ...musicData } = basicInfoData
     const { title, genre, description } = musicData
-    const data = [
-      {
-        musicData: { ...musicData, duration: musicMetadata?.duration },
-        metadata: { title, genre, description, ...metadataData },
-      },
-    ]
+    const data = {
+      ...musicData,
+      duration: musicMetadata.duration,
+      metadata: { title, genre, description, ...metadataData },
+    }
 
     // 음악파일, 커버이미지, 음악데이터 저장
     const formData = new FormData()

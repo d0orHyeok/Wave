@@ -1,3 +1,4 @@
+import { AuthRegisterPipe } from './pipes/auth-register.pipe';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwTRefreshGuard } from './guards/jwt-refresh.guard';
@@ -12,6 +13,7 @@ import {
   Post,
   Res,
   UseGuards,
+  UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
@@ -24,6 +26,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
+  @UsePipes(AuthRegisterPipe)
   async signUp(
     @Body(ValidationPipe) authRegisterDto: AuthRegisterDto,
   ): Promise<void> {
