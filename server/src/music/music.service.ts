@@ -4,11 +4,12 @@ import { IMusicMetadata, IMusicData } from './../entities/music.entity';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MusicRepository } from 'src/music/music.repository';
-import { Music, MusicStatus } from 'src/entities/music.entity';
+import { Music } from 'src/entities/music.entity';
 import { getStorage } from 'firebase-admin/storage';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import * as NodeID3 from 'node-id3';
 import * as uuid from 'uuid';
+import { EntityStatus } from 'src/entities/common.types';
 
 @Injectable()
 export class MusicService {
@@ -81,11 +82,11 @@ export class MusicService {
   }
 
   async getMusicById(id: number): Promise<Music> {
-    return this.musicRepository.getMusicById(id);
+    return this.musicRepository.findMusicById(id);
   }
 
-  async getMusicByPermalink(permalink: string) {
-    return this.musicRepository.findOne({ permalink });
+  async findMusicByPermalink(userId: string, permalink: string) {
+    return this.musicRepository.findMusicByPermalink(userId, permalink);
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {
@@ -97,7 +98,7 @@ export class MusicService {
     }
   }
 
-  async updateMusicStatus(id: number, status: MusicStatus): Promise<Music> {
+  async updateMusicStatus(id: number, status: EntityStatus): Promise<Music> {
     return this.musicRepository.updateMusicStatus(id, status);
   }
 

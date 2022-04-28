@@ -1,3 +1,4 @@
+import { Playlist } from './playlist.entity';
 import { Like } from './like.entity';
 import { Music } from 'src/entities/music.entity';
 import {
@@ -14,8 +15,8 @@ import { Follow } from './follow.entity';
 @Entity()
 @Unique(['username'])
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   username: string;
@@ -32,9 +33,6 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   profileImage: string;
 
-  @Column()
-  permaId: string;
-
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 
@@ -49,6 +47,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Music, (music) => music.user, { eager: true })
   musics: Music[];
+
+  @OneToMany(() => Playlist, (playlist) => playlist.user, { eager: true })
+  playlists: Playlist[];
 
   @CreateDateColumn()
   createdAt: Date;

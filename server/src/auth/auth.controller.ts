@@ -77,9 +77,9 @@ export class AuthController {
     return { userData };
   }
 
-  @Get('/:permaId')
-  async getUserByPermaId(@Param('permaId') permaId: string) {
-    const user = await this.authService.getUserByPermaId(permaId);
+  @Get('/:id')
+  async getUserById(@Param('id') id: string) {
+    const user = await this.authService.findUserById(id);
     const userData = await this.authService.getUserData(user);
     return { userData };
   }
@@ -108,7 +108,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async followUser(
     @GetUser() user: User,
-    @Param('followerId', ParseIntPipe) followerId: number,
+    @Param('followerId') followerId: string,
   ) {
     return this.authService.followUser(user, followerId);
   }
@@ -117,7 +117,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async unfollowUser(
     @GetUser() user: User,
-    @Param('followerId', ParseIntPipe) followerId: number,
+    @Param('followerId') followerId: string,
   ) {
     return this.authService.unfollowUser(user, followerId);
   }

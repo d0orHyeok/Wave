@@ -1,3 +1,4 @@
+import { PlaylistMusic } from './playlistMusic.entity';
 import { Like } from './like.entity';
 import { User } from 'src/entities/user.entity';
 import {
@@ -11,11 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum MusicStatus {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
-}
+import { EntityStatus } from './common.types';
 
 export interface IMusicMetadata {
   title: string;
@@ -38,7 +35,7 @@ export interface IMusicData {
   description?: string;
   tags?: string[];
   cover?: string;
-  status: MusicStatus;
+  status: EntityStatus;
   metaData: IMusicMetadata;
 }
 
@@ -80,14 +77,14 @@ export class Music extends BaseEntity {
   @Column('simple-json')
   metadata: IMusicMetadata;
 
-  @Column()
-  status: MusicStatus;
+  @Column({ default: EntityStatus.PUBLIC })
+  status: EntityStatus;
 
   @Column({ default: 0 })
   count: number;
 
   @Column({ name: 'userId', nullable: true })
-  userId: number;
+  userId: string;
 
   @Column({ name: 'uploader', nullable: true })
   uploader: string;
@@ -95,9 +92,12 @@ export class Music extends BaseEntity {
   @OneToMany(() => Like, (like) => like.music)
   likes: Like[];
 
+  @OneToMany(() => PlaylistMusic, (playlistMusic) => playlistMusic.music)
+  playlistMusics: PlaylistMusic[];
+
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
     nullable: true,
     createForeignKeyConstraints: false,
   })

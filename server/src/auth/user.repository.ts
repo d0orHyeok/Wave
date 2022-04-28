@@ -10,26 +10,8 @@ import {
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  generateRandomString() {
-    return (
-      Math.random().toString(36).substring(2, 9) +
-      Date.now().toString().substring(7)
-    );
-  }
-
   async createUser(authRegisterlDto: AuthRegisterDto): Promise<void> {
-    let randomString = this.generateRandomString();
-
-    while (true) {
-      const findUser = await this.findOne({ permaId: randomString });
-      if (!findUser) {
-        break;
-      } else {
-        randomString = this.generateRandomString();
-      }
-    }
-
-    const user = this.create({ ...authRegisterlDto, permaId: randomString });
+    const user = this.create(authRegisterlDto);
 
     try {
       await this.save(user);
@@ -53,11 +35,11 @@ export class UserRepository extends Repository<User> {
     return user;
   }
 
-  async findUserByPermaId(permaId: string) {
-    const user = await this.findOne({ permaId });
+  async findUserById(id: string) {
+    const user = await this.findOne({ id });
 
     if (!user) {
-      throw new NotFoundException(`Can't find User with permaId: ${permaId}`);
+      throw new NotFoundException(`Can't find User with id: ${id}`);
     }
 
     return user;

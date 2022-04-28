@@ -7,6 +7,7 @@ import { ConfigurationModule } from './configs/configuration.module';
 import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { PlaylistModule } from './playlist/playlist.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { join } from 'path';
     }),
     MusicModule,
     AuthModule,
+    PlaylistModule,
   ],
   controllers: [AppController],
   providers: [AppService],

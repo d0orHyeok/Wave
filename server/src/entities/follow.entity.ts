@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -33,4 +34,7 @@ export class Follow {
   })
   @JoinColumn({ name: 'followerId', referencedColumnName: 'id' })
   follower: User;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

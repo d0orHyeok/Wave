@@ -1,7 +1,7 @@
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { IMusicData, IMusicMetadata } from './../entities/music.entity';
 import { User } from 'src/entities/user.entity';
-import { MusicStatusValidationPipe } from './pipes/music-status-validation.pipe';
+import { EntityStatusValidationPipe } from '../entities/pipes/entity-status-validation.pipe';
 import { MusicService } from './music.service';
 import {
   BadRequestException,
@@ -19,10 +19,11 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Music, MusicStatus } from 'src/entities/music.entity';
+import { Music } from 'src/entities/music.entity';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
+import { EntityStatus } from 'src/entities/common.types';
 
 interface IUploadData {
   musicData: IMusicData;
@@ -68,7 +69,7 @@ export class MusicController {
       files.data[0].buffer.toString(),
     )[0];
 
-    const fileBase = `${Date.now()}_${user.permaId}_`;
+    const fileBase = `${Date.now()}_${user.id}_`;
 
     const uploadMusicFile = this.musicService.changeMusicMetadata(
       musicFile,
@@ -109,12 +110,12 @@ export class MusicController {
     return this.musicService.getMusicById(id);
   }
 
-  @Get('/:permaId/:link')
+  @Get('/:userId/:permalink')
   getMusicByPermalink(
-    @Param('permaId') permaId: string,
-    @Param('link') link: string,
+    @Param('userId') userId: string,
+    @Param('permalink') permalink: string,
   ): Promise<Music> {
-    return this.musicService.getMusicByPermalink(`${permaId}/${link}`);
+    return this.musicService.findMusicByPermalink(userId, permalink);
   }
 
   @Delete('/:id')
@@ -130,7 +131,7 @@ export class MusicController {
   @UseGuards(JwtAuthGuard)
   updateMusicStatus(
     @Param('id', ParseIntPipe) id: number,
-    @Body('status', MusicStatusValidationPipe) status: MusicStatus,
+    @Body('status', EntityStatusValidationPipe) status: EntityStatus,
   ) {
     return this.musicService.updateMusicStatus(id, status);
   }

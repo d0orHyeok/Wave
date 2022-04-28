@@ -142,23 +142,23 @@ export class AuthService {
     return this.likeRepository.getLikes(user);
   }
 
-  async followUser(user: User, followerId: number) {
-    const follower = await this.userRepository.findOne({ id: followerId });
+  async followUser(user: User, followerId: string) {
+    const follower = await this.userRepository.findUserById(followerId);
     if (follower) {
       await this.followRepository.createFollow(user, follower);
     }
     return this.followRepository.getFollow(user);
   }
 
-  async unfollowUser(user: User, followerId: number) {
-    const follower = await this.userRepository.findOne({ id: followerId });
+  async unfollowUser(user: User, followerId: string) {
+    const follower = await this.userRepository.findUserById(followerId);
     if (follower) {
       await this.followRepository.deleteFollow(user, follower);
     }
     return this.followRepository.getFollow(user);
   }
 
-  async getUserByPermaId(permaId: string) {
-    return this.userRepository.findUserByPermaId(permaId);
+  async findUserById(id: string) {
+    return this.userRepository.findUserById(id);
   }
 }

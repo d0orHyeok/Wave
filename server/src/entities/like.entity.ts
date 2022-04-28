@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  CreateDateColumn,
 } from 'typeorm';
 import { Music } from './music.entity';
 import { User } from './user.entity';
@@ -34,4 +35,7 @@ export class Like {
   })
   @JoinColumn({ name: 'musicId', referencedColumnName: 'id' })
   music: Music;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
