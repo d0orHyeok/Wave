@@ -8,7 +8,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { EntityStatus } from 'src/entities/common.types';
-import { IMusicMetadata } from 'src/entities/music.entity';
 import { MusicMetadataDto } from './music-metadata.dto';
 
 export class UploadMusicDataDto {
@@ -30,7 +29,7 @@ export class UploadMusicDataDto {
   @IsNotEmptyObject()
   @Type(() => MusicMetadataDto)
   @ValidateNested()
-  metadata: IMusicMetadata;
+  metadata: MusicMetadataDto;
 
   @IsOptional()
   @IsString()

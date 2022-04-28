@@ -42,7 +42,7 @@ export class Playlist {
     onDelete: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn([{ name: 'userId', referencedColumnName: 'userId' }])
+  @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
   user: User;
 
   @OneToMany(() => PlaylistMusic, (playlistMusic) => playlistMusic.playlist)

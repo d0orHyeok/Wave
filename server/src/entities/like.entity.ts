@@ -15,7 +15,7 @@ export class Like {
   id: number;
 
   @Column({ name: 'userId', nullable: true })
-  userId: number;
+  userId: string;
 
   @Column({ name: 'musicId', nullable: true })
   musicId: number;

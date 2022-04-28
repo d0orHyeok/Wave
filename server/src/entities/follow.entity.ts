@@ -14,10 +14,10 @@ export class Follow {
   id: number;
 
   @Column({ name: 'followingId', nullable: true })
-  followingId: number;
+  followingId: string;
 
   @Column({ name: 'followerId', nullable: true })
-  followerId: number;
+  followerId: string;
 
   @ManyToOne(() => User, (user) => user.following, {
     cascade: true,
