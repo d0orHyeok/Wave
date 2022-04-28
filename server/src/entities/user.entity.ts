@@ -3,19 +3,21 @@ import { Like } from './like.entity';
 import { Music } from 'src/entities/music.entity';
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Unique,
 } from 'typeorm';
 import { Follow } from './follow.entity';
+import ShortUniqueId from 'short-unique-id';
 
 @Entity()
 @Unique(['username'])
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column()
@@ -53,4 +55,10 @@ export class User extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @BeforeInsert()
+  generateId() {
+    const uid = new ShortUniqueId({ length: 12 });
+    this.id = uid();
+  }
 }
