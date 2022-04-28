@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
   ValidateNested,
@@ -20,6 +21,7 @@ export class UploadMusicDataDto {
   permalink: string;
 
   @IsNotEmpty()
+  @IsNumberString()
   @IsNumber()
   duration: number;
 

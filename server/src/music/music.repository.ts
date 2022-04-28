@@ -1,6 +1,9 @@
 import { MusicDataDto } from './dto/music-data.dto';
 import { User } from 'src/entities/user.entity';
-import { NotFoundException } from '@nestjs/common';
+import {
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Music } from 'src/entities/music.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { EntityStatus } from 'src/entities/common.types';
@@ -21,9 +24,16 @@ export class MusicRepository extends Repository<Music> {
       permalink: !existMusics ? permalink : `${permalink}_${Date.now()}`,
       user,
     });
-    await this.save(music);
 
-    return music;
+    try {
+      await this.save(music);
+      return music;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `Error ocuur create music.\n${error}`,
+      );
+    }
   }
 
   async findMusicById(id: number): Promise<Music> {

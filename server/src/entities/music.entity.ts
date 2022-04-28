@@ -32,7 +32,7 @@ export class Music extends BaseEntity {
   @Column()
   link: string;
 
-  @Column()
+  @Column('float')
   duration: number;
 
   @Column({ nullable: true })

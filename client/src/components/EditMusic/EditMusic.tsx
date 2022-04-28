@@ -58,12 +58,12 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
 
     // 음악파일, 커버이미지, 음악데이터 저장
     const formData = new FormData()
-    formData.append('music', files[0])
+    formData.append('musics', files[0])
     if (cover) {
-      formData.append('cover', cover)
+      formData.append('covers', cover)
     }
     formData.append(
-      'data',
+      'datas',
       new Blob([JSON.stringify(data)], { type: 'application/json' })
     )
 
