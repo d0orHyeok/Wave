@@ -72,37 +72,34 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
             : user.userData?.nickname || user.userData?.username || 'User'}
         </span>
       </S.ProfileWrapper>
-      {user.isLogin ? (
-        <>
-          <S.MyMenu
-            fold={fold}
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            disableScrollLock={true}
-            anchorOrigin={{
-              vertical: fold ? 'top' : 'bottom',
-              horizontal: fold ? 'right' : 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: fold ? 'left' : 'right',
-            }}
-          >
-            <MenuItem
-              onClick={handleClickAndNavigate(`/profile/${user.userData?.id}`)}
-            >
-              프로필
-            </MenuItem>
-            <MenuItem onClick={handleClickAndNavigate('/settings')}>
-              <Link to="/settings">설정</Link>
-            </MenuItem>
-            <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
-          </S.MyMenu>
-        </>
-      ) : (
-        <LoginModal open={open} onClose={handleClose} />
-      )}
+
+      <S.MyMenu
+        fold={fold}
+        anchorEl={anchorEl}
+        open={open && user.isLogin}
+        onClose={handleClose}
+        disableScrollLock={true}
+        anchorOrigin={{
+          vertical: fold ? 'top' : 'bottom',
+          horizontal: fold ? 'right' : 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: fold ? 'left' : 'right',
+        }}
+      >
+        <MenuItem
+          onClick={handleClickAndNavigate(`/profile/${user.userData?.id}`)}
+        >
+          프로필
+        </MenuItem>
+        <MenuItem onClick={handleClickAndNavigate('/settings')}>
+          <Link to="/settings">설정</Link>
+        </MenuItem>
+        <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
+      </S.MyMenu>
+
+      <LoginModal open={open && !user.isLogin} onClose={handleClose} />
     </>
   )
 }

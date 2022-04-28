@@ -11,7 +11,7 @@ export const ModalWrapper = styled.div`
   color: ${({ theme }) => theme.colors.bgText};
 `
 
-export const StyledContainer = styled.div`
+export const StyledContainer = styled.form`
   border-radius: inherit;
   padding: 20px;
   width: 420px;

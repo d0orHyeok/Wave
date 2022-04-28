@@ -79,7 +79,7 @@ const LoginModal = ({ onClose, ...props }: LoginModalProps) => {
   return (
     <Modal {...props} onClose={closeModal}>
       <S.ModalWrapper>
-        <S.StyledContainer>
+        <S.StyledContainer onSubmit={(e) => e.preventDefault()}>
           <h1 className="modal-title">Sign In</h1>
           <S.Box>
             <TextField
