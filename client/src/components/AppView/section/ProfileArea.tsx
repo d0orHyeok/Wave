@@ -90,9 +90,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
             }}
           >
             <MenuItem
-              onClick={handleClickAndNavigate(
-                `/profile/${user.userData?.permaId}`
-              )}
+              onClick={handleClickAndNavigate(`/profile/${user.userData?.id}`)}
             >
               프로필
             </MenuItem>

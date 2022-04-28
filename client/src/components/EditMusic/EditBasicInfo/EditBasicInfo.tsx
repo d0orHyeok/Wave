@@ -41,7 +41,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
     const descriptionRef = useRef<HTMLTextAreaElement>(null)
     const coverInputRef = useRef<HTMLInputElement>(null)
 
-    const permaId = useAppSelector((state) => state.user.userData?.permaId)
+    const userId = useAppSelector((state) => state.user.userData?.id)
 
     const [status, setStatus] = useState(true)
     const [cover, setCover] = useState<string>('img/empty-cover.PNG')
@@ -71,7 +71,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
 
           const data = {
             title,
-            permalink: `${permaId}/${permalink}`,
+            permalink: `${userId}/${permalink}`,
             tags: tags?.length ? tags : undefined,
             genre,
             description,
@@ -81,7 +81,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
           return data
         },
       }),
-      [originalCover, permaId, status]
+      [originalCover, userId, status]
     )
 
     const handleChangeCover = useCallback(
@@ -213,7 +213,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 Permalink<span className="require">{' *'}</span>
               </h2>
               <div className="inputwrap">
-                <label htmlFor="permalink">{`${window.location.hostname}/${permaId}/`}</label>
+                <label htmlFor="permalink">{`${window.location.hostname}/${userId}/`}</label>
                 <input
                   ref={permalinkRef}
                   id="permalink"

@@ -1,10 +1,9 @@
 export interface IUserData {
-  id: number
+  id: string
   username: string
   email: string
   nickname?: string
   profileImage?: string
-  permaId: string
   musics: string[]
   likes: number[]
   followers: IFollowState[]

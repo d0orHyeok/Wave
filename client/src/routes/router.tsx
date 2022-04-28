@@ -35,7 +35,7 @@ const Router = () => {
       <Route path="/track/*" element={withUser(TrackPage, null)} />
       <Route path="/track/notfound" element={<NotFoundPage />} />
       <Route
-        path="/profile/:permaId"
+        path="/profile/:userId"
         element={withUser(ProfilePage, true)}
       ></Route>
       <Route path="/search" element={<SearchPage />}></Route>
