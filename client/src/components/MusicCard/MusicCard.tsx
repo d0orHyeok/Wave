@@ -70,7 +70,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
     <>
       <S.CardContainer style={style}>
         <S.ImageBox>
-          <Link to={`/track/${music.permalink}`}>
+          <Link to={`/track/${music.userId}/${music.permalink}`}>
             <img
               src={
                 music?.cover
@@ -104,10 +104,12 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
         </S.ImageBox>
         <S.CartInfoBox>
           <div className="musicCard-title">
-            <Link to={`/track/${music.permalink}`}>{music.title} </Link>
+            <Link to={`/track/${music.userId}/${music.permalink}`}>
+              {music.title}
+            </Link>
           </div>
           <div className="musicCard-uploader">
-            <Link to={`/people/${music.uploader}`}>{music.uploader} </Link>
+            <Link to={`/profile/${music.userId}`}>{music.uploader}</Link>
           </div>
         </S.CartInfoBox>
       </S.CardContainer>

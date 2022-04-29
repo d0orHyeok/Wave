@@ -71,7 +71,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
 
           const data = {
             title,
-            permalink: `${userId}/${permalink}`,
+            permalink: `${permalink}`,
             tags: tags?.length ? tags : undefined,
             genre,
             description,
@@ -81,7 +81,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
           return data
         },
       }),
-      [originalCover, userId, status]
+      [originalCover, status]
     )
 
     const handleChangeCover = useCallback(

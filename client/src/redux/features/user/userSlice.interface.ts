@@ -1,10 +1,12 @@
+import { IMusic } from '../player/palyerSlice.interface'
+
 export interface IUserData {
   id: string
   username: string
   email: string
   nickname?: string
   profileImage?: string
-  musics: string[]
+  musics: IMusic[]
   likes: number[]
   followers: IFollowState[]
   following: IFollowState[]
