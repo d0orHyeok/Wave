@@ -1,7 +1,9 @@
 import { IMusic } from '../player/palyerSlice.interface'
 
+type UserId = string
+
 export interface IUserData {
-  id: string
+  id: UserId
   username: string
   email: string
   nickname?: string
@@ -14,7 +16,7 @@ export interface IUserData {
 }
 
 export interface IFollowState {
-  id: number
+  id: UserId
   name: string
   image: string
 }
@@ -42,6 +44,6 @@ export interface IToggleMusicLikeParams {
 }
 
 export interface IToggleFollowParams {
-  followerId: number
+  followerId: UserId
   isFollow: boolean
 }

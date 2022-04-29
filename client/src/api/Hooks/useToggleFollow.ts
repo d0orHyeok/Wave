@@ -7,7 +7,7 @@ function useToggleFollow() {
   const following = useAppSelector((state) => state.user.userData?.following)
 
   const toggleFollow = useCallback(
-    (followerId: number) => {
+    (followerId: string) => {
       if (following) {
         const params = {
           followerId,

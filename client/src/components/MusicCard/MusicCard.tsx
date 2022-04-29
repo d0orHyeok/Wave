@@ -10,7 +10,7 @@ import {
   AddPlaylistMenuItem,
 } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { useToggleLikeMusic } from '@api/ApiUserHooks'
+import { useToggleLikeMusic } from '@api/UserHooks'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
 
 interface IMusicCardProps {
@@ -113,7 +113,6 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
           </div>
         </S.CartInfoBox>
       </S.CardContainer>
-
       <MusicMenu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
         <AddMusicMenuItem music={music} onClose={handleCloseMenu} />
         <AddPlaylistMenuItem onClose={handleCloseMenu} />

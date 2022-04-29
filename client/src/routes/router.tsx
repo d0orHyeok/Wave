@@ -36,7 +36,7 @@ const Router = () => {
       <Route path="/track/notfound" element={<NotFoundPage />} />
       <Route
         path="/profile/:userId"
-        element={withUser(ProfilePage, true)}
+        element={withUser(ProfilePage, null)}
       ></Route>
       <Route path="/search" element={<SearchPage />}></Route>
     </Routes>

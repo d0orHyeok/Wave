@@ -21,7 +21,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { AddPlaylistMenuItem, MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { useToggleLikeMusic } from '@api/ApiUserHooks'
+import { useToggleLikeMusic } from '@api/UserHooks'
 import { useCopyLink } from '@api/MusicHooks'
 import { convertTimeToString } from '@api/functions'
 
