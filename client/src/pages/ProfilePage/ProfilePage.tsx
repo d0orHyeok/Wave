@@ -5,6 +5,7 @@ import { useAppSelector } from '@redux/hook'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import * as S from './ProfilePage.style'
+import CanNotFind from '../../components/CanNotFind/CanNotFind'
 
 const ProfilePage = () => {
   const { userId } = useParams()
@@ -21,25 +22,24 @@ const ProfilePage = () => {
     } else {
       setEditable(false)
       Axios.get(`/api/auth/${userId}`)
-        .then((res) => {
-          const { userData } = res.data
-          if (userData) {
-            setProfileData(userData)
-          } else {
-            navigate('/notfound')
-          }
-        })
-        .catch(() => navigate('/notfound'))
+        .then((res) => setProfileData(res.data.userData))
+        .catch((error) => console.log(error.response))
     }
   }, [navigate, userId, user])
 
   return (
-    <S.Wrapper>
-      <S.Container>
-        {editable && 'Edit!'}
-        {profileData?.nickname}
-      </S.Container>
-    </S.Wrapper>
+    <>
+      {!profileData ? (
+        <CanNotFind text="user" />
+      ) : (
+        <S.Wrapper>
+          <S.Container>
+            {editable && 'Edit!'}
+            {profileData.nickname}
+          </S.Container>
+        </S.Wrapper>
+      )}
+    </>
   )
 }
 
