@@ -12,7 +12,7 @@ import {
 
 const initialState: IUserState = {
   isLogin: false,
-  userData: null,
+  userData: undefined,
 }
 
 export const userRegister = createAsyncThunk(
@@ -85,6 +85,32 @@ export const userToggleFollow = createAsyncThunk(
   }
 )
 
+export const userUpdateImage = createAsyncThunk(
+  'USER_UPDATE_IMAGE',
+  async (formData: FormData) => {
+    try {
+      const response = await Axios.patch(`/api/auth/image/update`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      return response.data
+    } catch (error) {
+      return console.error(error)
+    }
+  }
+)
+
+export const userDeleteImage = createAsyncThunk(
+  'USER_DELETE_IMAGE',
+  async () => {
+    try {
+      const response = await Axios.patch(`/api/auth/image/delete`)
+      return response.data
+    } catch (error) {
+      return console.error(error)
+    }
+  }
+)
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -97,7 +123,7 @@ export const userSlice = createSlice({
     },
     [userLogin.rejected.type]: (state) => {
       state.isLogin = false
-      state.userData = null
+      state.userData = undefined
     },
     [userAuth.fulfilled.type]: (state, action) => {
       const { userData } = action.payload
@@ -107,12 +133,12 @@ export const userSlice = createSlice({
     },
     [userAuth.rejected.type]: (state) => {
       state.isLogin = false
-      state.userData = null
+      state.userData = undefined
     },
     [userLogout.pending.type]: (state) => {
       // 재발급 전에 기존의 accessToken을 폐기
       state.isLogin = false
-      state.userData = null
+      state.userData = undefined
     },
     [userToggleLikeMusic.fulfilled.type]: (state, action) => {
       const { likes } = action.payload
@@ -125,6 +151,16 @@ export const userSlice = createSlice({
       if (state.userData) {
         state.userData.followers = followers
         state.userData.following = following
+      }
+    },
+    [userUpdateImage.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.profileImage = action.payload
+      }
+    },
+    [userDeleteImage.fulfilled.type]: (state) => {
+      if (state.userData) {
+        state.userData.profileImage = undefined
       }
     },
   },

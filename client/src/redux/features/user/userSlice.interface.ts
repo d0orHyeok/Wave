@@ -8,6 +8,7 @@ export interface IUserData {
   email: string
   nickname?: string
   profileImage?: string
+  description?: string
   musics: IMusic[]
   likes: number[]
   followers: IFollowState[]
@@ -23,7 +24,7 @@ export interface IFollowState {
 
 export interface IUserState {
   isLogin: boolean
-  userData?: IUserData | null
+  userData?: IUserData
 }
 
 export interface IUserRegisterBody {
