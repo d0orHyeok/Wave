@@ -23,6 +23,7 @@ import { extname } from 'path';
 import { EntityStatus } from 'src/entities/common.types';
 import { UploadedFilesPipe } from './pipes/uploaded-files.pipe';
 import { UploadMusicDto } from './dto/upload-music.dto';
+import { uploadFileDisk } from 'src/upload';
 
 @Controller('music')
 export class MusicController {
@@ -62,7 +63,7 @@ export class MusicController {
 
     let coverUrl: string | undefined;
     if (cover) {
-      coverUrl = this.musicService.uploadFileDisk(
+      coverUrl = uploadFileDisk(
         cover,
         `${fileBase}cover${extname(cover.originalname)}`,
         'cover',

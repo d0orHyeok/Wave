@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MusicRepository } from 'src/music/music.repository';
 import { Music } from 'src/entities/music.entity';
 import { getStorage } from 'firebase-admin/storage';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import * as NodeID3 from 'node-id3';
 import * as uuid from 'uuid';
 import { EntityStatus } from 'src/entities/common.types';
@@ -134,24 +133,6 @@ export class MusicService {
         'Failed to upload file on firebase\n' + error,
       );
     }
-  }
-
-  uploadFileDisk(
-    file: Express.Multer.File,
-    fileName: string,
-    filePath?: string,
-  ) {
-    const defaultPath = 'uploads';
-    const uploadPath = !filePath ? defaultPath : `${defaultPath}/${filePath}`;
-
-    if (!existsSync(uploadPath)) {
-      mkdirSync(uploadPath);
-    }
-
-    const uploadFile = `${__dirname}/../../${uploadPath}/${fileName}`;
-    writeFileSync(uploadFile, file.buffer); // file.path 임시 파일 저장소
-
-    return `${uploadPath}/${fileName}`;
   }
 
   async updateMusicCount(id: number) {

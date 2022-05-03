@@ -1,3 +1,4 @@
+import { AuthProfileDto } from './dto/auth-profile.dto';
 import { AuthRegisterPipe } from './pipes/auth-register.pipe';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -12,7 +13,9 @@ import {
   Patch,
   Post,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,6 +23,7 @@ import { AuthCredentailDto } from './dto/auth-credential.dto';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 export class AuthController {
@@ -78,6 +82,31 @@ export class AuthController {
   async getUserData(@GetUser() user: User) {
     const userData = await this.authService.getUserData(user);
     return { userData };
+  }
+
+  @Patch('/profile')
+  @UseGuards(JwtAuthGuard)
+  async updateUserDesc(
+    @GetUser() user: User,
+    @Body(ValidationPipe) authProfileDto: AuthProfileDto,
+  ) {
+    return this.authService.updateProfileData(user, authProfileDto);
+  }
+
+  @Patch('/image/update')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async updateProfileImage(
+    @GetUser() user: User,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.authService.updateProfileImage(user, image);
+  }
+
+  @Patch('/image/delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteProfileImage(@GetUser() user: User) {
+    return this.authService.deleteProfileImage(user);
   }
 
   @Get('/:id')

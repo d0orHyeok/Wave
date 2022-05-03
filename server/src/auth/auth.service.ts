@@ -1,10 +1,16 @@
+import { AuthProfileDto } from './dto/auth-profile.dto';
+import { deleteFileDisk, uploadFileDisk } from 'src/upload';
 import { MusicRepository } from 'src/music/music.repository';
 import { LikeRepository } from './like.repository';
 import { FollowRepository } from './follow.repository';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { ConfigService } from '@nestjs/config';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { JwtService } from '@nestjs/jwt';
@@ -152,5 +158,37 @@ export class AuthService {
 
   async findUserById(id: string) {
     return this.userRepository.findUserById(id);
+  }
+
+  async updateProfileImage(user: User, image: Express.Multer.File) {
+    const filename = `${user.id}_${Date.now()}`;
+    const imageUrl = uploadFileDisk(image, `${filename}`, 'profile');
+
+    const existProfileImage = user.profileImage;
+    user.profileImage = imageUrl;
+
+    try {
+      await this.userRepository.save(user);
+      deleteFileDisk(existProfileImage);
+      return imageUrl;
+    } catch (error) {
+      deleteFileDisk(imageUrl);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async deleteProfileImage(user: User) {
+    const imagelink = user.profileImage;
+    deleteFileDisk(imagelink);
+    user.profileImage = null;
+    await this.userRepository.save(user);
+  }
+
+  async updateProfileData(user: User, authProfileDto: AuthProfileDto) {
+    const { nickname, description } = authProfileDto;
+    if (nickname) user.nickname = nickname;
+    if (description) user.description = description;
+    await this.userRepository.save(user);
+    return authProfileDto;
   }
 }

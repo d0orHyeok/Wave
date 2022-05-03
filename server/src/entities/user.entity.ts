@@ -35,6 +35,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   profileImage: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 
