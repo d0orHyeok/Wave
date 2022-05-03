@@ -60,6 +60,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
 
   useEffect(() => {
     if (music.id === currentMusic?.id) {
+      // 현재 재생중인 음악인지 확인
       setCardIsCurrentMusic(true)
     } else {
       setCardIsCurrentMusic(false)
@@ -79,6 +80,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
               }
               alt="cover"
             />
+            {/* when hover on image  */}
             <S.CardPlayButton
               isPlay={cardIsCurrentMusic.toString()}
               className="cardHoverBtn"
@@ -102,6 +104,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
             </S.CardHoverControl>
           </Link>
         </S.ImageBox>
+        {/* description */}
         <S.CartInfoBox>
           <div className="musicCard-title">
             <Link to={`/track/${music.userId}/${music.permalink}`}>
