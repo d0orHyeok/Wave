@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react'
 import * as S from './ProfileArea.style'
-import { FaUserAlt } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { MenuItem } from '@components/Common'
 import { BiLogInCircle } from 'react-icons/bi'
@@ -8,6 +7,7 @@ import LoginModal from '@components/LoginModal/LoginModal'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate, Link } from 'react-router-dom'
+import EmptyProfileImage from '@components/EmptyProfileImage/EmptyProfileImage'
 
 interface ProfileAreaProps {
   className?: string
@@ -18,6 +18,8 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const user = useAppSelector(selectUser)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+
+  const backendURI = process.env.REACT_APP_API_URL
 
   const openAlert = useAlert()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -59,11 +61,11 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
           ) : user.userData && user.userData.profileImage ? (
             <img
               className="user-image"
-              src={user.userData.profileImage}
-              alt="profile"
+              src={`${backendURI}/${user.userData.profileImage}`}
+              alt=""
             />
           ) : (
-            <FaUserAlt className="empty-image" />
+            <EmptyProfileImage />
           )}
         </S.ImageArea>
         <span className="profile-username">
