@@ -34,10 +34,10 @@ const Router = () => {
       <Route path="/settings" element={withUser(SettingsPage, true)}></Route>
       <Route path="/track/*" element={withUser(TrackPage, null)} />
       <Route path="/track/notfound" element={<NotFoundPage />} />
-      <Route
-        path="/profile/:userId"
-        element={withUser(ProfilePage, null)}
-      ></Route>
+      <Route path="/profile" element={withUser(ProfilePage, null)}>
+        <Route path=":userId" element={withUser(ProfilePage, null)} />
+        <Route path=":you" element={withUser(ProfilePage, true)} />
+      </Route>
       <Route path="/search" element={<SearchPage />}></Route>
     </Routes>
   )
