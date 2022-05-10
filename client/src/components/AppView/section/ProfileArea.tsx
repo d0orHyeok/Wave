@@ -90,10 +90,8 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
           horizontal: fold ? 'left' : 'right',
         }}
       >
-        <MenuItem
-          onClick={handleClickAndNavigate(`/profile/${user.userData?.id}`)}
-        >
-          프로필
+        <MenuItem onClick={handleClickAndNavigate(`/profile/you`)}>
+          <Link to="/profile/you">프로필</Link>
         </MenuItem>
         <MenuItem onClick={handleClickAndNavigate('/settings')}>
           <Link to="/settings">설정</Link>

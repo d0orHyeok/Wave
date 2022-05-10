@@ -34,6 +34,13 @@ export const ImageArea = styled.div`
     width: 30px;
     height: 30px;
     border-radius: 15px;
+    object-fit: cover;
+  }
+
+  & .empty-image {
+    margin: 5px;
+    width: 20px;
+    height: 20px;
   }
 `
 

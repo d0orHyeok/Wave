@@ -27,16 +27,15 @@ const Router = () => {
   return (
     <Routes>
       <Route path="*" element={<NotFoundPage />} />
-      <Route path="/" element={withUser(HomePage, null)} />
-      <Route path="/home" element={withUser(HomePage, null)} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/home" element={<HomePage />} />
       <Route path="/register" element={withUser(RegisterPage, false)} />
       <Route path="/upload" element={withUser(UploadPage, true)} />
       <Route path="/settings" element={withUser(SettingsPage, true)}></Route>
-      <Route path="/track/*" element={withUser(TrackPage, null)} />
+      <Route path="/track/*" element={<TrackPage />} />
       <Route path="/track/notfound" element={<NotFoundPage />} />
-      <Route path="/profile" element={withUser(ProfilePage, null)}>
-        <Route path=":userId" element={withUser(ProfilePage, null)} />
-        <Route path=":you" element={withUser(ProfilePage, true)} />
+      <Route path="/profile" element={<ProfilePage />}>
+        <Route path=":userId/*" element={<ProfilePage />} />
       </Route>
       <Route path="/search" element={<SearchPage />}></Route>
     </Routes>

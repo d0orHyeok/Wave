@@ -140,6 +140,14 @@ export const userSlice = createSlice({
       state.isLogin = false
       state.userData = undefined
     },
+    [userLogout.fulfilled.type]: (state) => {
+      state.isLogin = false
+      state.userData = undefined
+    },
+    [userLogout.rejected.type]: (state) => {
+      state.isLogin = false
+      state.userData = undefined
+    },
     [userToggleLikeMusic.fulfilled.type]: (state, action) => {
       const { likes } = action.payload
       if (state.userData) {
