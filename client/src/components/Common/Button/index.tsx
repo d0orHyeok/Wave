@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { IoMdHeart, IoMdHeartEmpty } from 'react-icons/io'
 import { BiShuffle, BiDotsHorizontalRounded } from 'react-icons/bi'
 import { RiRepeat2Line, RiRepeatOneLine } from 'react-icons/ri'
-import { BsPersonPlusFill, BsPersonPlus } from 'react-icons/bs'
+import {
+  BsFillPersonCheckFill,
+  BsPersonPlusFill,
+  BsPersonPlus,
+} from 'react-icons/bs'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>
 
@@ -133,6 +137,32 @@ const FollowButton = ({ isFollow, ...props }: IFollowButtonProps) => {
   )
 }
 
+const FollowTextBtn = styled.button<{ isFollow?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme, isFollow }) =>
+    isFollow ? theme.colors.primaryColor : 'white'};
+  background-color: ${({ theme, isFollow }) =>
+    isFollow ? 'none' : theme.colors.primaryColor};
+  & .icon {
+    margin-right: 8px;
+  }
+`
+
+const FollowTextButton = ({ isFollow, ...props }: IFollowButtonProps) => {
+  return (
+    <FollowTextBtn isFollow={isFollow} {...props}>
+      {isFollow ? (
+        <BsFillPersonCheckFill className="icon" />
+      ) : (
+        <BsPersonPlus className="icon" />
+      )}
+      {isFollow ? 'following' : 'follow'}
+    </FollowTextBtn>
+  )
+}
+
 const MoreButton = (props: ButtonProps) => {
   return (
     <SvgBtn {...props}>
@@ -149,6 +179,7 @@ export {
   LikeButton,
   LikeFilledButton,
   FollowButton,
+  FollowTextButton,
   MoreButton,
 }
 export default Button
