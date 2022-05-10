@@ -7,7 +7,8 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import * as S from './ProfilePage.style'
 import CanNotFind from '../../components/CanNotFind/CanNotFind'
 import Loading from '@components/Loading/Loading'
-import ProfileArea from './ProfileArea/ProfileArea'
+import ProfileHead from './ProfileHead/ProfileHead'
+import ProfileNav from './ProfileNav/ProfileNav'
 
 const ProfilePage = () => {
   const params = useParams()
@@ -20,15 +21,16 @@ const ProfilePage = () => {
   const [profileData, setProfileData] = useState<IUserData>()
 
   useEffect(() => {
+    const { userId } = params
     if (location.pathname === '/profile') {
       navigate('/profile/you')
-    } else if (location.pathname === '/profile/you') {
+    } else if (userId === 'you') {
+      if (!user.isLogin) navigate('/')
       setEditable(true)
       setProfileData(user.userData)
     } else {
-      const { userId } = params
       if (userId === user.userData?.id) {
-        navigate('/profile/you')
+        navigate(location.pathname.replace(`/${userId}`, '/you'))
       } else {
         setEditable(false)
         Axios.get(`/api/auth/${userId}`)
@@ -54,9 +56,8 @@ const ProfilePage = () => {
       ) : (
         <S.Wrapper>
           <S.Container>
-            {editable && 'Edit!'}
-            {profileData.nickname}
-            <ProfileArea data={profileData} />
+            <ProfileHead data={profileData} />
+            <ProfileNav editable={editable} />
           </S.Container>
         </S.Wrapper>
       )}

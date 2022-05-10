@@ -6,7 +6,7 @@ import { IUserData } from '@redux/features/user/userSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-interface IProfileAreaProps {
+interface IProfileHeadProps {
   data: IUserData
 }
 
@@ -14,6 +14,10 @@ const Container = styled.div<{ background: string }>`
   padding: 2rem;
   display: flex;
   ${({ background }) => background}
+
+  & > * {
+    flex-shrink: 0;
+  }
 `
 
 const Profile = styled.div`
@@ -25,6 +29,12 @@ const Profile = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  margin-right: 2rem;
+
+  ${({ theme }) => theme.device.tablet} {
+    width: 150px;
+    height: 150px;
   }
 `
 
@@ -46,7 +56,7 @@ const UserInfo = styled.div`
   }
 `
 
-const ProfileArea = ({ data }: IProfileAreaProps) => {
+const ProfileHead = ({ data }: IProfileHeadProps) => {
   const backendURI = process.env.REACT_APP_API_URL
 
   const [background, setBackground] = useState(EmptyBackground)
@@ -96,12 +106,12 @@ const ProfileArea = ({ data }: IProfileAreaProps) => {
       </Profile>
 
       <UserInfo>
-        <h1 className="info-title info-nickname">{data.nickname}</h1>
-        <h2 className="info-title info-username">{data.username}</h2>
+        <h1 className="info info-nickname">{data.nickname}</h1>
+        <h2 className="info info-username">{data.username}</h2>
       </UserInfo>
       <div></div>
     </Container>
   )
 }
 
-export default ProfileArea
+export default ProfileHead
