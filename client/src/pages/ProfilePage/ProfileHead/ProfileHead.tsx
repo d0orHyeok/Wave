@@ -74,11 +74,11 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
           algorithm: 'dominant',
         })
         const newbackground = `
-                background: ${primary.rgb};
+                background: ${secondary.rgb};
                 background: linear-gradient(
                   135deg,
-                  ${primary.rgba} 0%,
-                  ${secondary.rgba} 100%
+                  ${secondary.rgba} 0%,
+                  ${primary.rgba} 100%
                 );
             `
         setBackground(newbackground)
@@ -106,7 +106,7 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
       </Profile>
 
       <UserInfo>
-        <h1 className="info info-nickname">{data.nickname}</h1>
+        <h1 className="info info-nickname">{data.nickname || data.username}</h1>
         <h2 className="info info-username">{data.username}</h2>
       </UserInfo>
       <div></div>

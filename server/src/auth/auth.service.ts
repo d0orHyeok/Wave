@@ -188,7 +188,10 @@ export class AuthService {
     const { nickname, description } = authProfileDto;
     if (nickname) user.nickname = nickname;
     if (description) user.description = description;
-    await this.userRepository.save(user);
-    return authProfileDto;
+    const updateUser = await this.userRepository.save(user);
+    return {
+      nickname: updateUser.nickname,
+      description: updateUser.description,
+    };
   }
 }

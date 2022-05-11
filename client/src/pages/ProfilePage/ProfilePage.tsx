@@ -25,12 +25,11 @@ const ProfilePage = () => {
     if (location.pathname === '/profile') {
       navigate('/profile/you')
     } else if (userId === 'you') {
-      if (!user.isLogin) navigate('/')
-      setEditable(true)
-      setProfileData(user.userData)
+      !user.userData ? navigate('/') : navigate(`/profile/${user.userData.id}`)
     } else {
       if (userId === user.userData?.id) {
-        navigate(location.pathname.replace(`/${userId}`, '/you'))
+        setEditable(true)
+        setProfileData(user.userData)
       } else {
         setEditable(false)
         Axios.get(`/api/auth/${userId}`)

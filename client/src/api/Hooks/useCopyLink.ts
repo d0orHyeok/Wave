@@ -5,16 +5,16 @@ function useCopyLink() {
   const openAlert = useAlert()
 
   const copyLink = useCallback(
-    (link: string) => {
+    (link: string, message?: { success: string; fail: string }) => {
       if (navigator.clipboard) {
         // (IE는 사용 못하고, 크롬은 66버전 이상일때 사용 가능합니다.)
         navigator.clipboard
           .writeText(link)
           .then(() => {
-            openAlert('클립보드에 복사되었습니다.')
+            openAlert(!message ? '클립보드에 복사되었습니다.' : message.success)
           })
           .catch(() => {
-            openAlert('복사를 다시 시도해주세요.')
+            openAlert(!message ? '복사를 다시 시도해주세요.' : message.fail)
           })
       } else {
         // 흐름 2.
@@ -39,7 +39,7 @@ function useCopyLink() {
         document.execCommand('copy')
         // 흐름 6.
         document.body.removeChild(textarea)
-        openAlert('클립보드에 복사되었습니다.')
+        openAlert(!message ? '클립보드에 복사되었습니다.' : message.success)
       }
     },
     [openAlert]

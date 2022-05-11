@@ -65,7 +65,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
               alt=""
             />
           ) : (
-            <EmptyProfileImage />
+            <EmptyProfileImage size={30} />
           )}
         </S.ImageArea>
         <span className="profile-username">

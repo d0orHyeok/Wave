@@ -111,6 +111,18 @@ export const userDeleteImage = createAsyncThunk(
   }
 )
 
+export const userUpdateProfile = createAsyncThunk(
+  'USER_UPDATE_PROFILE',
+  async (data: { nickname?: string; description?: string }) => {
+    try {
+      const response = await Axios.patch(`/api/auth/profile`, data)
+      return response.data
+    } catch (error) {
+      return console.error(error)
+    }
+  }
+)
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -169,6 +181,13 @@ export const userSlice = createSlice({
     [userDeleteImage.fulfilled.type]: (state) => {
       if (state.userData) {
         state.userData.profileImage = undefined
+      }
+    },
+    [userUpdateProfile.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        const { nickname, description } = action.payload
+        state.userData.nickname = nickname
+        state.userData.description = description
       }
     },
   },

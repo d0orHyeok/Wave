@@ -11,7 +11,7 @@ export const ProfileWrapper = styled.div<{ fold: string }>`
   align-items: center;
   cursor: pointer;
   margin-left: ${({ fold }) => (fold === 'true' ? '0' : '-3px')};
-  justify-content: ${({ fold }) => (fold ? 'center' : 'left')};
+  justify-content: ${({ fold }) => (fold === 'true' ? 'center' : 'left')};
   transition: ease color 0.1s;
 
   & .profile-username {

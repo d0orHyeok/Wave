@@ -1,22 +1,38 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { Modal as MuiModal, ModalProps } from '@mui/material'
-import { useAppTheme } from '@redux/context/appThemeProvider'
+import { MdClose } from 'react-icons/md'
 
-const StyledModal = styled(MuiModal)<{ apptheme: string }>`
+const StyledModal = styled(MuiModal)`
   & .MuiBackdrop-root {
-    background-color: ${({ apptheme }) =>
-      apptheme === 'dark' ? 'rgba(18,18,18,0.38)' : 'rgba(255,255,255,0.38)'};
+    background-color: rgba(${({ theme }) => theme.colors.bgColorRGB}, 0.6);
   }
 `
 
-const Modal = (props: ModalProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [appTheme, _] = useAppTheme()
+const CloseButton = styled.button`
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  border: none;
+  font-size: 24px;
+`
+
+const Modal = ({ children, ...props }: ModalProps) => {
+  const handleClose = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (props.onClose) props.onClose(event, 'backdropClick')
+    },
+    [props]
+  )
 
   return (
-    <StyledModal {...props} apptheme={appTheme}>
-      {props.children}
+    <StyledModal {...props}>
+      <>
+        <CloseButton onClick={handleClose}>
+          <MdClose />
+        </CloseButton>
+        {children}
+      </>
     </StyledModal>
   )
 }

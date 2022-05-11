@@ -1,11 +1,14 @@
 import { useToggleFollow } from '@api/UserHooks'
 import { FollowTextButton } from '@components/Common/Button'
 import { useAppSelector } from '@redux/hook'
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { navItems } from '../assets/profileNavItem'
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from 'react-icons/bs'
+import { Modal } from '@components/Common'
+import EditProfile from '@components/InnerModal/EditProfile'
+import { useCopyLink } from '@api/MusicHooks'
 
 interface ProfileNavProps {
   editable?: boolean
@@ -13,11 +16,10 @@ interface ProfileNavProps {
 
 const Nav = styled.div`
   font-size: 16px;
-  margin-top: 8px;
-  padding: 0 16px;
+  margin: 8px 16px;
   display: flex;
   align-items: center;
-  width: 100%;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.bgColorRGBA(0.1)};
   & ul {
     width: 400px;
     overflow-x: auto;
@@ -103,10 +105,13 @@ const ButtonContainer = styled.div`
 const ProfileNav = ({ editable }: ProfileNavProps) => {
   const { userId, '*': nav } = useParams()
   const toggleFollow = useToggleFollow()
+  const copyLink = useCopyLink()
 
   const following = useAppSelector((state) => state.user.userData?.following)
 
   const ulRef = useRef<HTMLUListElement>(null)
+
+  const [open, setOpen] = useState(false)
 
   const handleClickFollow = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,12 +122,8 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
     [toggleFollow, userId]
   )
 
-  const handleClickEdit = useCallback(() => {
-    console.log('edit')
-  }, [])
-
-  const handleClickShare = useCallback(() => {
-    console.log('share')
+  const handleCloseModal = useCallback(() => {
+    setOpen(false)
   }, [])
 
   const handleClickArrowButton =
@@ -140,43 +141,63 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
       }
     }
 
+  const handleClickEdit = useCallback(() => {
+    setOpen(true)
+  }, [])
+
+  const handleClickShare = useCallback(() => {
+    copyLink(`${location.host}/profile/${userId}`, {
+      success: 'Link Copied',
+      fail: 'Fail to copy link',
+    })
+  }, [copyLink, userId])
+
   return (
-    <Nav>
-      <ScrollButton onClick={handleClickArrowButton(-1)}>
-        <BsFillCaretLeftFill />
-      </ScrollButton>
-      <ul ref={ulRef}>
-        {navItems.map((item, index) => (
-          <li
-            id={`profile-nav-${index}`}
-            key={item.name}
-            className={nav === item.path ? 'selected' : undefined}
-          >
-            <Link to={`/profile/${userId}${item.path ? '/' + item.path : ''}`}>
-              {item.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <ScrollButton onClick={handleClickArrowButton(1)}>
-        <BsFillCaretRightFill />
-      </ScrollButton>
-      <ButtonContainer>
-        {editable ? (
-          <button className="profileBtn" onClick={handleClickEdit}>
-            edit
+    <>
+      <Nav>
+        <ScrollButton onClick={handleClickArrowButton(-1)}>
+          <BsFillCaretLeftFill />
+        </ScrollButton>
+        <ul ref={ulRef}>
+          {navItems.map((item, index) => (
+            <li
+              id={`profile-nav-${index}`}
+              key={item.name}
+              className={nav === item.path ? 'selected' : undefined}
+            >
+              <Link
+                to={`/profile/${userId}${item.path ? '/' + item.path : ''}`}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <ScrollButton onClick={handleClickArrowButton(1)}>
+          <BsFillCaretRightFill />
+        </ScrollButton>
+        <ButtonContainer>
+          {editable ? (
+            <>
+              <button className="profileBtn" onClick={handleClickEdit}>
+                edit
+              </button>
+              <Modal open={open} onClose={handleCloseModal}>
+                <EditProfile onClose={handleCloseModal} />
+              </Modal>
+            </>
+          ) : (
+            <FollowTextButton
+              isFollow={following?.findIndex((f) => f.id === userId) !== -1}
+              onClick={handleClickFollow}
+            />
+          )}
+          <button className="profileBtn" onClick={handleClickShare}>
+            share
           </button>
-        ) : (
-          <FollowTextButton
-            isFollow={following?.findIndex((f) => f.id === userId) !== -1}
-            onClick={handleClickFollow}
-          />
-        )}
-        <button className="profileBtn" onClick={handleClickShare}>
-          share
-        </button>
-      </ButtonContainer>
-    </Nav>
+        </ButtonContainer>
+      </Nav>
+    </>
   )
 }
 
