@@ -194,6 +194,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { value, id } = event.currentTarget
       id === 'nickname' ? setNickname(value) : setDescription(value)
+      setChanged(true)
     },
     []
   )

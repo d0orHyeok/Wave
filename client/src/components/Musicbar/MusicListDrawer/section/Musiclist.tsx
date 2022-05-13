@@ -169,59 +169,61 @@ const Musiclist = () => {
         </S.PlaylistHead>
         <S.PlaylistContainer>
           <ul>
-            {indexArray.map((indexItem, index) => (
-              <S.PlaylistItem key={index} select={index === currentIndex}>
-                <S.ItemImageBox onClick={handleClickPlay(index)}>
-                  <img
-                    className="image"
-                    src={
-                      musics[indexItem]?.cover
-                        ? `${backendURI}/${musics[indexItem].cover}`
-                        : 'img/empty-cover.PNG'
-                    }
-                    alt="Album Art"
-                  />
+            {indexArray.map((indexItem, index) => {
+              const musicItem = musics[indexItem]
+              if (musicItem)
+                return (
+                  <S.PlaylistItem key={index} select={index === currentIndex}>
+                    <S.ItemImageBox onClick={handleClickPlay(index)}>
+                      <img
+                        className="image"
+                        src={
+                          musicItem?.cover
+                            ? `${backendURI}/${musicItem.cover}`
+                            : 'img/empty-cover.PNG'
+                        }
+                        alt="Album Art"
+                      />
 
-                  <span className="hoverIcon">
-                    {!isPlay || index !== currentIndex ? (
-                      <FaPlay />
-                    ) : (
-                      <FaPause />
-                    )}
-                  </span>
-                </S.ItemImageBox>
-                <S.ItemInfoBox>
-                  <h3 id="music-uploader" className="uploader">
-                    <Link to="#">
-                      {musics[indexItem]?.uploader
-                        ? musics[indexItem].uploader
-                        : ''}
-                    </Link>
-                  </h3>
-                  <h2 id="music-title" className="title">
-                    <Link to="#">{musics[indexItem]?.title}</Link>
-                  </h2>
-                </S.ItemInfoBox>
-                <S.ItemControlBox>
-                  <span className="duration">
-                    {convertTimeToString(Number(musics[indexItem].duration))}
-                  </span>
-                  <LikeFilledButton
-                    isLike={likes.includes(musics[indexItem].id)}
-                    className="btn"
-                    onClick={handleClickLike}
-                    aria-valuetext={`${musics[indexItem].id}`}
-                  />
-                  <MoreButton
-                    id="playlist-moreBtn"
-                    className="btn moreBtn"
-                    onClick={handleClickItem}
-                    value={indexItem}
-                    style={{ fontSize: '1.2em' }}
-                  />
-                </S.ItemControlBox>
-              </S.PlaylistItem>
-            ))}
+                      <span className="hoverIcon">
+                        {!isPlay || index !== currentIndex ? (
+                          <FaPlay />
+                        ) : (
+                          <FaPause />
+                        )}
+                      </span>
+                    </S.ItemImageBox>
+                    <S.ItemInfoBox>
+                      <h3 id="music-uploader" className="uploader">
+                        <Link to="#">
+                          {musicItem.user?.nickname || musicItem.userId}
+                        </Link>
+                      </h3>
+                      <h2 id="music-title" className="title">
+                        <Link to="#">{musicItem?.title}</Link>
+                      </h2>
+                    </S.ItemInfoBox>
+                    <S.ItemControlBox>
+                      <span className="duration">
+                        {convertTimeToString(Number(musicItem.duration))}
+                      </span>
+                      <LikeFilledButton
+                        isLike={likes.includes(musicItem.id)}
+                        className="btn"
+                        onClick={handleClickLike}
+                        aria-valuetext={`${musicItem.id}`}
+                      />
+                      <MoreButton
+                        id="playlist-moreBtn"
+                        className="btn moreBtn"
+                        onClick={handleClickItem}
+                        value={indexItem}
+                        style={{ fontSize: '1.2em' }}
+                      />
+                    </S.ItemControlBox>
+                  </S.PlaylistItem>
+                )
+            })}
           </ul>
         </S.PlaylistContainer>
       </S.AreaPlaylist>

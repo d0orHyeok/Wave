@@ -64,7 +64,6 @@ export interface IMusic {
   status: MusicStatus
   metaData: IMusicMetadata
   userId: string
-  uploader: string
   user?: IUserData
   createdAt: string
   updatedAt: string

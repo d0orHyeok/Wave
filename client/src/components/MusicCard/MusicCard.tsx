@@ -112,7 +112,9 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
             </Link>
           </div>
           <div className="musicCard-uploader">
-            <Link to={`/profile/${music.userId}`}>{music.uploader}</Link>
+            <Link to={`/profile/${music.userId}`}>
+              {music.user?.nickname || music.userId}
+            </Link>
           </div>
         </S.CartInfoBox>
       </S.CardContainer>

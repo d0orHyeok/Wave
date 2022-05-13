@@ -224,7 +224,9 @@ const Musicbar = () => {
                   <div className="music-info">
                     <h3 id="music-uploader" className="uploader">
                       <Link to="#">
-                        {currentMusic?.uploader ? currentMusic?.uploader : ''}
+                        {currentMusic?.user
+                          ? currentMusic?.user.nickname
+                          : currentMusic?.userId}
                       </Link>
                     </h3>
                     <h2 id="music-title" className="title">
