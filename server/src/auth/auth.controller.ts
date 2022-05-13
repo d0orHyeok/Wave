@@ -44,7 +44,7 @@ export class AuthController {
   ): Promise<{ accessToken: string }> {
     const user = await this.authService.validateUser(authCredentailDto);
 
-    const payload = { id: user.id };
+    const payload = { id: user.id, username: user.username };
 
     const accessToken = this.authService.getAccessToken(payload);
     const { refreshToken, cookieOption } =
@@ -72,7 +72,7 @@ export class AuthController {
   @Post('/refresh')
   @UseGuards(JwTRefreshGuard)
   refreshAccessToken(@GetUser() user: User) {
-    const payload = { id: user.id };
+    const payload = { id: user.id, username: user.username };
     const accessToken = this.authService.getAccessToken(payload);
     return { accessToken };
   }
@@ -111,9 +111,7 @@ export class AuthController {
 
   @Get('/:id')
   async getUserById(@Param('id') id: string) {
-    const user = await this.authService.findUserById(id);
-    const userData = await this.authService.getUserData(user);
-    return { userData };
+    return this.authService.findUserById(id);
   }
 
   @Patch('/:musicId/like')

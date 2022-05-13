@@ -23,7 +23,7 @@ export class User extends BaseEntity {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column()
@@ -47,7 +47,7 @@ export class User extends BaseEntity {
   @OneToMany(() => Follow, (follow) => follow.following)
   following: Follow[];
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   hashedRefreshToken: string;
 
   @OneToMany(() => Music, (music) => music.user, { eager: true })

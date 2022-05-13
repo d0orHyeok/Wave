@@ -59,11 +59,8 @@ export class Music extends BaseEntity {
   @Column({ default: 0 })
   count: number;
 
-  @Column({ name: 'userId', nullable: true })
+  @Column({ nullable: true, name: 'userId' })
   userId: string;
-
-  @Column({ name: 'uploader', nullable: true })
-  uploader: string;
 
   @OneToMany(() => Like, (like) => like.music)
   likes: Like[];
@@ -74,13 +71,8 @@ export class Music extends BaseEntity {
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,
     onDelete: 'CASCADE',
-    nullable: true,
-    createForeignKeyConstraints: false,
   })
-  @JoinColumn([
-    { name: 'userId', referencedColumnName: 'id' },
-    { name: 'uploader', referencedColumnName: 'username' },
-  ])
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
   @CreateDateColumn()

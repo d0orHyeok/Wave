@@ -33,9 +33,9 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
   async validate(req: Request, payload) {
     const refreshToken = req.cookies?.RefreshToken;
-    const { id } = payload;
+    const { username } = payload;
 
-    const user: User = await this.userRepository.findOne({ id });
+    const user: User = await this.userRepository.findUserByUsername(username);
 
     if (!user) {
       throw new UnauthorizedException("Can't find user");

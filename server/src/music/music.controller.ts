@@ -16,7 +16,6 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Music } from 'src/entities/music.entity';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
@@ -86,7 +85,7 @@ export class MusicController {
   }
 
   @Get('/:id')
-  getMusicById(@Param('id', ParseIntPipe) id: number): Promise<Music> {
+  getMusicById(@Param('id', ParseIntPipe) id: number) {
     return this.musicService.findMusicById(id);
   }
 
@@ -94,7 +93,7 @@ export class MusicController {
   getMusicByPermalink(
     @Param('userId') userId: string,
     @Param('permalink') permalink: string,
-  ): Promise<Music> {
+  ) {
     return this.musicService.findMusicByPermalink(userId, permalink);
   }
 

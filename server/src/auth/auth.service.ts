@@ -89,9 +89,7 @@ export class AuthService {
   ): Promise<void> {
     const salt = await bcrypt.genSalt();
     const hashedRefreshToken = await bcrypt.hash(refreshToken, salt);
-
-    user.hashedRefreshToken = hashedRefreshToken;
-    await this.userRepository.save(user);
+    await this.userRepository.updateRefreshToken(user, hashedRefreshToken);
   }
 
   async compareRefreshToken(
@@ -107,8 +105,7 @@ export class AuthService {
   }
 
   async removeRefreshTokenWithCookie(user: User): Promise<CookieOptions> {
-    user.hashedRefreshToken = null;
-    await this.userRepository.save(user);
+    await this.userRepository.updateRefreshToken(user, null);
 
     return {
       httpOnly: true,
@@ -117,11 +114,9 @@ export class AuthService {
   }
 
   async getUserData(user: User) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, hashedRefreshToken, ...userData } = user;
     const followData = await this.followRepository.getFollow(user);
     const likes = await this.likeRepository.getLikes(user);
-    return { ...userData, ...followData, likes };
+    return { ...user, ...followData, likes };
   }
 
   async likeMusic(user: User, musicId: number) {
@@ -157,7 +152,9 @@ export class AuthService {
   }
 
   async findUserById(id: string) {
-    return this.userRepository.findUserById(id);
+    const user = await this.userRepository.findUserById(id);
+    const userData = await this.getUserData(user);
+    return { userData };
   }
 
   async updateProfileImage(user: User, image: Express.Multer.File) {

@@ -11,7 +11,11 @@ import { EntityStatus } from 'src/entities/common.types';
 @EntityRepository(Music)
 export class MusicRepository extends Repository<Music> {
   async getAllMusic(): Promise<Music[]> {
-    return this.find();
+    return await this.createQueryBuilder('music')
+      .leftJoinAndSelect('music.user', 'user')
+      .select(['music', 'user.nickname'])
+      .where('music.status = :status', { status: 'PUBLIC' })
+      .getMany();
   }
 
   async createMusic(createMusicData: MusicDataDto, user: User): Promise<Music> {

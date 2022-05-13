@@ -25,8 +25,19 @@ export class UserRepository extends Repository<User> {
     }
   }
 
+  getCols<T>(): (keyof T)[] {
+    return this.metadata.columns.map((col) => col.propertyName) as (keyof T)[];
+  }
+
   async findUserByUsername(username: string): Promise<User> {
-    const user = await this.findOne({ username });
+    // const user = await this.createQueryBuilder('user')
+    //   .select('*')
+    //   .where('user.username = :username', { username: username })
+    //   .getOne();
+    const user = await this.findOne({
+      where: { username },
+      select: this.getCols(),
+    });
 
     if (!user) {
       throw new UnauthorizedException(`Can't find User with id: ${username}`);
@@ -43,5 +54,13 @@ export class UserRepository extends Repository<User> {
     }
 
     return user;
+  }
+
+  async updateRefreshToken(user: User, hashedRefreshToken?: string) {
+    return this.createQueryBuilder()
+      .update(User)
+      .set({ hashedRefreshToken })
+      .where('id = :id', { id: user.id })
+      .execute();
   }
 }

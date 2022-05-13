@@ -1,3 +1,4 @@
+import { AuthService } from './../auth/auth.service';
 import { MusicMetadataDto } from './dto/music-metadata.dto';
 import { MusicDataDto } from './dto/music-data.dto';
 import { ConfigService } from '@nestjs/config';
@@ -17,6 +18,7 @@ export class MusicService {
     @InjectRepository(MusicRepository)
     private config: ConfigService,
     private musicRepository: MusicRepository,
+    private authService: AuthService,
   ) {}
 
   async getAllMusic(): Promise<Music[]> {
@@ -81,12 +83,19 @@ export class MusicService {
     return !newBuffer ? file : { ...file, buffer: newBuffer };
   }
 
-  async findMusicById(id: number): Promise<Music> {
-    return this.musicRepository.findMusicById(id);
+  async findMusicById(id: number) {
+    const music = await this.musicRepository.findMusicById(id);
+    const user = await this.authService.findUserById(music.userId);
+    return { ...music, user };
   }
 
   async findMusicByPermalink(userId: string, permalink: string) {
-    return this.musicRepository.findMusicByPermalink(userId, permalink);
+    const music = await this.musicRepository.findMusicByPermalink(
+      userId,
+      permalink,
+    );
+    const user = await this.authService.findUserById(music.userId);
+    return { ...music, user };
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {
