@@ -37,8 +37,6 @@ const getLocalVolume = () => {
 }
 
 const Musicbar = () => {
-  const backendURI = process.env.REACT_APP_API_URL
-
   const dispatch = useAppDispatch()
   const toggleLikeMusic = useToggleLikeMusic()
   const toggleFollow = useToggleFollow()
@@ -212,11 +210,7 @@ const Musicbar = () => {
                   {/* Music Image */}
                   <div className="img-container">
                     <img
-                      src={
-                        currentMusic?.cover
-                          ? `${backendURI}/${currentMusic.cover}`
-                          : 'img/empty-cover.PNG'
-                      }
+                      src={currentMusic.cover || 'img/empty-cover.PNG'}
                       alt="Album Art"
                     />
                   </div>

@@ -26,8 +26,6 @@ import { useCopyLink } from '@api/MusicHooks'
 import { convertTimeToString } from '@api/functions'
 
 const Musiclist = () => {
-  const backendURI = process.env.REACT_APP_API_URL
-
   const copyLink = useCopyLink()
   const dispatch = useAppDispatch()
   const toggleLikeMusic = useToggleLikeMusic()
@@ -137,11 +135,7 @@ const Musiclist = () => {
         <S.MusicImage>
           {currentMusic ? (
             <img
-              src={
-                currentMusic?.cover
-                  ? `${backendURI}/${currentMusic.cover}`
-                  : 'img/empty-cover.PNG'
-              }
+              src={currentMusic.cover || 'img/empty-cover.PNG'}
               alt="Album Art"
             />
           ) : (
@@ -177,11 +171,7 @@ const Musiclist = () => {
                     <S.ItemImageBox onClick={handleClickPlay(index)}>
                       <img
                         className="image"
-                        src={
-                          musicItem?.cover
-                            ? `${backendURI}/${musicItem.cover}`
-                            : 'img/empty-cover.PNG'
-                        }
+                        src={musicItem?.cover || 'img/empty-cover.PNG'}
                         alt="Album Art"
                       />
 

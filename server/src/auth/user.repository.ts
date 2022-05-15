@@ -30,10 +30,6 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserByUsername(username: string): Promise<User> {
-    // const user = await this.createQueryBuilder('user')
-    //   .select('*')
-    //   .where('user.username = :username', { username: username })
-    //   .getOne();
     const user = await this.findOne({
       where: { username },
       select: this.getCols(),

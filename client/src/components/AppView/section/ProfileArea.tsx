@@ -19,8 +19,6 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const backendURI = process.env.REACT_APP_API_URL
-
   const openAlert = useAlert()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -61,7 +59,7 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
           ) : user.userData && user.userData.profileImage ? (
             <img
               className="user-image"
-              src={`${backendURI}/${user.userData.profileImage}`}
+              src={user.userData.profileImage}
               alt=""
             />
           ) : (

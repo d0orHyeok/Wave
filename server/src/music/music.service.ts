@@ -138,6 +138,7 @@ export class MusicService {
         link: this.createPersistentDownloadUrl(filename, dowloadToken),
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         'Failed to upload file on firebase\n' + error,
       );

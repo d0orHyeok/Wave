@@ -1,6 +1,5 @@
 import Button, { PrimaryButton } from '@components/Common/Button'
 import EmptyProfileImage from '@components/EmptyProfileImage/EmptyProfileImage'
-import { Divider } from '@mui/material'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -11,32 +10,11 @@ import {
   userUpdateProfile,
 } from '@redux/features/user/userSlice'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
-
-const Wrapper = styled.div`
-  position: fixed;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: ${({ theme }) => theme.colors.bgColor};
-  box-shadow: 3px 3px 10px 0 ${({ theme }) => theme.colors.bgTextRGBA(0.16)};
-
-  border-radius: 4px;
-  max-width: 850px;
-  width: 100%;
-`
-
-const Container = styled.div`
-  padding: 25px;
-
-  & .title {
-    font-size: 1.25rem;
-    line-height: 1.25rem;
-  }
-`
-
-const StyledDivider = styled(Divider)`
-  border-color: ${({ theme }) => theme.colors.bgTextRGBA(0.16)} !important;
-`
+import {
+  InnerModalWrapper,
+  InnerModalContainer,
+  StyledDivider,
+} from './common.style'
 
 const EditContainer = styled.div`
   padding: 1rem 0;
@@ -179,7 +157,6 @@ interface EditProfileProps {
 }
 
 const EditProfile = ({ onClose }: EditProfileProps) => {
-  const backendURI = process.env.REACT_APP_API_URL
   const dispatch = useAppDispatch()
   const userData = useAppSelector((state) => state.user.userData)
 
@@ -271,8 +248,8 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
   }, [description, image, imageDelete, nickname, userData])
 
   return (
-    <Wrapper>
-      <Container>
+    <InnerModalWrapper>
+      <InnerModalContainer>
         <h1 className="title">Edit your Profile</h1>
         <StyledDivider sx={{ margin: '0.5rem 0' }} />
         <EditContainer>
@@ -286,7 +263,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
               <EmptyProfileImage className="empty" />
             ) : (
               <div className="profileImage">
-                <img src={`${backendURI}/${userData.profileImage}`} alt="" />
+                <img src={userData.profileImage} alt="" />
               </div>
             )}
             {/* 이미지 업로드 */}
@@ -351,8 +328,8 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
             Save Changes
           </PrimaryButton>
         </ButtonArea>
-      </Container>
-    </Wrapper>
+      </InnerModalContainer>
+    </InnerModalWrapper>
   )
 }
 

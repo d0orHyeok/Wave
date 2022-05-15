@@ -57,8 +57,6 @@ const UserInfo = styled.div`
 `
 
 const ProfileHead = ({ data }: IProfileHeadProps) => {
-  const backendURI = process.env.REACT_APP_API_URL
-
   const [background, setBackground] = useState(EmptyBackground)
 
   const changeBackground = useCallback(async () => {
@@ -66,7 +64,7 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
     if (data.profileImage) {
       const fac = new FastAverageColor()
       try {
-        const url = `${backendURI}/${data.profileImage}`
+        const url = `${data.profileImage}`
         // 이미지의 평균주색
         const primary = await fac.getColorAsync(url)
         // 이미지의 평균보조색
@@ -89,7 +87,7 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
     } else {
       setBackground(EmptyBackground)
     }
-  }, [backendURI, data.profileImage])
+  }, [data.profileImage])
 
   useEffect(() => {
     changeBackground()
@@ -101,7 +99,7 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
         {!data.profileImage ? (
           <EmptyProfileImage />
         ) : (
-          <img src={`${backendURI}/${data.profileImage}`} alt="" />
+          <img src={data.profileImage} alt="" />
         )}
       </Profile>
 

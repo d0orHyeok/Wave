@@ -159,7 +159,10 @@ export class AuthService {
 
   async updateProfileImage(user: User, image: Express.Multer.File) {
     const filename = `${user.id}_${Date.now()}`;
-    const imageUrl = uploadFileDisk(image, `${filename}`, 'profile');
+    const imageUrl =
+      this.config.get<string>('SERVER_URL') +
+      '/' +
+      uploadFileDisk(image, `${filename}`, 'profile');
 
     const existProfileImage = user.profileImage;
     user.profileImage = imageUrl;

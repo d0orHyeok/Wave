@@ -23,10 +23,14 @@ import { EntityStatus } from 'src/entities/common.types';
 import { UploadedFilesPipe } from './pipes/uploaded-files.pipe';
 import { UploadMusicDto } from './dto/upload-music.dto';
 import { uploadFileDisk } from 'src/upload';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('music')
 export class MusicController {
-  constructor(private musicService: MusicService) {}
+  constructor(
+    private musicService: MusicService,
+    private config: ConfigService,
+  ) {}
   private logger = new Logger('MusicController');
 
   @Get('/')
@@ -62,11 +66,14 @@ export class MusicController {
 
     let coverUrl: string | undefined;
     if (cover) {
-      coverUrl = uploadFileDisk(
-        cover,
-        `${fileBase}cover${extname(cover.originalname)}`,
-        'cover',
-      );
+      coverUrl =
+        this.config.get<string>('SERVER_URL') +
+        '/' +
+        uploadFileDisk(
+          cover,
+          `${fileBase}cover${extname(cover.originalname)}`,
+          'cover',
+        );
     }
 
     const { filename, link } = await this.musicService.uploadFileFirebase(

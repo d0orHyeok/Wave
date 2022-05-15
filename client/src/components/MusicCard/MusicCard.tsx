@@ -72,14 +72,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
       <S.CardContainer style={style}>
         <S.ImageBox>
           <Link to={`/track/${music.userId}/${music.permalink}`}>
-            <img
-              src={
-                music?.cover
-                  ? `${process.env.REACT_APP_API_URL}/${music.cover}`
-                  : 'img/empty-cover.PNG'
-              }
-              alt="cover"
-            />
+            <img src={music?.cover || 'img/empty-cover.PNG'} alt="cover" />
             {/* when hover on image  */}
             <S.CardPlayButton
               isPlay={cardIsCurrentMusic.toString()}
