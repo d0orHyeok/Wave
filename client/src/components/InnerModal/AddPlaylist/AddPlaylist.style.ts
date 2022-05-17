@@ -157,7 +157,7 @@ export const AddItem = styled.li`
     margin-right: 8px;
     width: 30px;
     height: 28px;
-    & img {
+    & .img {
       width: 100%;
       height: 100%;
       object-fit: cover;

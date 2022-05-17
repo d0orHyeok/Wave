@@ -30,7 +30,7 @@ export const ImageBox = styled.div`
     height: 110px;
   }
 
-  & img {
+  & .img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -43,7 +43,7 @@ export const ImageBox = styled.div`
   }
 
   &:hover {
-    & img {
+    & .img {
       filter: saturate(100%) brightness(40%);
     }
 

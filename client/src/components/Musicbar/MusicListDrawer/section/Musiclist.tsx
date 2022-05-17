@@ -24,6 +24,7 @@ import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/UserHooks'
 import { useCopyLink } from '@api/MusicHooks'
 import { convertTimeToString } from '@api/functions'
+import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()
@@ -134,10 +135,11 @@ const Musiclist = () => {
       <S.AreaImage className="area-image">
         <S.MusicImage>
           {currentMusic ? (
-            <img
-              src={currentMusic.cover || 'img/empty-cover.PNG'}
-              alt="Album Art"
-            />
+            currentMusic.cover ? (
+              <img className="img" src={currentMusic.cover} alt="Album Art" />
+            ) : (
+              <EmptyMusicCover className="img" />
+            )
           ) : (
             <></>
           )}
@@ -169,12 +171,15 @@ const Musiclist = () => {
                 return (
                   <S.PlaylistItem key={index} select={index === currentIndex}>
                     <S.ItemImageBox onClick={handleClickPlay(index)}>
-                      <img
-                        className="image"
-                        src={musicItem?.cover || 'img/empty-cover.PNG'}
-                        alt="Album Art"
-                      />
-
+                      {musicItem.cover ? (
+                        <img
+                          className="image"
+                          src={musicItem.cover}
+                          alt="Album Art"
+                        />
+                      ) : (
+                        <EmptyMusicCover className="image" />
+                      )}
                       <span className="hoverIcon">
                         {!isPlay || index !== currentIndex ? (
                           <FaPlay />

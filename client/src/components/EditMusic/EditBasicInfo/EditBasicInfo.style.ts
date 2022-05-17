@@ -36,7 +36,7 @@ export const EditBasicInfo = styled.div`
       }
     }
 
-    & img {
+    & .img {
       width: 100%;
       height: 100%;
       object-fit: cover;

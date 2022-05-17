@@ -12,6 +12,7 @@ import {
 import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/UserHooks'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
+import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
 
 interface IMusicCardProps {
   music: IMusic
@@ -72,7 +73,11 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
       <S.CardContainer style={style}>
         <S.ImageBox>
           <Link to={`/track/${music.userId}/${music.permalink}`}>
-            <img src={music?.cover || 'img/empty-cover.PNG'} alt="cover" />
+            {music.cover ? (
+              <img className="img" src={music.cover} alt="cover" />
+            ) : (
+              <EmptyMusicCover className="img" />
+            )}
             {/* when hover on image  */}
             <S.CardPlayButton
               isPlay={cardIsCurrentMusic.toString()}

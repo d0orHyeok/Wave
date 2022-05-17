@@ -12,6 +12,7 @@ import { useAppSelector } from '@redux/hook'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import { MdOutlineEdit } from 'react-icons/md'
 import { AiFillCamera } from 'react-icons/ai'
+import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
 
 export interface IEditBasicInfoHandler {
   getData: () => IEditBasicInfoValue | void
@@ -44,7 +45,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
     const userId = useAppSelector((state) => state.user.userData?.id)
 
     const [status, setStatus] = useState(true)
-    const [cover, setCover] = useState<string>('img/empty-cover.PNG')
+    const [cover, setCover] = useState<string>('')
     const [originalCover, setOriginalCover] = useState<File | undefined>()
 
     useImperativeHandle(
@@ -92,6 +93,8 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
           const data = await fileToUint8Array(files[0])
           const url = getCoverUrlFromMetadata(data, files[0].type)
           setCover(url)
+        } else {
+          setCover('')
         }
       },
       []
@@ -155,8 +158,6 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
             }
           )
           setOriginalCover(origin)
-        } else {
-          setCover('img/empty-cover.PNG')
         }
 
         if (title && titleRef.current) {
@@ -193,7 +194,11 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
               ref={coverInputRef}
               onChange={handleChangeCover}
             />
-            <img src={cover} alt="cover" />
+            {cover.length ? (
+              <img className="img" src={cover} alt="cover" />
+            ) : (
+              <EmptyMusicCover className="img" />
+            )}
           </div>
           <S.EditBasicInfoForm onSubmit={(e) => e.preventDefault()}>
             <S.EditInputBox>

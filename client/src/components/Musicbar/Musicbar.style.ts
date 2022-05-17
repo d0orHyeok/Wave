@@ -69,7 +69,7 @@ export const InfoArea = styled.div`
     position: relative;
     width: 50px;
     height: 50px;
-    & img {
+    & .img {
       height: 100%;
       width: 100%;
       object-fit: cover;

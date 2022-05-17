@@ -5,6 +5,8 @@ import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
 import { useAppSelector } from '@redux/hook'
 import EmptyPlaylistImage from '@components/EmptyImage/EmptyPlaylistImage'
+import Axios from '@api/Axios'
+import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
 
 interface AddPlaylistProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,6 +50,17 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
       return alert('2자 이상의 제목을 입력해 주세요.')
     }
 
+    const body = {
+      name: newPlaylist.title,
+      musicIds: musics.map((music) => music.id),
+      status: newPlaylist.privacy,
+    }
+
+    Axios.post('/api/playlist/create', body)
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch((err) => console.error(err))
     setNewPlaylist({ title: '', privacy: 'PUBLIC' })
     onClose()
   }
@@ -149,7 +162,11 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
                 return (
                   <S.AddItem key={index}>
                     <div className="music-cover">
-                      <img src={music.cover || 'img/empty-cover.PNG'} alt="" />
+                      {music.cover ? (
+                        <img className="img" src={music.cover} alt="" />
+                      ) : (
+                        <EmptyMusicCover className="img" />
+                      )}
                     </div>
                     <div className="music-name">
                       <span>{`${
