@@ -243,7 +243,10 @@ const Musiclist = () => {
           <IoMdLink className="icon" />
           <span>링크 복사</span>
         </MusicMenuItem>
-        <AddPlaylistMenuItem onClose={handleCloseMenu} />
+        <AddPlaylistMenuItem
+          musics={anchorEl ? [musics[Number(anchorEl.value)]] : []}
+          onClose={handleCloseMenu}
+        />
         <MusicMenuItem onClick={handleClickRemove}>
           <IoMdClose className="icon" />
           <span>재생목록에서 제거</span>

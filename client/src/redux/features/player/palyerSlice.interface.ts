@@ -33,7 +33,7 @@ export interface IProgressPayload {
 
 import { IUserData } from '../user/userSlice.interface'
 
-export enum MusicStatus {
+export enum TypeStatus {
   PUBLIC = 'PUBLIC',
   PRIVATE = 'PRIVATE',
 }
@@ -61,10 +61,24 @@ export interface IMusic {
   description?: string
   tags?: string[]
   cover?: string
-  status: MusicStatus
+  status: TypeStatus
   metaData: IMusicMetadata
   userId: string
   user?: IUserData
   createdAt: string
   updatedAt: string
+}
+
+export interface IPlaylist {
+  id: number
+  name: string
+  permalink: string
+  image?: string
+  description?: string
+  tags: string[]
+  status: TypeStatus
+  createdAt: string
+  userId: string
+  user: IUserData
+  musics: IMusic[]
 }

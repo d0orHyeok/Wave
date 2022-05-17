@@ -1,4 +1,4 @@
-import { IMusic } from '../player/palyerSlice.interface'
+import { IMusic, IPlaylist } from '../player/palyerSlice.interface'
 
 type UserId = string
 
@@ -13,6 +13,7 @@ export interface IUserData {
   likes: number[]
   followers: IFollowState[]
   following: IFollowState[]
+  playlists: IPlaylist[]
   createdAt: string
 }
 

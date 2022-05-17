@@ -22,10 +22,13 @@ export class Playlist {
   @Column()
   permalink: string;
 
+  @Column()
+  image: string;
+
   @Column({ nullable: true })
   description: string;
 
-  @Column('text', { array: true, nullable: true })
+  @Column('text', { array: true, nullable: true, default: [] })
   tags: string[];
 
   @Column({ default: EntityStatus.PUBLIC })

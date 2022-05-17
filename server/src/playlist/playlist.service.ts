@@ -43,11 +43,10 @@ export class PlaylistService {
   }
 
   async getPlaylistData(playlist: Playlist) {
-    const { user, playlistMusics, ...paylistData } = playlist;
-    const userData = await this.authService.getUserData(user);
+    const { playlistMusics, ...paylistData } = playlist;
+
     return {
       ...paylistData,
-      user: userData,
       musics: playlistMusics.map((pm) => pm.music),
     };
   }

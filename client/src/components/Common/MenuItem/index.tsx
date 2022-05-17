@@ -1,10 +1,14 @@
 import styled from 'styled-components'
 import { MenuItem as MuiMenuItem, MenuItemProps } from '@mui/material'
 import { MdPlaylistAdd, MdPlaylistPlay } from 'react-icons/md'
-import { useAppDispatch } from '@redux/hook'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { addMusic } from '@redux/features/player/playerSlice'
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
+import { Modal } from '@components/Common'
+import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
+import { selectUser } from '@redux/features/user/userSlice'
+import { useLoginOpen } from '@redux/context/loginProvider'
 
 const MenuItem = styled(MuiMenuItem)`
   &.MuiMenuItem-root:hover {
@@ -50,6 +54,10 @@ interface IAddMusicMenuItemProps extends ICustionMusicMenuItemProps {
   music?: IMusic
 }
 
+interface IAddPlaylistMenuItemProps extends ICustionMusicMenuItemProps {
+  musics?: IMusic[]
+}
+
 const AddMusicMenuItem = ({
   music,
   onClick,
@@ -81,26 +89,52 @@ const AddMusicMenuItem = ({
 }
 
 const AddPlaylistMenuItem = ({
+  musics,
   onClick,
   onClose,
   ...props
-}: ICustionMusicMenuItemProps) => {
+}: IAddPlaylistMenuItemProps) => {
+  const user = useAppSelector(selectUser)
+
+  const [open, setOpen] = useState(false)
+  const openLoginModal = useLoginOpen()
+
+  const closeModal = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      setOpen(false)
+      onClose && onClose(event)
+    },
+    [onClose]
+  )
+
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLLIElement>) => {
       if (onClick) {
         onClick(event)
       } else {
-        onClose && onClose(event)
+        if (!user.isLogin) {
+          openLoginModal()
+          onClose && onClose()
+        } else {
+          const { parentElement } = event.currentTarget
+          if (parentElement) parentElement.style.display = 'none'
+          setOpen(true)
+        }
       }
     },
-    [onClick, onClose]
+    [onClose, openLoginModal, onClick, user.isLogin]
   )
 
   return (
-    <MusicMenuItem onClick={handleClick} {...props}>
-      <MdPlaylistAdd className="icon" />
-      <span>플레이리스트에 추가</span>
-    </MusicMenuItem>
+    <>
+      <MusicMenuItem onClick={handleClick} {...props}>
+        <MdPlaylistAdd className="icon" />
+        <span>플레이리스트에 추가</span>
+      </MusicMenuItem>
+      <Modal open={open} onClose={closeModal}>
+        <AddPlaylist addMusics={musics} onClose={closeModal} />
+      </Modal>
+    </>
   )
 }
 

@@ -113,7 +113,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
       </S.CardContainer>
       <MusicMenu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
         <AddMusicMenuItem music={music} onClose={handleCloseMenu} />
-        <AddPlaylistMenuItem onClose={handleCloseMenu} />
+        <AddPlaylistMenuItem musics={[music]} onClose={handleCloseMenu} />
       </MusicMenu>
     </>
   )
