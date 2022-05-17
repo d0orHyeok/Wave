@@ -1,7 +1,7 @@
 import FastAverageColor from 'fast-average-color'
 import EmptyProfileImage, {
   EmptyBackground,
-} from '@components/EmptyProfileImage/EmptyProfileImage'
+} from '@components/EmptyImage/EmptyProfileImage'
 import { IUserData } from '@redux/features/user/userSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'

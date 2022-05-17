@@ -1,25 +1,22 @@
 import styled from 'styled-components'
+import { InnerModalWrapper } from '../common.style'
 import { PrimaryButton } from '@components/Common/Button'
 
-export const ModalWrapper = styled.div`
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.colors.bgColor};
-  color: ${({ theme }) => theme.colors.bgText};
+export const Wrapper = styled(InnerModalWrapper)`
+  width: 420px;
+  height: 400px;
+
+  ${({ theme }) => theme.device.mobile} {
+    width: 85%;
+  }
 `
 
 export const StyledContainer = styled.form`
   border-radius: inherit;
-  padding: 20px;
-  width: 420px;
-  height: 400px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.bgColorRGBA(0.16)};
 
   & .modal-title {
     font-size: 1.2rem;
@@ -64,12 +61,13 @@ export const StyledContainer = styled.form`
 `
 
 export const Box = styled.div`
-  width: 300px;
+  max-width: 300px;
+  width: 100%;
 `
 
 export const LoginButton = styled(PrimaryButton)`
   margin: 1rem 0;
-  width: 300px;
+  width: 100%;
   height: 50px;
   font-size: 1rem;
   font-weight: bold;

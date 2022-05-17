@@ -8,6 +8,7 @@ import { AppThemeProvider } from '@redux/context/appThemeProvider'
 import { AlertProvider } from '@redux/context/alertProvider'
 import { BrowserRouter } from 'react-router-dom'
 import AppView from '@components/AppView/AppView'
+import { LoginProvider } from '@redux/context/loginProvider'
 
 function App() {
   return (
@@ -16,9 +17,11 @@ function App() {
         <AlertProvider>
           <GlobalStyle />
           <BrowserRouter>
-            <AppView>
-              <Router />
-            </AppView>
+            <LoginProvider>
+              <AppView>
+                <Router />
+              </AppView>
+            </LoginProvider>
           </BrowserRouter>
         </AlertProvider>
       </AppThemeProvider>

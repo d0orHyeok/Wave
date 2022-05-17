@@ -1,5 +1,5 @@
 import Button, { PrimaryButton } from '@components/Common/Button'
-import EmptyProfileImage from '@components/EmptyProfileImage/EmptyProfileImage'
+import EmptyProfileImage from '@components/EmptyImage/EmptyProfileImage'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -15,6 +15,13 @@ import {
   InnerModalContainer,
   StyledDivider,
 } from './common.style'
+
+const Container = styled(InnerModalContainer)`
+  & .title {
+    font-size: 1.25rem;
+    line-height: 1.25rem;
+  }
+`
 
 const EditContainer = styled.div`
   padding: 1rem 0;
@@ -249,7 +256,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
 
   return (
     <InnerModalWrapper>
-      <InnerModalContainer>
+      <Container>
         <h1 className="title">Edit your Profile</h1>
         <StyledDivider sx={{ margin: '0.5rem 0' }} />
         <EditContainer>
@@ -328,7 +335,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
             Save Changes
           </PrimaryButton>
         </ButtonArea>
-      </InnerModalContainer>
+      </Container>
     </InnerModalWrapper>
   )
 }

@@ -20,9 +20,4 @@ export const InnerModalWrapper = styled.div`
 
 export const InnerModalContainer = styled.div`
   padding: 25px;
-
-  & .title {
-    font-size: 1.25rem;
-    line-height: 1.25rem;
-  }
 `

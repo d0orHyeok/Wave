@@ -54,10 +54,9 @@ const ProfilePage = () => {
         <CanNotFind text="user" />
       ) : (
         <S.Wrapper>
-          <S.Container>
-            <ProfileHead data={profileData} />
-            <ProfileNav editable={editable} />
-          </S.Container>
+          <ProfileHead data={profileData} />
+          <ProfileNav editable={editable} />
+          <S.Container></S.Container>
         </S.Wrapper>
       )}
     </>

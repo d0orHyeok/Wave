@@ -3,11 +3,11 @@ import * as S from './ProfileArea.style'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { MenuItem } from '@components/Common'
 import { BiLogInCircle } from 'react-icons/bi'
-import LoginModal from '@components/LoginModal/LoginModal'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate, Link } from 'react-router-dom'
-import EmptyProfileImage from '@components/EmptyProfileImage/EmptyProfileImage'
+import EmptyProfileImage from '@components/EmptyImage/EmptyProfileImage'
+import { useLoginOpen } from '@redux/context/loginProvider'
 
 interface ProfileAreaProps {
   className?: string
@@ -19,11 +19,17 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
+  const openLoginModal = useLoginOpen()
   const openAlert = useAlert()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
+    if (user.isLogin) {
+      setAnchorEl(event.currentTarget)
+    } else {
+      openLoginModal()
+    }
   }
 
   const handleClose = useCallback(() => {
@@ -96,8 +102,6 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
         </MenuItem>
         <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
       </S.MyMenu>
-
-      <LoginModal open={open && !user.isLogin} onClose={handleClose} />
     </>
   )
 }
