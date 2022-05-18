@@ -6,13 +6,11 @@ import { UserRepository } from 'src/auth/user.repository';
 import { PlaylistController } from './playlist.controller';
 import { PlaylistRepository } from './playlist.repository';
 import { PlaylistService } from './playlist.service';
-import { PlaylistMusicRepository } from './playlistMusic.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       PlaylistRepository,
-      PlaylistMusicRepository,
       UserRepository,
       MusicRepository,
     ]),
@@ -20,5 +18,6 @@ import { PlaylistMusicRepository } from './playlistMusic.repository';
   ],
   controllers: [PlaylistController],
   providers: [PlaylistService],
+  exports: [PlaylistService],
 })
 export class PlaylistModule {}

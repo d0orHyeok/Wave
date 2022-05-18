@@ -1,5 +1,5 @@
+import { Playlist } from 'src/entities/playlist.entity';
 import { MusicMetadataDto } from './../music/dto/music-metadata.dto';
-import { PlaylistMusic } from './playlistMusic.entity';
 import { Like } from './like.entity';
 import { User } from 'src/entities/user.entity';
 import {
@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -23,7 +24,7 @@ export class Music extends BaseEntity {
   @Column()
   title: string;
 
-  @Column({ unique: true })
+  @Column()
   permalink: string;
 
   @Column()
@@ -65,8 +66,8 @@ export class Music extends BaseEntity {
   @OneToMany(() => Like, (like) => like.music)
   likes: Like[];
 
-  @OneToMany(() => PlaylistMusic, (playlistMusic) => playlistMusic.music)
-  playlistMusics: PlaylistMusic[];
+  @ManyToMany(() => Playlist, (playlist) => playlist.musics)
+  playlists: Playlist[];
 
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,

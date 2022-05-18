@@ -41,7 +41,12 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicById(id: number): Promise<Music> {
-    const music = await this.findOne(id);
+    // const music = await this.findOne(id);
+    const music = await this.createQueryBuilder('music')
+      .leftJoinAndSelect('music.user', 'user')
+      .select(['music', 'user.nickname'])
+      .where('music.id = :id', { id })
+      .getOne();
 
     if (!music) {
       throw new NotFoundException(`Can't find Music with id ${id}`);
@@ -51,7 +56,13 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicByPermalink(userId: string, permalink: string) {
-    const music = await this.findOne({ userId, permalink });
+    // const music = await this.findOne({ userId, permalink });
+    const music = await this.createQueryBuilder('music')
+      .leftJoinAndSelect('music.user', 'user')
+      .select(['music', 'user.nickname'])
+      .where('user.id = :userId', { userId })
+      .andWhere('music.permalink = :permalink', { permalink })
+      .getOne();
 
     if (!music) {
       throw new NotFoundException(
@@ -60,6 +71,14 @@ export class MusicRepository extends Repository<Music> {
     }
 
     return music;
+  }
+
+  async findMusicByIds(musicIds: number[]) {
+    return this.createQueryBuilder('music')
+      .leftJoinAndSelect('music.user', 'user')
+      .select(['music', 'user.nickname'])
+      .whereInIds(musicIds)
+      .getMany();
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {

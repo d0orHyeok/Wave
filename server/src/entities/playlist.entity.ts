@@ -1,12 +1,13 @@
-import { PlaylistMusic } from './playlistMusic.entity';
+import { Music } from 'src/entities/music.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
   Column,
   CreateDateColumn,
-  OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { User } from './user.entity';
 import { EntityStatus } from './common.types';
@@ -22,32 +23,36 @@ export class Playlist {
   @Column()
   permalink: string;
 
-  @Column()
+  @Column({ nullable: true })
   image: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column('text', { array: true, nullable: true, default: [] })
+  @Column('text', { array: true, nullable: true })
   tags: string[];
 
   @Column({ default: EntityStatus.PUBLIC })
   status: EntityStatus;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Column({ name: 'userId', nullable: true })
+  @Column({ nullable: true, name: 'userId' })
   userId: string;
 
   @ManyToOne(() => User, (user) => user.playlists, {
     cascade: true,
     onDelete: 'CASCADE',
-    nullable: true,
   })
-  @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
-  @OneToMany(() => PlaylistMusic, (playlistMusic) => playlistMusic.playlist)
-  playlistMusics: PlaylistMusic[];
+  @ManyToMany(() => Music, (music) => music.playlists, {
+    eager: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  musics: Music[];
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

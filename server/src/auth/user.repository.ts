@@ -25,15 +25,16 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  getCols<T>(): (keyof T)[] {
-    return this.metadata.columns.map((col) => col.propertyName) as (keyof T)[];
-  }
-
   async findUserByUsername(username: string): Promise<User> {
-    const user = await this.findOne({
-      where: { username },
-      select: this.getCols(),
-    });
+    const user = await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.playlists', 'playlists')
+      .leftJoinAndSelect('playlists.musics', 'musics')
+      .leftJoinAndSelect('musics.user', 'pmu')
+      .select(['user', 'playlists', 'musics', 'pmu.nickname'])
+      .addSelect('user.hashedRefreshToken')
+      .addSelect('user.password')
+      .where('user.username = :username', { username })
+      .getOne();
 
     if (!user) {
       throw new UnauthorizedException(`Can't find User with id: ${username}`);
@@ -43,7 +44,13 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserById(id: string) {
-    const user = await this.findOne({ id });
+    const user = await this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.playlists', 'playlists')
+      .leftJoinAndSelect('playlists.musics', 'musics')
+      .leftJoinAndSelect('musics.user', 'pmu')
+      .select(['user', 'playlists', 'musics', 'pmu.nickname'])
+      .where('user.id = :id', { id })
+      .getOne();
 
     if (!user) {
       throw new NotFoundException(`Can't find User with id: ${id}`);

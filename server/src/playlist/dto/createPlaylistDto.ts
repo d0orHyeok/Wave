@@ -1,3 +1,4 @@
+import { EntityStatus } from './../../entities/common.types';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreatePlaylistDto {
@@ -5,19 +6,11 @@ export class CreatePlaylistDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  permalink: string;
-
-  @IsOptional()
-  @IsString({ each: true })
-  tags: string[];
-
-  @IsOptional()
-  @IsString()
-  description: string;
-
   @IsOptional()
   @IsNumber({}, { each: true })
   musicIds: number[];
+
+  @IsOptional()
+  @IsString()
+  status: EntityStatus;
 }

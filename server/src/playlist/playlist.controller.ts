@@ -1,3 +1,4 @@
+import { UpdatePlaylistDto } from './dto/updatePlaylistDto';
 import {
   Body,
   Controller,
@@ -34,23 +35,29 @@ export class PlaylistController {
     @Param('userId') userId: string,
     @Param('permalink') permalink: string,
   ) {
-    const playlist = await this.playlistService.findPlaylistByPermalink(
-      userId,
-      permalink,
-    );
-    return this.playlistService.getPlaylistData(playlist);
+    return this.playlistService.findPlaylistByPermalink(userId, permalink);
   }
 
-  @Post('/:id/add')
-  async createPlaylistMusics(
+  @Put('/update/:id')
+  @UseGuards(JwtAuthGuard)
+  async updatePlaylistInfo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ValidationPipe) updatePlaylistDto: UpdatePlaylistDto,
+  ) {
+    return this.playlistService.updatePlaylistInfo(id, updatePlaylistDto);
+  }
+
+  @Put('/musics/add/:id')
+  @UseGuards(JwtAuthGuard)
+  async addMusicToPlaylist(
     @Param('id', ParseIntPipe) id: number,
     @Body('musicIds') musicIds: number[],
   ) {
-    const playlist = await this.playlistService.findPlaylistById(id);
-    return this.playlistService.addMusics(playlist, musicIds);
+    return this.playlistService.addMusicToPlaylist(id, musicIds || []);
   }
 
-  @Put('/:id/:musicId')
+  @Put('/musics/delete/:id/:musicId')
+  @UseGuards(JwtAuthGuard)
   async deletePlaylistMusic(
     @Param('id', ParseIntPipe) id: number,
     @Param('musicId', ParseIntPipe) musicId: number,
