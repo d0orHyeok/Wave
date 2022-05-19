@@ -36,20 +36,26 @@ export class PlaylistService {
     return this.playlistRepository.findPlaylistByPermalink(userId, permalink);
   }
 
-  async updatePlaylistInfo(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    return this.playlistRepository.updatePlaylistInfo(id, updatePlaylistDto);
+  async updatePlaylistInfo(
+    playlistId: number,
+    updatePlaylistDto: UpdatePlaylistDto,
+  ) {
+    return this.playlistRepository.updatePlaylistInfo(
+      playlistId,
+      updatePlaylistDto,
+    );
   }
 
-  async addMusicToPlaylist(id: number, musicIds: number[]) {
+  async addMusicToPlaylist(playlistId: number, musicIds: number[]) {
     const musics = await this.musicRepository.findMusicByIds(musicIds);
-    return this.playlistRepository.addMusicToPlaylist(id, musics);
+    return this.playlistRepository.addMusicToPlaylist(playlistId, musics);
   }
 
-  async deleteMusic(musicId: number, playlistId: number) {
-    return this.playlistRepository.deleteMusic(musicId, playlistId);
+  async deleteMusic(playlistId: number, musicIds: number[]) {
+    return this.playlistRepository.deleteMusic(playlistId, musicIds);
   }
 
-  async deletePlaylist(id: number, user: User) {
-    return this.playlistRepository.deletePlaylist(id, user);
+  async deletePlaylist(playlistId: number, user: User) {
+    return this.playlistRepository.deletePlaylist(playlistId, user);
   }
 }

@@ -49,3 +49,8 @@ export interface IToggleFollowParams {
   followerId: UserId
   isFollow: boolean
 }
+
+export interface IUserUpdatePlaylistMusicsParams {
+  playlistId: number | string
+  musicIds: number[]
+}

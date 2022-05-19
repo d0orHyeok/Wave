@@ -1,3 +1,4 @@
+import { IPlaylist } from './../player/palyerSlice.interface'
 import { RootState } from '@redux/store'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import Axios, { interceptWithAccessToken } from '@api/Axios'
@@ -8,6 +9,7 @@ import {
   IUserLoginBody,
   IUserRegisterBody,
   IUserState,
+  IUserUpdatePlaylistMusicsParams,
 } from './userSlice.interface'
 
 const initialState: IUserState = {
@@ -88,38 +90,49 @@ export const userToggleFollow = createAsyncThunk(
 export const userUpdateImage = createAsyncThunk(
   'USER_UPDATE_IMAGE',
   async (formData: FormData) => {
-    try {
-      const response = await Axios.patch(`/api/auth/image/update`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-      return response.data
-    } catch (error) {
-      return console.error(error)
-    }
+    const response = await Axios.patch(`/api/auth/image/update`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
   }
 )
 
 export const userDeleteImage = createAsyncThunk(
   'USER_DELETE_IMAGE',
   async () => {
-    try {
-      const response = await Axios.patch(`/api/auth/image/delete`)
-      return response.data
-    } catch (error) {
-      return console.error(error)
-    }
+    const response = await Axios.patch(`/api/auth/image/delete`)
+    return response.data
   }
 )
 
 export const userUpdateProfile = createAsyncThunk(
   'USER_UPDATE_PROFILE',
   async (data: { nickname?: string; description?: string }) => {
-    try {
-      const response = await Axios.patch(`/api/auth/profile`, data)
-      return response.data
-    } catch (error) {
-      return console.error(error)
-    }
+    const response = await Axios.patch(`/api/auth/profile`, data)
+    return response.data
+  }
+)
+
+export const userAddMusicsToPlaylist = createAsyncThunk(
+  'USER_PLAYLIST_ADD_MUSIC',
+  async (params: IUserUpdatePlaylistMusicsParams) => {
+    const { playlistId, musicIds } = params
+    const response = await Axios.put(`/api/playlist/musics/add/${playlistId}`, {
+      musicIds,
+    })
+    return response.data
+  }
+)
+
+export const userDeleteMusicsFromPlaylist = createAsyncThunk(
+  'USER_PLAYLIST_DELETE_MUSIC',
+  async (params: IUserUpdatePlaylistMusicsParams) => {
+    const { playlistId, musicIds } = params
+    const response = await Axios.put(
+      `/api/playlist/musics/delete/${playlistId}`,
+      { musicIds }
+    )
+    return response.data
   }
 )
 
@@ -188,6 +201,22 @@ export const userSlice = createSlice({
         const { nickname, description } = action.payload
         state.userData.nickname = nickname
         state.userData.description = description
+      }
+    },
+    [userAddMusicsToPlaylist.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        const updatePlaylist: IPlaylist = action.payload
+        state.userData.playlists = state.userData.playlists.map((playlist) =>
+          playlist.id === updatePlaylist.id ? updatePlaylist : playlist
+        )
+      }
+    },
+    [userDeleteMusicsFromPlaylist.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        const updatePlaylist: IPlaylist = action.payload
+        state.userData.playlists = state.userData.playlists.map((playlist) =>
+          playlist.id === updatePlaylist.id ? updatePlaylist : playlist
+        )
       }
     },
   },

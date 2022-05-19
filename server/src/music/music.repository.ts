@@ -13,7 +13,6 @@ export class MusicRepository extends Repository<Music> {
   async getAllMusic(): Promise<Music[]> {
     return await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
-      .select(['music', 'user.nickname'])
       .where('music.status = :status', { status: 'PUBLIC' })
       .getMany();
   }
@@ -44,7 +43,6 @@ export class MusicRepository extends Repository<Music> {
     // const music = await this.findOne(id);
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
-      .select(['music', 'user.nickname'])
       .where('music.id = :id', { id })
       .getOne();
 
@@ -59,7 +57,6 @@ export class MusicRepository extends Repository<Music> {
     // const music = await this.findOne({ userId, permalink });
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
-      .select(['music', 'user.nickname'])
       .where('user.id = :userId', { userId })
       .andWhere('music.permalink = :permalink', { permalink })
       .getOne();
@@ -76,7 +73,6 @@ export class MusicRepository extends Repository<Music> {
   async findMusicByIds(musicIds: number[]) {
     return this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
-      .select(['music', 'user.nickname'])
       .whereInIds(musicIds)
       .getMany();
   }

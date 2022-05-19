@@ -96,6 +96,13 @@ export const PlaylistItem = styled.li`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size: 12px;
+
+    & .info-num {
+      display: inline-flex;
+      align-items: center;
+      line-height: 12px;
+    }
   }
 `
 

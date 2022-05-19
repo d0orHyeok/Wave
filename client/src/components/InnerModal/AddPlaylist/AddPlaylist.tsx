@@ -3,10 +3,15 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { StyledDivider } from '../common.style'
 import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
-import { useAppSelector } from '@redux/hook'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
 import EmptyPlaylistImage from '@components/EmptyImage/EmptyPlaylistImage'
 import Axios from '@api/Axios'
 import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
+import { BsSoundwave } from 'react-icons/bs'
+import {
+  userAddMusicsToPlaylist,
+  userDeleteMusicsFromPlaylist,
+} from '@redux/features/user/userSlice'
 
 interface AddPlaylistProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,15 +20,18 @@ interface AddPlaylistProps {
 }
 
 const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
+  const dispatch = useAppDispatch()
+
   const playlists =
     useAppSelector((state) => state.user.userData?.playlists) || []
   const [navIndex, setNavIndex] = useState(0)
+  //  플레이 리스트 생성 정보
   const [newPlaylist, setNewPlaylist] = useState({
     title: '',
     privacy: 'PUBLIC',
   })
-  const [filter, setFilter] = useState('')
-  const [musics, setMusics] = useState<IMusic[]>([])
+  const [filter, setFilter] = useState('') // 플레이리스트 검색 필터
+  const [musics, setMusics] = useState<IMusic[]>([]) // 플레이리스트에 추가할 음악
 
   const handleClickPrivacy = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +53,7 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
     [newPlaylist]
   )
 
-  const createPlaylist = () => {
+  const createPlaylist = useCallback(() => {
     if (newPlaylist.title.length < 2) {
       return alert('2자 이상의 제목을 입력해 주세요.')
     }
@@ -63,14 +71,37 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
       .catch((err) => console.error(err))
     setNewPlaylist({ title: '', privacy: 'PUBLIC' })
     onClose()
-  }
+  }, [musics, newPlaylist, onClose])
 
   const pullMusic = useCallback(
+    // 추가할 음악 제거
     (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       setMusics(musics.filter((_, n) => index !== n))
     },
     [musics]
+  )
+
+  const addMusicsToPlaylist = useCallback(
+    (musics: IMusic[]) => (event: React.MouseEvent<HTMLElement>) => {
+      const playlistId = event.currentTarget.getAttribute('data-playlistid')
+      if (playlistId) {
+        const params = { playlistId, musicIds: musics.map((music) => music.id) }
+        dispatch(userAddMusicsToPlaylist(params))
+      }
+    },
+    [dispatch]
+  )
+
+  const deleteMusicsFromPlaylist = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      const playlistId = event.currentTarget.getAttribute('data-playlistid')
+      if (playlistId) {
+        const params = { playlistId, musicIds: musics.map((music) => music.id) }
+        dispatch(userDeleteMusicsFromPlaylist(params))
+      }
+    },
+    [dispatch, musics]
   )
 
   useEffect(() => {
@@ -102,6 +133,21 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
             />
             <ul>
               {playlists.map((playlist, index) => {
+                let added = false
+                let filteredMusics = musics
+                if (filteredMusics.length === 1) {
+                  added =
+                    playlist.musics.findIndex(
+                      (pm) => pm.id === musics[0].id
+                    ) !== -1
+                } else {
+                  filteredMusics = musics.filter(
+                    (music) =>
+                      playlist.musics.findIndex((pm) => pm.id === music.id) ===
+                      -1
+                  )
+                  added = filteredMusics.length ? false : true
+                }
                 return (
                   <S.PlaylistItem key={index}>
                     <div className="image">
@@ -112,10 +158,26 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
                       )}
                     </div>
                     <div className="info">
-                      <div className="info-name">test</div>
-                      <div className="info-num">1 musics</div>
+                      <div className="info-name">{playlist.name}</div>
+                      <div
+                        className="info-num"
+                        title={`${playlist.musics.length} musics`}
+                      >
+                        <BsSoundwave size={14} style={{ marginRight: '4px' }} />
+                        {playlist.musics.length}
+                      </div>
                     </div>
-                    <S.AddButton added={true}>Add to playlist</S.AddButton>
+                    <S.AddButton
+                      added={added}
+                      data-playlistid={playlist.id}
+                      onClick={
+                        !added
+                          ? addMusicsToPlaylist(filteredMusics)
+                          : deleteMusicsFromPlaylist
+                      }
+                    >
+                      {added ? 'Added' : 'Add to playlist'}
+                    </S.AddButton>
                   </S.PlaylistItem>
                 )
               })}

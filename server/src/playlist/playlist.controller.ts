@@ -56,13 +56,13 @@ export class PlaylistController {
     return this.playlistService.addMusicToPlaylist(id, musicIds || []);
   }
 
-  @Put('/musics/delete/:id/:musicId')
+  @Put('/musics/delete/:id')
   @UseGuards(JwtAuthGuard)
   async deletePlaylistMusic(
     @Param('id', ParseIntPipe) id: number,
-    @Param('musicId', ParseIntPipe) musicId: number,
+    @Body('musicIds') musicIds: number[],
   ) {
-    return this.playlistService.deleteMusic(id, musicId);
+    return this.playlistService.deleteMusic(id, musicIds || []);
   }
 
   @Delete('/:id')

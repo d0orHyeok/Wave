@@ -42,24 +42,16 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
   }
 
-  async addMusicToPlaylist(id: number, musics: Music[]) {
-    const playlist = await this.findPlaylistById(id);
-    const existMusics = playlist.musics;
-    playlist.musics = [...existMusics, ...musics];
-    return await this.save(playlist);
-  }
-
-  async findPlaylistById(id: number) {
+  async findPlaylistById(playlistId: number) {
     const playlist = await this.createQueryBuilder('playlist')
       .leftJoinAndSelect('playlist.user', 'user')
       .leftJoinAndSelect('playlist.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
-      .select(['playlist', 'user', 'musics', 'pmu.username'])
-      .where('playlist.id = :id', { id })
+      .where('playlist.id = :id', { id: playlistId })
       .getOne();
 
     if (!playlist) {
-      throw new NotFoundException(`Can't find playlist with id ${id}`);
+      throw new NotFoundException(`Can't find playlist with id ${playlistId}`);
     }
     return playlist;
   }
@@ -69,7 +61,6 @@ export class PlaylistRepository extends Repository<Playlist> {
       .leftJoinAndSelect('playlist.user', 'user')
       .leftJoinAndSelect('playlist.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
-      .select(['playlist', 'user', 'musics', 'pmu.username'])
       .where('user.id = :userId', { userId })
       .andWhere('playlist.permalink = :permalink', { permalink })
       .getOne();
@@ -83,22 +74,43 @@ export class PlaylistRepository extends Repository<Playlist> {
     return playlist;
   }
 
-  async updatePlaylistInfo(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    const playlist = await this.findPlaylistById(id);
+  async updatePlaylistInfo(
+    playlistId: number,
+    updatePlaylistDto: UpdatePlaylistDto,
+  ) {
+    const playlist = await this.findPlaylistById(playlistId);
     Object.entries(updatePlaylistDto).forEach((entrie) => {
       const [key, value] = entrie;
-      if (value.length > 0) {
+      if (value) {
         playlist[key] = value;
       }
     });
     return this.save(playlist);
   }
 
-  async deleteMusic(musicId: number, playlistId: number) {
+  async addMusicToPlaylist(playlistId: number, musics: Music[]) {
     const playlist = await this.findPlaylistById(playlistId);
     const existMusics = playlist.musics;
-    playlist.musics = existMusics.filter((music) => music.id !== musicId);
-    return await this.save(playlist);
+    playlist.musics = [...existMusics, ...musics];
+    try {
+      return await this.save(playlist);
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException('Fail to update playlist musics');
+    }
+  }
+
+  async deleteMusic(playlistId: number, musicIds: number[]) {
+    const playlist = await this.findPlaylistById(playlistId);
+    const existMusics = playlist.musics;
+    playlist.musics = existMusics.filter(
+      (music) => !musicIds.includes(music.id),
+    );
+    try {
+      return await this.save(playlist);
+    } catch (err) {
+      throw new InternalServerErrorException('Fail to update playlist musics');
+    }
   }
 
   async deletePlaylist(id: number, user: User): Promise<void> {
