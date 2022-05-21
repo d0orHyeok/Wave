@@ -85,7 +85,9 @@ export class MusicService {
 
   async findMusicById(id: number) {
     const music = await this.musicRepository.findMusicById(id);
-    const user = await this.authService.findUserById(music.userId);
+    const { userData: user } = await this.authService.findUserById(
+      music.userId,
+    );
     return { ...music, user };
   }
 
@@ -94,7 +96,9 @@ export class MusicService {
       userId,
       permalink,
     );
-    const user = await this.authService.findUserById(music.userId);
+    const { userData: user } = await this.authService.findUserById(
+      music.userId,
+    );
     return { ...music, user };
   }
 
