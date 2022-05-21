@@ -14,7 +14,7 @@ const EmptyProfileImage = styled.div<{ size?: number }>`
 `
 
 export default EmptyProfileImage
-export const EmptyBackground = `
+export const EmptyProfileImageBackground = `
 background: rgb(89,133,138);
 background: linear-gradient(135deg, rgba(89,133,138,1) 0%, rgba(158, 140, 158,1) 100%);
 `

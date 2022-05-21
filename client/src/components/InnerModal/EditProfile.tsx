@@ -1,5 +1,5 @@
 import Button, { PrimaryButton } from '@components/Common/Button'
-import EmptyProfileImage from '@components/EmptyImage/EmptyProfileImage'
+import EmptyProfileImage from '@styles/EmptyImage/EmptyProfileImage.style'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'

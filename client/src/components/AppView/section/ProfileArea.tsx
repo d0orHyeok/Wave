@@ -6,7 +6,7 @@ import { BiLogInCircle } from 'react-icons/bi'
 import { selectUser, userLogout } from '@redux/features/user/userSlice'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate, Link } from 'react-router-dom'
-import EmptyProfileImage from '@components/EmptyImage/EmptyProfileImage'
+import EmptyProfileImage from '@styles/EmptyImage/EmptyProfileImage.style'
 import { useLoginOpen } from '@redux/context/loginProvider'
 
 interface ProfileAreaProps {

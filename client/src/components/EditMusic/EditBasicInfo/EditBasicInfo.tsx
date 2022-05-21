@@ -12,7 +12,7 @@ import { useAppSelector } from '@redux/hook'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import { MdOutlineEdit } from 'react-icons/md'
 import { AiFillCamera } from 'react-icons/ai'
-import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
+import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 
 export interface IEditBasicInfoHandler {
   getData: () => IEditBasicInfoValue | void

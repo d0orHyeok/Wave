@@ -4,9 +4,9 @@ import { StyledDivider } from '../common.style'
 import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
-import EmptyPlaylistImage from '@components/EmptyImage/EmptyPlaylistImage'
+import EmptyPlaylistImage from '@styles/EmptyImage/EmptyPlaylistImage.stlye'
 import Axios from '@api/Axios'
-import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
+import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 import { BsSoundwave } from 'react-icons/bs'
 import {
   userAddMusicsToPlaylist,

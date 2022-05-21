@@ -1,91 +1,48 @@
-import FastAverageColor from 'fast-average-color'
-import EmptyProfileImage, {
-  EmptyBackground,
-} from '@components/EmptyImage/EmptyProfileImage'
+import {
+  EmptyProfileImage,
+  EmptyProfileImageBackground,
+} from '@styles/EmptyImage'
 import { IUserData } from '@redux/features/user/userSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { getGradientFromImageUrl } from '@api/functions'
+import * as AnyHeadStyle from '@styles/AnyHead.style'
 
 interface IProfileHeadProps {
   data: IUserData
 }
 
-const Container = styled.div<{ background: string }>`
-  padding: 2rem;
+const Container = styled(AnyHeadStyle.AnyHeadWrapper)<{ background: string }>`
   display: flex;
-  ${({ background }) => background}
-
-  & > * {
-    flex-shrink: 0;
-  }
+  align-items: flex-start;
 `
 
-const Profile = styled.div`
-  position: relative;
-  width: 200px;
-  height: 200px;
-  & img {
-    border-radius: 100px;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  margin-right: 2rem;
+const Profile = styled(AnyHeadStyle.AnyHeadImage)`
+  flex-shrink: 0;
+  border-radius: 100px;
+  margin-right: 30px;
 
   ${({ theme }) => theme.device.tablet} {
-    width: 150px;
-    height: 150px;
+    border-radius: 75px;
   }
 `
 
-const UserInfo = styled.div`
-  & .info {
-    background-color: rgba(0, 0, 0, 0.75);
-    padding: 0.25rem 0.5rem;
-    &.info-nickname {
-      font-size: 1.5rem;
-      line-height: 1.5rem;
-      color: rgba(255, 255, 255, 0.86);
-      margin-bottom: 0.5rem;
-    }
-    &.info-username {
-      font-size: 1rem;
-      line-height: 1rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-  }
-`
+const UserInfo = styled(AnyHeadStyle.AnyHeadInfo)``
 
 const ProfileHead = ({ data }: IProfileHeadProps) => {
-  const [background, setBackground] = useState(EmptyBackground)
+  const [background, setBackground] = useState(EmptyProfileImageBackground)
 
   const changeBackground = useCallback(async () => {
     // 유저의 프로필 이미지에 따라 배경을 변화시킨다
     if (data.profileImage) {
-      const fac = new FastAverageColor()
-      try {
-        const url = `${data.profileImage}`
-        // 이미지의 평균주색
-        const primary = await fac.getColorAsync(url)
-        // 이미지의 평균보조색
-        const secondary = await fac.getColorAsync(url, {
-          algorithm: 'dominant',
-        })
-        const newbackground = `
-                background: ${secondary.rgb};
-                background: linear-gradient(
-                  135deg,
-                  ${secondary.rgba} 0%,
-                  ${primary.rgba} 100%
-                );
-            `
-        setBackground(newbackground)
-      } catch (error) {
-        console.log(error)
-        setBackground(EmptyBackground)
-      }
+      const url = `${data.profileImage}`
+      const newGradient = await getGradientFromImageUrl(
+        url,
+        EmptyProfileImageBackground
+      )
+      setBackground(newGradient)
     } else {
-      setBackground(EmptyBackground)
+      setBackground(EmptyProfileImageBackground)
     }
   }, [data.profileImage])
 
@@ -97,15 +54,15 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
     <Container background={background}>
       <Profile>
         {!data.profileImage ? (
-          <EmptyProfileImage />
+          <EmptyProfileImage className="img" />
         ) : (
-          <img src={data.profileImage} alt="" />
+          <img className="img" src={data.profileImage} alt="" />
         )}
       </Profile>
 
       <UserInfo>
-        <h1 className="info info-nickname">{data.nickname || data.username}</h1>
-        <h2 className="info info-username">{data.username}</h2>
+        <h1 className="info info-main">{data.nickname || data.username}</h1>
+        <h2 className="info">{data.username}</h2>
       </UserInfo>
       <div></div>
     </Container>

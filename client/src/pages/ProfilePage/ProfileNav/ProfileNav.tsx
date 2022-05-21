@@ -9,6 +9,7 @@ import { BsFillCaretLeftFill, BsFillCaretRightFill } from 'react-icons/bs'
 import { Modal } from '@components/Common'
 import EditProfile from '@components/InnerModal/EditProfile'
 import { useCopyLink } from '@api/MusicHooks'
+import { useLoginOpen } from '@redux/context/loginProvider'
 
 interface ProfileNavProps {
   editable?: boolean
@@ -21,11 +22,9 @@ const Nav = styled.div`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.colors.bgColorRGBA(0.1)};
   & ul {
-    width: 400px;
     overflow-x: auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     white-space: nowrap;
     scroll-behavior: smooth;
 
@@ -64,6 +63,10 @@ const Nav = styled.div`
       &:hover::before {
         display: block;
       }
+    }
+
+    ${({ theme }) => theme.device.tablet} {
+      font-size: 14px;
     }
   }
 `
@@ -106,8 +109,10 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
   const { userId, '*': nav } = useParams()
   const toggleFollow = useToggleFollow()
   const copyLink = useCopyLink()
+  const openLogin = useLoginOpen()
 
   const following = useAppSelector((state) => state.user.userData?.following)
+  const isLogin = useAppSelector((state) => state.user.isLogin)
 
   const ulRef = useRef<HTMLUListElement>(null)
 
@@ -117,9 +122,13 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       event.stopPropagation()
-      if (userId) toggleFollow(userId)
+      if (isLogin) {
+        if (userId) toggleFollow(userId)
+      } else {
+        openLogin()
+      }
     },
-    [toggleFollow, userId]
+    [isLogin, openLogin, toggleFollow, userId]
   )
 
   const handleCloseModal = useCallback(() => {
@@ -130,14 +139,44 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
     (move: -1 | 1) => (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault()
       event.stopPropagation()
-      if (ulRef.current) {
-        const scrollLeft = ulRef.current.scrollLeft
-        const moveLeft = ulRef.current.offsetWidth
+      const target = ulRef.current
+      if (target) {
+        const scrollLeft = target.scrollLeft
+        const length = target.children.length
+        const widths = Array.from(target.children).map((c, index) =>
+          index !== length - 1 ? c.clientWidth + 16 : c.clientWidth
+        )
+        let i = 0
         if (move > 0) {
-          ulRef.current.scrollTo(scrollLeft + moveLeft, 0)
+          let moveLeft = 0
+          while (moveLeft <= scrollLeft) {
+            moveLeft += widths[i]
+            i += 1
+          }
+          target.scrollTo(moveLeft, 0)
         } else {
-          ulRef.current.scrollTo(scrollLeft - moveLeft, 0)
+          i = length - 1
+          let moveLeft = target.scrollWidth
+          while (moveLeft >= scrollLeft) {
+            moveLeft -= widths[i]
+            i -= 1
+          }
+          target.scrollTo(moveLeft, 0)
         }
+      }
+    }
+
+  const handleClickNavItem =
+    (index: number) => (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation()
+      const target = ulRef.current
+      if (target) {
+        const length = target.children.length
+        const widths = Array.from(target.children).map((c, index) =>
+          index !== length - 1 ? c.clientWidth + 16 : c.clientWidth
+        )
+        const moveLeft = widths.slice(0, index).reduce((a, b) => a + b)
+        target.scrollTo(moveLeft, 0)
       }
     }
 
@@ -167,6 +206,7 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
             >
               <Link
                 to={`/profile/${userId}${item.path ? '/' + item.path : ''}`}
+                onClick={handleClickNavItem(index)}
               >
                 {item.name}
               </Link>
@@ -188,7 +228,7 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
             </>
           ) : (
             <FollowTextButton
-              isFollow={following?.findIndex((f) => f.id === userId) !== -1}
+              isFollow={following?.findIndex((f) => f.id === userId) === -1}
               onClick={handleClickFollow}
             />
           )}

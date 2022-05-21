@@ -12,7 +12,7 @@ import {
 import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/UserHooks'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
-import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
+import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 
 interface IMusicCardProps {
   music: IMusic

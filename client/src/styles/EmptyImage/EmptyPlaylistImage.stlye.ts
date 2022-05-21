@@ -13,7 +13,7 @@ const EmptyPlaylistImage = styled.div<{ size?: number }>`
 `
 
 export default EmptyPlaylistImage
-export const EmptyBackground = `
+export const EmptyPlaylistImageBackground = `
 background: rgb(82,150,147);
 background: linear-gradient(135deg, rgba(82,150,147,1) 0%, rgba(163,138,81,1) 100%);
 `

@@ -24,7 +24,7 @@ import { MusicMenu } from '@components/Common/Menu'
 import { useToggleLikeMusic } from '@api/UserHooks'
 import { useCopyLink } from '@api/MusicHooks'
 import { convertTimeToString } from '@api/functions'
-import EmptyMusicCover from '@components/EmptyImage/EmptyMusicCover'
+import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()
