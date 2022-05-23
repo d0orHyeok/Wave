@@ -83,7 +83,7 @@ const AddMusicMenuItem = ({
   return (
     <MusicMenuItem onClick={handleClick} {...props}>
       <MdPlaylistPlay className="icon" />
-      <span>재생목록에 추가</span>
+      <span>Add to Next up</span>
     </MusicMenuItem>
   )
 }
@@ -114,7 +114,7 @@ const AddPlaylistMenuItem = ({
       } else {
         if (!user.isLogin) {
           openLoginModal()
-          onClose && onClose()
+          onClose && onClose(event)
         } else {
           const { parentElement } = event.currentTarget
           if (parentElement) parentElement.style.display = 'none'
@@ -129,7 +129,7 @@ const AddPlaylistMenuItem = ({
     <>
       <MusicMenuItem onClick={handleClick} {...props}>
         <MdPlaylistAdd className="icon" />
-        <span>플레이리스트에 추가</span>
+        <span>Add to Playlist</span>
       </MusicMenuItem>
       <Modal open={open} onClose={closeModal}>
         <AddPlaylist addMusics={musics} onClose={closeModal} />

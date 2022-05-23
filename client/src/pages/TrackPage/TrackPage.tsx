@@ -3,7 +3,21 @@ import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'
-import * as S from './TrackPage.style'
+import styled from 'styled-components'
+import Loading from '@components/Loading/Loading'
+import CommentBox from '@components/CommentBox/CommentBox'
+import InteractionBar from '@components/InteractionBar/InteractionBar'
+
+const Wrapper = styled.div`
+  min-height: 100%;
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+`
+
+const Content = styled.div`
+  display: flex;
+`
 
 const TrackPage = () => {
   const { '*': permalink } = useParams()
@@ -17,11 +31,28 @@ const TrackPage = () => {
       .catch(() => navigate('/track/notfound'))
   }, [navigate, permalink])
 
-  return (
-    <S.Wrapper>
+  return !music ? (
+    <Loading />
+  ) : (
+    <Wrapper>
       <TrackHead music={music} />
-      <div>{music?.title}</div>
-    </S.Wrapper>
+      <div>
+        <CommentBox />
+        <InteractionBar target={music} />
+      </div>
+      <Content>
+        <div>{music.description}</div>
+        {music.tags ? (
+          <ul>
+            {music.tags.map((tag, index) => (
+              <li key={index}>{`#${tag}`}</li>
+            ))}
+          </ul>
+        ) : (
+          <></>
+        )}
+      </Content>
+    </Wrapper>
   )
 }
 

@@ -60,13 +60,12 @@ export const userLogout = createAsyncThunk('LOGOUT', async () => {
 
 export const userToggleLikeMusic = createAsyncThunk(
   'TOGGLE_LIKES',
-  async ({ musicId, isLike }: IToggleMusicLikeParams, { rejectWithValue }) => {
-    const routePath = isLike ? 'like' : 'unlike'
+  async ({ musicId, mod }: IToggleMusicLikeParams, { rejectWithValue }) => {
     try {
-      const response = await Axios.patch(`/api/auth/${musicId}/${routePath}`)
+      const response = await Axios.patch(`/api/auth/${musicId}/${mod}`)
       return response.data
     } catch (error) {
-      return rejectWithValue(`Failed to ${routePath} music`)
+      return rejectWithValue(`Failed to ${mod} music`)
     }
   }
 )

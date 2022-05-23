@@ -42,7 +42,7 @@ export interface IUserLoginBody {
 
 export interface IToggleMusicLikeParams {
   musicId: number
-  isLike: boolean
+  mod: 'like' | 'unlike'
 }
 
 export interface IToggleFollowParams {

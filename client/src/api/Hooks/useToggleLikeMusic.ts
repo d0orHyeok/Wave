@@ -9,8 +9,12 @@ function useToggleLikeMusic() {
   const toggleLikeMusic = useCallback(
     (musicId: number) => {
       if (likes) {
-        const params = { musicId, isLike: !likes.includes(musicId) }
-        dispatch(userToggleLikeMusic(params))
+        dispatch(
+          userToggleLikeMusic({
+            musicId,
+            mod: likes.includes(musicId) ? 'unlike' : 'like',
+          })
+        )
       }
     },
     [dispatch, likes]

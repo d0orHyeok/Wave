@@ -43,6 +43,8 @@ export class MusicRepository extends Repository<Music> {
     // const music = await this.findOne(id);
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
+      .leftJoinAndSelect('music.playlists', 'playlists')
+      .leftJoinAndSelect('playlists.user', 'pu')
       .where('music.id = :id', { id })
       .getOne();
 
@@ -57,6 +59,8 @@ export class MusicRepository extends Repository<Music> {
     // const music = await this.findOne({ userId, permalink });
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
+      .leftJoinAndSelect('music.playlists', 'playlists')
+      .leftJoinAndSelect('playlists.user', 'pu')
       .where('user.id = :userId', { userId })
       .andWhere('music.permalink = :permalink', { permalink })
       .getOne();

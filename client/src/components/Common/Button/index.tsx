@@ -142,7 +142,7 @@ const FollowTextBtn = styled.button<{ isFollow?: boolean }>`
   align-items: center;
   justify-content: center;
   color: ${({ theme, isFollow }) =>
-    isFollow ? theme.colors.primaryColor : 'white'};
+    isFollow ? theme.colors.primaryColor : theme.colors.bgText};
   background-color: ${({ theme, isFollow }) =>
     isFollow ? 'none' : theme.colors.primaryColor};
   & .icon {

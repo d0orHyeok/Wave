@@ -48,9 +48,15 @@ export const playerSlice = createSlice({
     setCurrentMusic: (state, action: PayloadAction<IMusic>) => {
       const setMusic = action.payload // 변경할 음악
       state.currentMusic = setMusic
-      const findIndex = state.musics.findIndex(
-        (music) => music.id === setMusic.id
-      )
+      let findIndex = -1
+      state.musics = state.musics.map((music, index) => {
+        if (music.id === setMusic.id) {
+          findIndex = index
+          return setMusic
+        } else {
+          return music
+        }
+      })
 
       if (findIndex === -1) {
         // 재생목록에 변경할 음악이 없다면 추가

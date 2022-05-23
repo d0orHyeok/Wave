@@ -12,7 +12,7 @@ interface ILoginContext {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const AlertContext = createContext<any>({})
+const LoginContext = createContext<any>({})
 
 export const LoginProvider = ({ children }: ILoginProviderProps) => {
   const [open, setOpen] = useState(false)
@@ -22,17 +22,17 @@ export const LoginProvider = ({ children }: ILoginProviderProps) => {
   }, [])
 
   return (
-    <AlertContext.Provider value={{ open, setOpen }}>
+    <LoginContext.Provider value={{ open, setOpen }}>
       <Modal open={open} onClose={handleClose}>
         <Login onClose={handleClose} />
       </Modal>
       {children}
-    </AlertContext.Provider>
+    </LoginContext.Provider>
   )
 }
 
 export const useLoginOpen = () => {
-  const context: ILoginContext = useContext(AlertContext)
+  const context: ILoginContext = useContext(LoginContext)
   const setOpen = context.setOpen
 
   const openLoginModal = useCallback(() => {

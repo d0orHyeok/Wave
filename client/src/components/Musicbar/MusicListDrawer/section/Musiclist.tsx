@@ -242,11 +242,11 @@ const Musiclist = () => {
         </MusicMenuItem>
         <MusicMenuItem onClick={handleCloseMenu}>
           <BiRepost className="icon" />
-          <span>가져오기</span>
+          <span>Repost</span>
         </MusicMenuItem>
         <MusicMenuItem onClick={handleClickCopy}>
           <IoMdLink className="icon" />
-          <span>링크 복사</span>
+          <span>Copy Link</span>
         </MusicMenuItem>
         <AddPlaylistMenuItem
           musics={anchorEl ? [musics[Number(anchorEl.value)]] : []}
@@ -254,7 +254,7 @@ const Musiclist = () => {
         />
         <MusicMenuItem onClick={handleClickRemove}>
           <IoMdClose className="icon" />
-          <span>재생목록에서 제거</span>
+          <span>Remove</span>
         </MusicMenuItem>
       </MusicMenu>
     </>

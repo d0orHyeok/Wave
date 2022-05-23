@@ -57,6 +57,7 @@ export interface IMusic {
   filename: string
   link: string
   duration: string
+  count: number
   genre?: string
   description?: string
   tags?: string[]

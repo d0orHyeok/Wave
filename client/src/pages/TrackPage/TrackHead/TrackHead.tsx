@@ -11,7 +11,7 @@ import * as AnyHeadStyle from '@styles/AnyHead.style'
 import { Link } from 'react-router-dom'
 
 interface TrackHeadProps {
-  music?: IMusic
+  music: IMusic
 }
 
 const Wrapper = styled(AnyHeadStyle.AnyHeadWrapper)``
@@ -87,7 +87,7 @@ const TrackHead = ({ music }: TrackHeadProps) => {
   const [background, setBackground] = useState(EmptyMusicCoverBackgorund)
 
   const changeBackground = useCallback(async () => {
-    if (music?.cover) {
+    if (music.cover) {
       const newBackground = await getGradientFromImageUrl(
         music.cover,
         EmptyMusicCoverBackgorund
@@ -96,7 +96,7 @@ const TrackHead = ({ music }: TrackHeadProps) => {
     } else {
       setBackground(EmptyMusicCoverBackgorund)
     }
-  }, [music?.cover])
+  }, [music.cover])
 
   const handleClickPlay = useCallback(
     async (event: React.MouseEvent<HTMLElement>) => {
@@ -130,13 +130,13 @@ const TrackHead = ({ music }: TrackHeadProps) => {
           )}
         </PlayButton>
         <MusicInfo>
-          <div className="info info-main">{music?.title}</div>
-          <div className="info">{music?.user?.nickname || music?.userId}</div>
+          <div className="info info-main">{music.title}</div>
+          <div className="info">{music.user?.nickname || music.userId}</div>
         </MusicInfo>
 
         <SubInfo>
-          <div className="ago">{caculateDateAgo(music?.createdAt || '')}</div>
-          {music?.genre ? (
+          <div className="ago">{caculateDateAgo(music.createdAt)}</div>
+          {music.genre ? (
             <div className="genre">
               <Link
                 to={`/search?tags=%23${music.genre}`}
