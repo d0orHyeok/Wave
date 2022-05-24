@@ -4,19 +4,23 @@ import { useCallback } from 'react'
 
 function useToggleFollow() {
   const dispatch = useAppDispatch()
-  const following = useAppSelector((state) => state.user.userData?.following)
+  const userData = useAppSelector((state) => state.user.userData)
 
   const toggleFollow = useCallback(
     (followerId: string) => {
-      if (following) {
-        const params = {
-          followerId,
-          isFollow: following.findIndex((f) => f.id === followerId) === -1,
-        }
-        dispatch(userToggleFollow(params))
+      if (userData && userData.id !== followerId) {
+        dispatch(
+          userToggleFollow({
+            followerId,
+            mod:
+              userData.following.findIndex((f) => f.id === followerId) === -1
+                ? 'follow'
+                : 'unfollow',
+          })
+        )
       }
     },
-    [dispatch, following]
+    [dispatch, userData]
   )
 
   return toggleFollow

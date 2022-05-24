@@ -31,7 +31,8 @@ const Musiclist = () => {
   const dispatch = useAppDispatch()
   const toggleLikeMusic = useToggleLikeMusic()
 
-  const likes = useAppSelector((state) => state.user.userData?.likes || [])
+  const likeMusics =
+    useAppSelector((state) => state.user.userData?.likeMusics) || []
   const { isPlay, isShuffle, repeat } = useAppSelector(
     (state) => state.player.controll
   )
@@ -203,7 +204,11 @@ const Musiclist = () => {
                         {convertTimeToString(Number(musicItem.duration))}
                       </span>
                       <LikeFilledButton
-                        isLike={likes.includes(musicItem.id)}
+                        isLike={
+                          likeMusics.findIndex(
+                            (lm) => lm.id === musicItem.id
+                          ) !== -1
+                        }
                         className="btn"
                         onClick={handleClickLike}
                         aria-valuetext={`${musicItem.id}`}

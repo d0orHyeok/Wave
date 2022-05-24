@@ -45,6 +45,7 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('music.user', 'user')
       .leftJoinAndSelect('music.playlists', 'playlists')
       .leftJoinAndSelect('playlists.user', 'pu')
+      .leftJoinAndSelect('music.likes', 'likes')
       .where('music.id = :id', { id })
       .getOne();
 
@@ -61,6 +62,7 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('music.user', 'user')
       .leftJoinAndSelect('music.playlists', 'playlists')
       .leftJoinAndSelect('playlists.user', 'pu')
+      .leftJoinAndSelect('music.likes', 'likes')
       .where('user.id = :userId', { userId })
       .andWhere('music.permalink = :permalink', { permalink })
       .getOne();

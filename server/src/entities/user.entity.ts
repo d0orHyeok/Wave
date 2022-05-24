@@ -1,5 +1,4 @@
 import { Playlist } from './playlist.entity';
-import { Like } from './like.entity';
 import { Music } from 'src/entities/music.entity';
 import {
   BaseEntity,
@@ -7,11 +6,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryColumn,
   Unique,
 } from 'typeorm';
-import { Follow } from './follow.entity';
 import ShortUniqueId from 'short-unique-id';
 
 @Entity()
@@ -38,14 +38,16 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  @ManyToMany(() => Music, (music) => music.likes, { cascade: true })
+  @JoinTable()
+  likeMusics: Music[];
 
-  @OneToMany(() => Follow, (follow) => follow.follower)
-  followers: Follow[];
+  @ManyToMany(() => User, (user) => user.following)
+  followers: User[];
 
-  @OneToMany(() => Follow, (follow) => follow.following)
-  following: Follow[];
+  @ManyToMany(() => User, (user) => user.followers)
+  @JoinTable()
+  following: User[];
 
   @Column({ nullable: true, select: false })
   hashedRefreshToken: string;

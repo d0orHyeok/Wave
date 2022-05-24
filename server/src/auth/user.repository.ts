@@ -7,6 +7,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Music } from 'src/entities/music.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -25,12 +26,19 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async findUserByUsername(username: string): Promise<User> {
-    const user = await this.createQueryBuilder('user')
+  getAllColumnQuery() {
+    return this.createQueryBuilder('user')
       .leftJoinAndSelect('user.playlists', 'playlists')
       .leftJoinAndSelect('playlists.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
-      .select(['user', 'playlists', 'musics', 'pmu.nickname'])
+      .leftJoinAndSelect('user.likeMusics', 'likeMusics')
+      .leftJoinAndSelect('likeMusics.user', 'lmu')
+      .leftJoinAndSelect('user.followers', 'followers')
+      .leftJoinAndSelect('user.following', 'following');
+  }
+
+  async findUserByUsername(username: string): Promise<User> {
+    const user = await this.getAllColumnQuery()
       .addSelect('user.hashedRefreshToken')
       .addSelect('user.password')
       .where('user.username = :username', { username })
@@ -44,11 +52,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserById(id: string) {
-    const user = await this.createQueryBuilder('user')
-      .leftJoinAndSelect('user.playlists', 'playlists')
-      .leftJoinAndSelect('playlists.musics', 'musics')
-      .leftJoinAndSelect('musics.user', 'pmu')
-      .select(['user', 'playlists', 'musics', 'pmu.nickname'])
+    const user = await this.getAllColumnQuery()
       .where('user.id = :id', { id })
       .getOne();
 
@@ -65,5 +69,74 @@ export class UserRepository extends Repository<User> {
       .set({ hashedRefreshToken })
       .where('id = :id', { id: user.id })
       .execute();
+  }
+
+  async likeMusic(user: User, music: Music) {
+    const likeMusics = user.likeMusics || [];
+    if (likeMusics.findIndex((m) => m.id === music.id) !== -1) {
+      return likeMusics;
+    }
+    const newLikeMusics = [...likeMusics, music];
+    user.likeMusics = newLikeMusics;
+    try {
+      await this.save(user);
+      return newLikeMusics;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to update likeMusics`,
+      );
+    }
+  }
+
+  async unlikeMusic(user: User, music: Music) {
+    const likeMusics = user.likeMusics || [];
+    const newLikeMusics = likeMusics.filter((m) => m.id !== music.id);
+    user.likeMusics = newLikeMusics;
+
+    try {
+      await this.save(user);
+      return newLikeMusics;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to update likeMusics`,
+      );
+    }
+  }
+
+  async followUser(user: User, target: User) {
+    const following = user.following || [];
+    if (following.findIndex((f) => f.id === target.id) !== -1) {
+      return following;
+    }
+    const newFollowing = [...following, target];
+    user.following = newFollowing;
+    try {
+      const updatedUser = await this.save(user);
+      const { followers, following } = updatedUser;
+      return { followers, following };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to update likeMusics`,
+      );
+    }
+  }
+
+  async unfollowUser(user: User, target: User) {
+    const following = user.following || [];
+    const newFollowing = following.filter((f) => f.id !== target.id);
+    user.following = newFollowing;
+    try {
+      const updatedUser = await this.save(user);
+      const { followers, following } = updatedUser;
+      return { followers, following };
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to update likeMusics`,
+      );
+    }
   }
 }

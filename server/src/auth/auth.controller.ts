@@ -80,8 +80,7 @@ export class AuthController {
   @Get('/info')
   @UseGuards(JwtAuthGuard)
   async getUserData(@GetUser() user: User) {
-    const userData = await this.authService.getUserData(user);
-    return { userData };
+    return user;
   }
 
   @Patch('/profile')
@@ -120,8 +119,7 @@ export class AuthController {
     @GetUser() user: User,
     @Param('musicId', ParseIntPipe) musicId: number,
   ) {
-    const likes = await this.authService.likeMusic(user, musicId);
-    return { likes };
+    return this.authService.likeMusic(user, musicId);
   }
 
   @Patch('/:musicId/unlike')
@@ -130,25 +128,21 @@ export class AuthController {
     @GetUser() user: User,
     @Param('musicId', ParseIntPipe) musicId: number,
   ) {
-    const likes = await this.authService.unlikeMusic(user, musicId);
-    return { likes };
+    return this.authService.unlikeMusic(user, musicId);
   }
 
-  @Patch('/:followerId/follow')
+  @Patch('/:targetId/follow')
   @UseGuards(JwtAuthGuard)
-  async followUser(
-    @GetUser() user: User,
-    @Param('followerId') followerId: string,
-  ) {
-    return this.authService.followUser(user, followerId);
+  async followUser(@GetUser() user: User, @Param('targetId') targetId: string) {
+    return this.authService.followUser(user, targetId);
   }
 
-  @Patch('/:followerId/unfollow')
+  @Patch('/:targetId/unfollow')
   @UseGuards(JwtAuthGuard)
   async unfollowUser(
     @GetUser() user: User,
-    @Param('followerId') followerId: string,
+    @Param('targetId') targetId: string,
   ) {
-    return this.authService.unfollowUser(user, followerId);
+    return this.authService.unfollowUser(user, targetId);
   }
 }

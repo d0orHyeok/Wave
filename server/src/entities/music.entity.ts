@@ -1,6 +1,5 @@
 import { Playlist } from 'src/entities/playlist.entity';
 import { MusicMetadataDto } from './../music/dto/music-metadata.dto';
-import { Like } from './like.entity';
 import { User } from 'src/entities/user.entity';
 import {
   BaseEntity,
@@ -10,7 +9,6 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -63,8 +61,8 @@ export class Music extends BaseEntity {
   @Column({ nullable: true, name: 'userId' })
   userId: string;
 
-  @OneToMany(() => Like, (like) => like.music)
-  likes: Like[];
+  @ManyToMany(() => User, (user) => user.likeMusics)
+  likes: User[];
 
   @ManyToMany(() => Playlist, (playlist) => playlist.musics)
   playlists: Playlist[];

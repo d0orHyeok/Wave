@@ -1,8 +1,6 @@
 import { AuthProfileDto } from './dto/auth-profile.dto';
 import { deleteFileDisk, uploadFileDisk } from 'src/upload';
 import { MusicRepository } from 'src/music/music.repository';
-import { LikeRepository } from './like.repository';
-import { FollowRepository } from './follow.repository';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { ConfigService } from '@nestjs/config';
 import { AuthCredentailDto } from './dto/auth-credential.dto';
@@ -23,8 +21,6 @@ export class AuthService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    private followRepository: FollowRepository,
-    private likeRepository: LikeRepository,
     private musicRepository: MusicRepository,
     private jwtService: JwtService,
     private config: ConfigService,
@@ -113,48 +109,28 @@ export class AuthService {
     };
   }
 
-  async getUserData(user: User) {
-    const followData = await this.followRepository.getFollow(user);
-    const likes = await this.likeRepository.getLikes(user);
-    return { ...user, ...followData, likes };
-  }
-
   async likeMusic(user: User, musicId: number) {
-    const music = await this.musicRepository.findOne({ id: musicId });
-    if (music) {
-      await this.likeRepository.createLike(user, music);
-    }
-    return this.likeRepository.getLikes(user);
+    const music = await this.musicRepository.findMusicById(musicId);
+    return this.userRepository.likeMusic(user, music);
   }
 
   async unlikeMusic(user: User, musicId: number) {
-    const music = await this.musicRepository.findOne({ id: musicId });
-    if (music) {
-      await this.likeRepository.deleteLike(user, music);
-    }
-    return this.likeRepository.getLikes(user);
+    const music = await this.musicRepository.findMusicById(musicId);
+    return this.userRepository.unlikeMusic(user, music);
   }
 
-  async followUser(user: User, followerId: string) {
-    const follower = await this.userRepository.findUserById(followerId);
-    if (follower) {
-      await this.followRepository.createFollow(user, follower);
-    }
-    return this.followRepository.getFollow(user);
+  async followUser(user: User, targetId: string) {
+    const target = await this.userRepository.findUserById(targetId);
+    return this.userRepository.followUser(user, target);
   }
 
-  async unfollowUser(user: User, followerId: string) {
-    const follower = await this.userRepository.findUserById(followerId);
-    if (follower) {
-      await this.followRepository.deleteFollow(user, follower);
-    }
-    return this.followRepository.getFollow(user);
+  async unfollowUser(user: User, targetId: string) {
+    const target = await this.userRepository.findUserById(targetId);
+    return this.userRepository.unfollowUser(user, target);
   }
 
   async findUserById(id: string) {
-    const user = await this.userRepository.findUserById(id);
-    const userData = await this.getUserData(user);
-    return { userData };
+    return this.userRepository.findUserById(id);
   }
 
   async updateProfileImage(user: User, image: Express.Multer.File) {

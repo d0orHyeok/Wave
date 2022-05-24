@@ -25,7 +25,8 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
-  const likes = useAppSelector((state) => state.user.userData?.likes) || []
+  const likeMusics =
+    useAppSelector((state) => state.user.userData?.likeMusics) || []
 
   const [cardIsCurrentMusic, setCardIsCurrentMusic] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -92,7 +93,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
             </S.CardPlayButton>
             <S.CardHoverControl className="cardHoverControl">
               <LikeFilledButton
-                isLike={likes.includes(music.id)}
+                isLike={likeMusics.findIndex((lm) => lm.id === music.id) !== -1}
                 onClick={handleClickLike}
               />
               <MoreButton

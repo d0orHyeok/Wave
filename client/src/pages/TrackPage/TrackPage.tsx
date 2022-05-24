@@ -38,7 +38,7 @@ const TrackPage = () => {
       <TrackHead music={music} />
       <div>
         <CommentBox />
-        <InteractionBar target={music} />
+        <InteractionBar target={music} setTarget={setMusic} />
       </div>
       <Content>
         <div>{music.description}</div>

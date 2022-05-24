@@ -33,7 +33,7 @@ const ProfilePage = () => {
       } else {
         setEditable(false)
         Axios.get(`/api/auth/${userId}`)
-          .then((res) => setProfileData(res.data.userData))
+          .then((res) => setProfileData(res.data))
           .catch((error) => console.log(error.response))
           .finally(() => setIsLoading(false))
       }

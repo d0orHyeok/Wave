@@ -93,9 +93,15 @@ const StyledButton = styled(Button)<{ active?: boolean }>`
 
 interface InteractionBarProps extends React.HTMLAttributes<HTMLDivElement> {
   target: IMusic | IPlaylist
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setTarget?: React.Dispatch<React.SetStateAction<any>>
 }
 
-const InteractionBar = ({ target, ...props }: InteractionBarProps) => {
+const InteractionBar = ({
+  target,
+  setTarget,
+  ...props
+}: InteractionBarProps) => {
   const dispatch = useAppDispatch()
   const openLogin = useLoginOpen()
   const copyLink = useCopyLink()
@@ -118,14 +124,24 @@ const InteractionBar = ({ target, ...props }: InteractionBarProps) => {
     }
 
     if ('title' in target) {
+      const mod = like ? 'unlike' : 'like'
       dispatch(
         userToggleLikeMusic({
           musicId: target.id,
-          mod: like ? 'unlike' : 'like',
+          mod,
         })
-      )
+      ).then((payload) => {
+        if (payload.type.indexOf('fulfilled') !== -1 && setTarget) {
+          const existLikes = target.likes
+          const newLikes =
+            mod === 'like'
+              ? [...existLikes, userData]
+              : existLikes.filter((l) => l.id !== userData.id)
+          setTarget({ ...target, likes: newLikes })
+        }
+      })
     }
-  }, [userData, target, openLogin, dispatch, like])
+  }, [userData, target, openLogin, dispatch, like, setTarget])
 
   const handleClickAddPlaylist = useCallback(() => {
     if (!userData) {
@@ -157,9 +173,18 @@ const InteractionBar = ({ target, ...props }: InteractionBarProps) => {
   }, [dispatch, target])
 
   useEffect(() => {
-    const result = userData?.likes.includes(target.id) || false
-    setLike(result)
-  }, [setLike, target, userData])
+    if ('title' in target) {
+      if (userData) {
+        const result =
+          userData.likeMusics.findIndex((lm) => lm.id === target.id) !== -1
+        setLike(result)
+      } else {
+        setLike(false)
+      }
+    } else {
+      setLike(false)
+    }
+  }, [like, target, userData])
 
   return (
     <Container {...props}>
@@ -199,14 +224,22 @@ const InteractionBar = ({ target, ...props }: InteractionBarProps) => {
       </div>
       {'title' in target ? (
         <StyledUl>
-          <li title={`${target.count.toLocaleString()} plays`}>
-            <FaPlay className="icon play" />
-            {numberFormat(target.count)}
-          </li>
-          <li title={`any likes`}>
-            <GoHeart className="icon heart" />
-            11
-          </li>
+          {target.count > 0 ? (
+            <li title={`${target.count.toLocaleString()} plays`}>
+              <FaPlay className="icon play" />
+              {numberFormat(target.count)}
+            </li>
+          ) : (
+            <></>
+          )}
+          {target.likes?.length > 0 ? (
+            <li title={`any likes`}>
+              <GoHeart className="icon heart" />
+              {numberFormat(target.likes.length)}
+            </li>
+          ) : (
+            <></>
+          )}
           <li title="any reposts">
             <BiRepost className="icon repost" />
             11

@@ -228,7 +228,7 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
             </>
           ) : (
             <FollowTextButton
-              isFollow={following?.findIndex((f) => f.id === userId) === -1}
+              isFollow={following?.findIndex((f) => f.id === userId) !== -1}
               onClick={handleClickFollow}
             />
           )}

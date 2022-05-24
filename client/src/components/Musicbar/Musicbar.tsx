@@ -170,15 +170,16 @@ const Musicbar = () => {
 
   useEffect(() => {
     if (
-      user.userData?.likes.length &&
+      user.userData?.likeMusics.length &&
       currentMusic &&
-      user.userData.likes.includes(currentMusic.id)
+      user.userData.likeMusics.findIndex((lm) => lm.id === currentMusic.id) !==
+        -1
     ) {
       setIsLike(true)
     } else {
       setIsLike(false)
     }
-  }, [currentMusic, user.userData?.likes])
+  }, [currentMusic, user.userData?.likeMusics])
 
   useEffect(() => {
     let bol = false

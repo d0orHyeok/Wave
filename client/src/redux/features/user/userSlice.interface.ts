@@ -10,17 +10,11 @@ export interface IUserData {
   profileImage?: string
   description?: string
   musics: IMusic[]
-  likes: number[]
-  followers: IFollowState[]
-  following: IFollowState[]
+  likeMusics: IMusic[]
+  followers: IUserData[]
+  following: IUserData[]
   playlists: IPlaylist[]
   createdAt: string
-}
-
-export interface IFollowState {
-  id: UserId
-  name: string
-  image: string
 }
 
 export interface IUserState {
@@ -47,7 +41,7 @@ export interface IToggleMusicLikeParams {
 
 export interface IToggleFollowParams {
   followerId: UserId
-  isFollow: boolean
+  mod: 'follow' | 'unfollow'
 }
 
 export interface IUserUpdatePlaylistMusicsParams {

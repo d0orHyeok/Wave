@@ -72,16 +72,12 @@ export const userToggleLikeMusic = createAsyncThunk(
 
 export const userToggleFollow = createAsyncThunk(
   'TOGGLE_FOLLOW',
-  async (
-    { followerId, isFollow }: IToggleFollowParams,
-    { rejectWithValue }
-  ) => {
-    const routePath = isFollow ? 'follow' : 'unfollow'
+  async ({ followerId, mod }: IToggleFollowParams, { rejectWithValue }) => {
     try {
-      const response = await Axios.patch(`/api/auth/${followerId}/${routePath}`)
+      const response = await Axios.patch(`/api/auth/${followerId}/${mod}`)
       return response.data
     } catch (error) {
-      return rejectWithValue(`Failed to ${routePath}`)
+      return rejectWithValue(`Failed to ${mod}`)
     }
   }
 )
@@ -150,10 +146,8 @@ export const userSlice = createSlice({
       state.userData = undefined
     },
     [userAuth.fulfilled.type]: (state, action) => {
-      const { userData } = action.payload
-
       state.isLogin = true
-      state.userData = userData
+      state.userData = action.payload
     },
     [userAuth.rejected.type]: (state) => {
       state.isLogin = false
@@ -173,9 +167,8 @@ export const userSlice = createSlice({
       state.userData = undefined
     },
     [userToggleLikeMusic.fulfilled.type]: (state, action) => {
-      const { likes } = action.payload
       if (state.userData) {
-        state.userData.likes = likes
+        state.userData.likeMusics = action.payload
       }
     },
     [userToggleFollow.fulfilled.type]: (state, action) => {

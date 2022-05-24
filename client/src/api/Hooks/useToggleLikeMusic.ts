@@ -4,20 +4,23 @@ import { useCallback } from 'react'
 
 function useToggleLikeMusic() {
   const dispatch = useAppDispatch()
-  const likes = useAppSelector((state) => state.user.userData?.likes)
+  const likeMusics = useAppSelector((state) => state.user.userData?.likeMusics)
 
   const toggleLikeMusic = useCallback(
     (musicId: number) => {
-      if (likes) {
+      if (likeMusics) {
         dispatch(
           userToggleLikeMusic({
             musicId,
-            mod: likes.includes(musicId) ? 'unlike' : 'like',
+            mod:
+              likeMusics?.findIndex((lm) => lm.id === musicId) !== -1
+                ? 'unlike'
+                : 'like',
           })
         )
       }
     },
-    [dispatch, likes]
+    [dispatch, likeMusics]
   )
 
   return toggleLikeMusic
