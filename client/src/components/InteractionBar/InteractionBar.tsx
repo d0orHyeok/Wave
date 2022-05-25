@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { IoMdLink } from 'react-icons/io'
 import { GoHeart } from 'react-icons/go'
@@ -111,7 +111,6 @@ const InteractionBar = ({
 
   const userData = useAppSelector((state) => state.user.userData)
   const [openModal, setOpenModal] = useState(false)
-  const [like, setLike] = useState(false)
 
   const handleClickRepost = useCallback(() => {
     if (!userData) {
@@ -140,24 +139,18 @@ const InteractionBar = ({
     }
 
     if ('title' in target) {
-      const mod = like ? 'unlike' : 'like'
-      dispatch(
-        userToggleLikeMusic({
-          musicId: target.id,
-          mod,
-        })
-      ).then((value) => {
+      dispatch(userToggleLikeMusic(target.id)).then((value) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
           const existLikes = target.likes
           const newLikes =
-            mod === 'like'
+            value.payload.type === 'like'
               ? [...existLikes, userData]
               : existLikes.filter((l) => l.id !== userData.id)
           setTarget({ ...target, likes: newLikes })
         }
       })
     }
-  }, [userData, target, openLogin, dispatch, like, setTarget])
+  }, [userData, target, openLogin, dispatch, setTarget])
 
   const handleClickAddPlaylist = useCallback(() => {
     if (!userData) {
@@ -188,25 +181,19 @@ const InteractionBar = ({
     }
   }, [dispatch, target])
 
-  useEffect(() => {
-    if (!userData) {
-      setLike(false)
-      return
-    }
-
-    if ('title' in target) {
-      const resultLike =
-        userData.likeMusics.findIndex((lm) => lm.id === target.id) !== -1
-      setLike(resultLike)
-    } else {
-      setLike(false)
-    }
-  }, [target, userData])
-
   return (
     <Container {...props}>
       <div>
-        <StyledButton title="Like" active={like} onClick={handleClickLike}>
+        <StyledButton
+          title="Like"
+          active={
+            userData?.likeMusics
+              ? userData.likeMusics.findIndex((lm) => lm.id === target.id) !==
+                -1
+              : false
+          }
+          onClick={handleClickLike}
+        >
           <GoHeart className="icon" />
           <span className="text">Like</span>
         </StyledButton>

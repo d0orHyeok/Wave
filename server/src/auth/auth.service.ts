@@ -109,26 +109,6 @@ export class AuthService {
     };
   }
 
-  async likeMusic(user: User, musicId: number) {
-    const music = await this.musicRepository.findMusicById(musicId);
-    return this.userRepository.likeMusic(user, music);
-  }
-
-  async unlikeMusic(user: User, musicId: number) {
-    const music = await this.musicRepository.findMusicById(musicId);
-    return this.userRepository.unlikeMusic(user, music);
-  }
-
-  async followUser(user: User, targetId: string) {
-    const target = await this.userRepository.findUserById(targetId);
-    return this.userRepository.followUser(user, target);
-  }
-
-  async unfollowUser(user: User, targetId: string) {
-    const target = await this.userRepository.findUserById(targetId);
-    return this.userRepository.unfollowUser(user, target);
-  }
-
   async findUserById(id: string) {
     return this.userRepository.findUserById(id);
   }
@@ -169,6 +149,16 @@ export class AuthService {
       nickname: updateUser.nickname,
       description: updateUser.description,
     };
+  }
+
+  async toggleLikeMusic(user: User, musicId: number) {
+    const music = await this.musicRepository.findMusicById(musicId);
+    return this.userRepository.toggleLikeMusic(user, music);
+  }
+
+  async toggleFollow(user: User, targetId: string) {
+    const target = await this.userRepository.findUserById(targetId);
+    return this.userRepository.toggleFollow(user, target);
   }
 
   async toggleRepostMusic(user: User, musicId: number) {

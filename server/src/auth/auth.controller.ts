@@ -119,31 +119,13 @@ export class AuthController {
     @GetUser() user: User,
     @Param('musicId', ParseIntPipe) musicId: number,
   ) {
-    return this.authService.likeMusic(user, musicId);
-  }
-
-  @Patch('/:musicId/unlike')
-  @UseGuards(JwtAuthGuard)
-  async unlikeMusic(
-    @GetUser() user: User,
-    @Param('musicId', ParseIntPipe) musicId: number,
-  ) {
-    return this.authService.unlikeMusic(user, musicId);
+    return this.authService.toggleLikeMusic(user, musicId);
   }
 
   @Patch('/:targetId/follow')
   @UseGuards(JwtAuthGuard)
   async followUser(@GetUser() user: User, @Param('targetId') targetId: string) {
-    return this.authService.followUser(user, targetId);
-  }
-
-  @Patch('/:targetId/unfollow')
-  @UseGuards(JwtAuthGuard)
-  async unfollowUser(
-    @GetUser() user: User,
-    @Param('targetId') targetId: string,
-  ) {
-    return this.authService.unfollowUser(user, targetId);
+    return this.authService.toggleFollow(user, targetId);
   }
 
   @Patch('/:musicId/repost/music')

@@ -28,8 +28,11 @@ import {
   toggleShuffle,
 } from '@redux/features/player/playerSlice'
 import Musiclist from './MusicListDrawer/section/Musiclist'
-import { selectUser } from '@redux/features/user/userSlice'
-import { useToggleFollow, useToggleLikeMusic } from '@api/UserHooks'
+import {
+  selectUser,
+  userToggleFollow,
+  userToggleLikeMusic,
+} from '@redux/features/user/userSlice'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 
 // 로컬스토리지에 저장된 볼륨값을 확인하여 가져오고 없다면 100을 리턴
@@ -39,8 +42,6 @@ const getLocalVolume = () => {
 
 const Musicbar = () => {
   const dispatch = useAppDispatch()
-  const toggleLikeMusic = useToggleLikeMusic()
-  const toggleFollow = useToggleFollow()
 
   const user = useAppSelector(selectUser)
   const { isPlay, isShuffle, repeat } = useAppSelector(
@@ -133,13 +134,13 @@ const Musicbar = () => {
 
   const handleClickLike = () => {
     if (currentMusic) {
-      toggleLikeMusic(currentMusic.id)
+      dispatch(userToggleLikeMusic(currentMusic.id))
     }
   }
 
   const handleClickFollow = () => {
     if (currentMusic) {
-      toggleFollow(currentMusic.userId)
+      dispatch(userToggleFollow(currentMusic.userId))
     }
   }
 

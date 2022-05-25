@@ -10,9 +10,9 @@ import {
   AddPlaylistMenuItem,
 } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { useToggleLikeMusic } from '@api/UserHooks'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
+import { userToggleLikeMusic } from '@redux/features/user/userSlice'
 
 interface IMusicCardProps {
   music: IMusic
@@ -21,7 +21,6 @@ interface IMusicCardProps {
 
 const MusicCard = ({ music, style }: IMusicCardProps) => {
   const dispatch = useAppDispatch()
-  const toggleLikeMusic = useToggleLikeMusic()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
@@ -57,7 +56,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
   const handleClickLike = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation()
     event.preventDefault()
-    toggleLikeMusic(music.id)
+    dispatch(userToggleLikeMusic(music.id))
   }
 
   useEffect(() => {

@@ -73,16 +73,29 @@ export class UserRepository extends Repository<User> {
       .execute();
   }
 
-  async likeMusic(user: User, music: Music) {
+  async toggleLikeMusic(user: User, music: Music) {
     const likeMusics = user.likeMusics || [];
-    if (likeMusics.findIndex((m) => m.id === music.id) !== -1) {
-      return likeMusics;
+    let findIndex = -1;
+    const newLikeMusics = likeMusics.filter((lm, index) => {
+      if (lm.id !== music.id) {
+        return true;
+      } else {
+        findIndex = index;
+        return false;
+      }
+    });
+
+    if (findIndex === -1) {
+      newLikeMusics.push(music);
     }
-    const newLikeMusics = [...likeMusics, music];
     user.likeMusics = newLikeMusics;
+
     try {
       await this.save(user);
-      return newLikeMusics;
+      return {
+        type: findIndex === -1 ? 'like' : 'unlike',
+        likeMusics: newLikeMusics,
+      };
     } catch (error) {
       throw new InternalServerErrorException(
         error,
@@ -91,46 +104,29 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async unlikeMusic(user: User, music: Music) {
-    const likeMusics = user.likeMusics || [];
-    const newLikeMusics = likeMusics.filter((m) => m.id !== music.id);
-    user.likeMusics = newLikeMusics;
+  async toggleFollow(user: User, target: User) {
+    const following = user.following || [];
+    let findIndex = -1;
+    const newFollowing = following.filter((f, index) => {
+      if (f.id !== target.id) {
+        return true;
+      } else {
+        findIndex = index;
+        return false;
+      }
+    });
+
+    if (findIndex === -1) {
+      newFollowing.push(target);
+    }
+    user.following = newFollowing;
 
     try {
       await this.save(user);
-      return newLikeMusics;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        `Error to update likeMusics`,
-      );
-    }
-  }
-
-  async followUser(user: User, target: User) {
-    const following = user.following || [];
-    if (following.findIndex((f) => f.id === target.id) !== -1) {
-      return following;
-    }
-    const newFollowing = [...following, target];
-    user.following = newFollowing;
-    try {
-      const updatedUser = await this.save(user);
-      const { followers, following } = updatedUser;
-      return { followers, following };
-    } catch (error) {
-      throw new InternalServerErrorException(error, `Error to update follow`);
-    }
-  }
-
-  async unfollowUser(user: User, target: User) {
-    const following = user.following || [];
-    const newFollowing = following.filter((f) => f.id !== target.id);
-    user.following = newFollowing;
-    try {
-      const updatedUser = await this.save(user);
-      const { followers, following } = updatedUser;
-      return { followers, following };
+      return {
+        type: findIndex === -1 ? 'follow' : 'unfollow',
+        following: newFollowing,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error, `Error to update follow`);
     }
@@ -150,10 +146,8 @@ export class UserRepository extends Repository<User> {
 
     if (findIndex === -1) {
       newReposts.push(music);
-      user.repostMusics = newReposts;
-    } else {
-      user.repostMusics = newReposts;
     }
+    user.repostMusics = newReposts;
 
     try {
       await this.save(user);

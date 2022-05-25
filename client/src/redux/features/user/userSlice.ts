@@ -4,8 +4,6 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import Axios, { interceptWithAccessToken } from '@api/Axios'
 import axios from 'axios'
 import {
-  IToggleFollowParams,
-  IToggleMusicLikeParams,
   IUserLoginBody,
   IUserRegisterBody,
   IUserState,
@@ -60,25 +58,17 @@ export const userLogout = createAsyncThunk('LOGOUT', async () => {
 
 export const userToggleLikeMusic = createAsyncThunk(
   'TOGGLE_LIKES',
-  async ({ musicId, mod }: IToggleMusicLikeParams, { rejectWithValue }) => {
-    try {
-      const response = await Axios.patch(`/api/auth/${musicId}/${mod}`)
-      return response.data
-    } catch (error) {
-      return rejectWithValue(`Failed to ${mod} music`)
-    }
+  async (musicId: number) => {
+    const response = await Axios.patch(`/api/auth/${musicId}/like`)
+    return response.data
   }
 )
 
 export const userToggleFollow = createAsyncThunk(
   'TOGGLE_FOLLOW',
-  async ({ followerId, mod }: IToggleFollowParams, { rejectWithValue }) => {
-    try {
-      const response = await Axios.patch(`/api/auth/${followerId}/${mod}`)
-      return response.data
-    } catch (error) {
-      return rejectWithValue(`Failed to ${mod}`)
-    }
+  async (targetId: string) => {
+    const response = await Axios.patch(`/api/auth/${targetId}/follow`)
+    return response.data
   }
 )
 
@@ -177,14 +167,12 @@ export const userSlice = createSlice({
     },
     [userToggleLikeMusic.fulfilled.type]: (state, action) => {
       if (state.userData) {
-        state.userData.likeMusics = action.payload
+        state.userData.likeMusics = action.payload.likeMusics
       }
     },
     [userToggleFollow.fulfilled.type]: (state, action) => {
-      const { followers, following } = action.payload
       if (state.userData) {
-        state.userData.followers = followers
-        state.userData.following = following
+        state.userData.following = action.payload.following
       }
     },
     [userUpdateImage.fulfilled.type]: (state, action) => {

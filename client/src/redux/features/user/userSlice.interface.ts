@@ -35,16 +35,6 @@ export interface IUserLoginBody {
   password: string
 }
 
-export interface IToggleMusicLikeParams {
-  musicId: number
-  mod: 'like' | 'unlike'
-}
-
-export interface IToggleFollowParams {
-  followerId: UserId
-  mod: 'follow' | 'unfollow'
-}
-
 export interface IUserUpdatePlaylistMusicsParams {
   playlistId: number | string
   musicIds: number[]

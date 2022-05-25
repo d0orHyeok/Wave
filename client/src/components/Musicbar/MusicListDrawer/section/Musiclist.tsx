@@ -21,15 +21,14 @@ import {
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { AddPlaylistMenuItem, MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { useToggleLikeMusic } from '@api/UserHooks'
 import { useCopyLink } from '@api/MusicHooks'
 import { convertTimeToString } from '@api/functions'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
+import { userToggleLikeMusic } from '@redux/features/user/userSlice'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()
   const dispatch = useAppDispatch()
-  const toggleLikeMusic = useToggleLikeMusic()
 
   const likeMusics =
     useAppSelector((state) => state.user.userData?.likeMusics) || []
@@ -113,10 +112,10 @@ const Musiclist = () => {
     event.stopPropagation()
     if (anchorEl) {
       const musicId = musics[Number(anchorEl.value)].id
-      toggleLikeMusic(musicId)
+      dispatch(userToggleLikeMusic(musicId))
       setAnchorEl(null)
     } else {
-      toggleLikeMusic(Number(event.currentTarget.ariaValueText))
+      dispatch(userToggleLikeMusic(Number(event.currentTarget.ariaValueText)))
     }
   }
 

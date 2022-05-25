@@ -1,6 +1,5 @@
-import { useToggleFollow } from '@api/UserHooks'
 import { FollowTextButton } from '@components/Common/Button'
-import { useAppSelector } from '@redux/hook'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
 import React, { useCallback, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -10,6 +9,7 @@ import { Modal } from '@components/Common'
 import EditProfile from '@components/InnerModal/EditProfile'
 import { useCopyLink } from '@api/MusicHooks'
 import { useLoginOpen } from '@redux/context/loginProvider'
+import { userToggleFollow } from '@redux/features/user/userSlice'
 
 interface ProfileNavProps {
   editable?: boolean
@@ -107,7 +107,8 @@ const ButtonContainer = styled.div`
 
 const ProfileNav = ({ editable }: ProfileNavProps) => {
   const { userId, '*': nav } = useParams()
-  const toggleFollow = useToggleFollow()
+
+  const dispatch = useAppDispatch()
   const copyLink = useCopyLink()
   const openLogin = useLoginOpen()
 
@@ -123,12 +124,12 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
       event.preventDefault()
       event.stopPropagation()
       if (isLogin) {
-        if (userId) toggleFollow(userId)
+        if (userId) dispatch(userToggleFollow(userId))
       } else {
         openLogin()
       }
     },
-    [isLogin, openLogin, toggleFollow, userId]
+    [isLogin, openLogin, dispatch, userId]
   )
 
   const handleCloseModal = useCallback(() => {
