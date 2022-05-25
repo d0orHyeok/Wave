@@ -6,8 +6,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -38,7 +38,7 @@ export class PlaylistController {
     return this.playlistService.findPlaylistByPermalink(userId, permalink);
   }
 
-  @Put('/update/:id')
+  @Patch('/update/:id')
   @UseGuards(JwtAuthGuard)
   async updatePlaylistInfo(
     @Param('id', ParseIntPipe) id: number,
@@ -47,7 +47,7 @@ export class PlaylistController {
     return this.playlistService.updatePlaylistInfo(id, updatePlaylistDto);
   }
 
-  @Put('/musics/add/:id')
+  @Patch('/musics/add/:id')
   @UseGuards(JwtAuthGuard)
   async addMusicToPlaylist(
     @Param('id', ParseIntPipe) id: number,
@@ -56,7 +56,7 @@ export class PlaylistController {
     return this.playlistService.addMusicToPlaylist(id, musicIds || []);
   }
 
-  @Put('/musics/delete/:id')
+  @Patch('/musics/delete/:id')
   @UseGuards(JwtAuthGuard)
   async deletePlaylistMusic(
     @Param('id', ParseIntPipe) id: number,

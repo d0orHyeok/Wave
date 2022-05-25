@@ -11,6 +11,7 @@ export interface IUserData {
   description?: string
   musics: IMusic[]
   likeMusics: IMusic[]
+  repostMusics: IMusic[]
   followers: IUserData[]
   following: IUserData[]
   playlists: IPlaylist[]

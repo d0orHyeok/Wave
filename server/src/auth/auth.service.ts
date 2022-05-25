@@ -170,4 +170,9 @@ export class AuthService {
       description: updateUser.description,
     };
   }
+
+  async toggleRepostMusic(user: User, musicId: number) {
+    const music = await this.musicRepository.findMusicById(musicId);
+    return this.userRepository.toggleRepostMusic(user, music);
+  }
 }

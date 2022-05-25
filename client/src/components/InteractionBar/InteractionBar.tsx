@@ -11,7 +11,10 @@ import { useLoginOpen } from '@redux/context/loginProvider'
 import { useCopyLink } from '@api/MusicHooks'
 import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
-import { userToggleLikeMusic } from '@redux/features/user/userSlice'
+import {
+  userToggleLikeMusic,
+  userToggleRepostMusic,
+} from '@redux/features/user/userSlice'
 import { FaPlay } from 'react-icons/fa'
 import { numberFormat } from '@api/functions'
 
@@ -115,7 +118,20 @@ const InteractionBar = ({
       openLogin()
       return
     }
-  }, [openLogin, userData])
+
+    if ('title' in target) {
+      dispatch(userToggleRepostMusic(target.id)).then((value) => {
+        if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
+          const existReposts = target.reposts || []
+          const newReposts =
+            value.payload.type === 'repost'
+              ? [...existReposts, userData]
+              : existReposts.filter((ru) => ru.id !== userData.id)
+          setTarget({ ...target, reposts: newReposts })
+        }
+      })
+    }
+  }, [dispatch, openLogin, setTarget, target, userData])
 
   const handleClickLike = useCallback(() => {
     if (!userData) {
@@ -130,8 +146,8 @@ const InteractionBar = ({
           musicId: target.id,
           mod,
         })
-      ).then((payload) => {
-        if (payload.type.indexOf('fulfilled') !== -1 && setTarget) {
+      ).then((value) => {
+        if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
           const existLikes = target.likes
           const newLikes =
             mod === 'like'
@@ -173,18 +189,19 @@ const InteractionBar = ({
   }, [dispatch, target])
 
   useEffect(() => {
+    if (!userData) {
+      setLike(false)
+      return
+    }
+
     if ('title' in target) {
-      if (userData) {
-        const result =
-          userData.likeMusics.findIndex((lm) => lm.id === target.id) !== -1
-        setLike(result)
-      } else {
-        setLike(false)
-      }
+      const resultLike =
+        userData.likeMusics.findIndex((lm) => lm.id === target.id) !== -1
+      setLike(resultLike)
     } else {
       setLike(false)
     }
-  }, [like, target, userData])
+  }, [target, userData])
 
   return (
     <Container {...props}>
@@ -193,7 +210,16 @@ const InteractionBar = ({
           <GoHeart className="icon" />
           <span className="text">Like</span>
         </StyledButton>
-        <StyledButton title="Repost" onClick={handleClickRepost}>
+        <StyledButton
+          title="Repost"
+          active={
+            userData?.repostMusics
+              ? userData.repostMusics.findIndex((rm) => rm.id === target.id) !==
+                -1
+              : false
+          }
+          onClick={handleClickRepost}
+        >
           <BiRepost className="icon" />
           <span className="text">Repost</span>
         </StyledButton>
@@ -240,10 +266,14 @@ const InteractionBar = ({
           ) : (
             <></>
           )}
-          <li title="any reposts">
-            <BiRepost className="icon repost" />
-            11
-          </li>
+          {target.reposts?.length ? (
+            <li title="any reposts">
+              <BiRepost className="icon repost" />
+              {numberFormat(target.reposts.length)}
+            </li>
+          ) : (
+            <></>
+          )}
         </StyledUl>
       ) : (
         <></>

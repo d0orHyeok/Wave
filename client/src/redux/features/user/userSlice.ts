@@ -110,23 +110,32 @@ export const userUpdateProfile = createAsyncThunk(
 
 export const userAddMusicsToPlaylist = createAsyncThunk(
   'USER_PLAYLIST_ADD_MUSIC',
-  async (params: IUserUpdatePlaylistMusicsParams) => {
-    const { playlistId, musicIds } = params
-    const response = await Axios.put(`/api/playlist/musics/add/${playlistId}`, {
-      musicIds,
-    })
+  async ({ playlistId, musicIds }: IUserUpdatePlaylistMusicsParams) => {
+    const response = await Axios.patch(
+      `/api/playlist/musics/add/${playlistId}`,
+      {
+        musicIds,
+      }
+    )
     return response.data
   }
 )
 
 export const userDeleteMusicsFromPlaylist = createAsyncThunk(
   'USER_PLAYLIST_DELETE_MUSIC',
-  async (params: IUserUpdatePlaylistMusicsParams) => {
-    const { playlistId, musicIds } = params
-    const response = await Axios.put(
+  async ({ playlistId, musicIds }: IUserUpdatePlaylistMusicsParams) => {
+    const response = await Axios.patch(
       `/api/playlist/musics/delete/${playlistId}`,
       { musicIds }
     )
+    return response.data
+  }
+)
+
+export const userToggleRepostMusic = createAsyncThunk(
+  'USER_MUSIC_REPOST',
+  async (musicId: number) => {
+    const response = await Axios.patch(`/api/auth/${musicId}/repost/music`)
     return response.data
   }
 )
@@ -209,6 +218,11 @@ export const userSlice = createSlice({
         state.userData.playlists = state.userData.playlists.map((playlist) =>
           playlist.id === updatePlaylist.id ? updatePlaylist : playlist
         )
+      }
+    },
+    [userToggleRepostMusic.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        state.userData.repostMusics = action.payload.reposts
       }
     },
   },

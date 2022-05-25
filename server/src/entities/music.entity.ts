@@ -61,6 +61,9 @@ export class Music extends BaseEntity {
   @Column({ nullable: true, name: 'userId' })
   userId: string;
 
+  @ManyToMany(() => User, (user) => user.repostMusics)
+  reposts: User[];
+
   @ManyToMany(() => User, (user) => user.likeMusics)
   likes: User[];
 

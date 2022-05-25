@@ -145,4 +145,10 @@ export class AuthController {
   ) {
     return this.authService.unfollowUser(user, targetId);
   }
+
+  @Patch('/:musicId/repost/music')
+  @UseGuards(JwtAuthGuard)
+  async repostMusic(@GetUser() user: User, @Param('musicId') musicId: number) {
+    return this.authService.toggleRepostMusic(user, musicId);
+  }
 }

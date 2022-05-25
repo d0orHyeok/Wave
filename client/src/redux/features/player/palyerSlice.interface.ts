@@ -61,6 +61,7 @@ export interface IMusic {
   genre?: string
   description?: string
   likes: IUserData[]
+  reposts: IUserData[]
   tags?: string[]
   cover?: string
   status: TypeStatus

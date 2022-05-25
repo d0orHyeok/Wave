@@ -42,6 +42,10 @@ export class User extends BaseEntity {
   @JoinTable()
   likeMusics: Music[];
 
+  @ManyToMany(() => Music, (music) => music.reposts, { cascade: true })
+  @JoinTable()
+  repostMusics: Music[];
+
   @ManyToMany(() => User, (user) => user.following)
   followers: User[];
 

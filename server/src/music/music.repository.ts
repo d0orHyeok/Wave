@@ -40,12 +40,12 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicById(id: number): Promise<Music> {
-    // const music = await this.findOne(id);
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
       .leftJoinAndSelect('music.playlists', 'playlists')
       .leftJoinAndSelect('playlists.user', 'pu')
       .leftJoinAndSelect('music.likes', 'likes')
+      .leftJoinAndSelect('music.reposts', 'reposts')
       .where('music.id = :id', { id })
       .getOne();
 
@@ -57,12 +57,12 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicByPermalink(userId: string, permalink: string) {
-    // const music = await this.findOne({ userId, permalink });
     const music = await this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
       .leftJoinAndSelect('music.playlists', 'playlists')
       .leftJoinAndSelect('playlists.user', 'pu')
       .leftJoinAndSelect('music.likes', 'likes')
+      .leftJoinAndSelect('music.reposts', 'reposts')
       .where('user.id = :userId', { userId })
       .andWhere('music.permalink = :permalink', { permalink })
       .getOne();

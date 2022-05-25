@@ -34,7 +34,9 @@ export class UserRepository extends Repository<User> {
       .leftJoinAndSelect('user.likeMusics', 'likeMusics')
       .leftJoinAndSelect('likeMusics.user', 'lmu')
       .leftJoinAndSelect('user.followers', 'followers')
-      .leftJoinAndSelect('user.following', 'following');
+      .leftJoinAndSelect('user.following', 'following')
+      .leftJoinAndSelect('user.repostMusics', 'repostMusics')
+      .leftJoinAndSelect('repostMusics.user', 'rmu');
   }
 
   async findUserByUsername(username: string): Promise<User> {
@@ -117,10 +119,7 @@ export class UserRepository extends Repository<User> {
       const { followers, following } = updatedUser;
       return { followers, following };
     } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        `Error to update likeMusics`,
-      );
+      throw new InternalServerErrorException(error, `Error to update follow`);
     }
   }
 
@@ -133,10 +132,37 @@ export class UserRepository extends Repository<User> {
       const { followers, following } = updatedUser;
       return { followers, following };
     } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        `Error to update likeMusics`,
-      );
+      throw new InternalServerErrorException(error, `Error to update follow`);
+    }
+  }
+
+  async toggleRepostMusic(user: User, music: Music) {
+    const reposts = user.repostMusics || [];
+    let findIndex = -1;
+    const newReposts = reposts.filter((m, index) => {
+      if (m.id !== music.id) {
+        return true;
+      } else {
+        findIndex = index;
+        return false;
+      }
+    });
+
+    if (findIndex === -1) {
+      newReposts.push(music);
+      user.repostMusics = newReposts;
+    } else {
+      user.repostMusics = newReposts;
+    }
+
+    try {
+      await this.save(user);
+      return {
+        type: findIndex === -1 ? 'repost' : 'unrepost',
+        reposts: newReposts,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error, `Error to update reposts`);
     }
   }
 }
