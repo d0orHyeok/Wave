@@ -1,4 +1,3 @@
-import Axios from '@api/Axios'
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -7,6 +6,7 @@ import styled from 'styled-components'
 import Loading from '@components/Loading/Loading'
 import CommentBox from '@components/CommentBox/CommentBox'
 import InteractionBar from '@components/InteractionBar/InteractionBar'
+import { getMusicByPermalink } from '@api/musicApi'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -26,7 +26,11 @@ const TrackPage = () => {
   const [music, setMusic] = useState<IMusic>()
 
   useEffect(() => {
-    Axios.get(`/api/music/${permalink}`)
+    if (!permalink) {
+      return
+    }
+
+    getMusicByPermalink(permalink)
       .then((res) => setMusic(res.data))
       .catch(() => navigate('/track/notfound'))
   }, [navigate, permalink])

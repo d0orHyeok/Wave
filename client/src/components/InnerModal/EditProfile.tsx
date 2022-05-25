@@ -8,7 +8,7 @@ import {
   userDeleteImage,
   userUpdateImage,
   userUpdateProfile,
-} from '@redux/features/user/userSlice'
+} from '@redux/thunks/userThunks'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import {
   InnerModalWrapper,

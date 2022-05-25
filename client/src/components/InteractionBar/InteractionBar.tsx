@@ -8,13 +8,13 @@ import { Button, Modal } from '@components/Common'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { useLoginOpen } from '@redux/context/loginProvider'
-import { useCopyLink } from '@api/MusicHooks'
+import { useCopyLink } from '@api/Hooks'
 import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
 import {
   userToggleLikeMusic,
   userToggleRepostMusic,
-} from '@redux/features/user/userSlice'
+} from '@redux/thunks/userThunks'
 import { FaPlay } from 'react-icons/fa'
 import { numberFormat } from '@api/functions'
 

@@ -22,20 +22,3 @@ export interface IUserState {
   isLogin: boolean
   userData?: IUserData
 }
-
-export interface IUserRegisterBody {
-  username: string
-  password: string
-  email: string
-  nickanem?: string
-}
-
-export interface IUserLoginBody {
-  username: string
-  password: string
-}
-
-export interface IUserUpdatePlaylistMusicsParams {
-  playlistId: number | string
-  musicIds: number[]
-}

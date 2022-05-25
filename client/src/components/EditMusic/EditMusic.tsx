@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState, useRef } from 'react'
 import * as S from './EditMusic.style'
 import * as mmb from 'music-metadata-browser'
 import { ICommonTagsResult } from 'music-metadata/lib/type'
-import Axios from '@api/Axios'
 import EditHead from './EditHead/EditHead'
 import EditBasicInfo, {
   IEditBasicInfoHandler,
@@ -10,6 +9,7 @@ import EditBasicInfo, {
 import EditMetadata, { IEditMetadataHandler } from './EditMetadata/EditMetadata'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate } from 'react-router-dom'
+import { uploadMusic } from '@api/musicApi'
 
 interface EditMusicProps {
   files?: FileList
@@ -68,9 +68,7 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
     )
 
     // 서버에 업로드 요청
-    Axios.post('/api/music/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+    uploadMusic(formData)
       .then(() => {
         openAlert('업로드에 성공하였습니다.')
         if (window.confirm('계속해서 업로드 하시겠습니까?')) {

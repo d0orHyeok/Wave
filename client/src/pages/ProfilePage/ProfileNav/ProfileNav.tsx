@@ -7,9 +7,9 @@ import { navItems } from '../assets/profileNavItem'
 import { BsFillCaretLeftFill, BsFillCaretRightFill } from 'react-icons/bs'
 import { Modal } from '@components/Common'
 import EditProfile from '@components/InnerModal/EditProfile'
-import { useCopyLink } from '@api/MusicHooks'
+import { useCopyLink } from '@api/Hooks'
 import { useLoginOpen } from '@redux/context/loginProvider'
-import { userToggleFollow } from '@redux/features/user/userSlice'
+import { userToggleFollow } from '@redux/thunks/userThunks'
 
 interface ProfileNavProps {
   editable?: boolean

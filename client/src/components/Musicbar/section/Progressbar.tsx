@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@redux/hook'
 import React, { useCallback, useEffect, useState } from 'react'
 import convertTimeToString from '@api/functions/convertTimeToString'
 import * as S from './Progressbar.style'
-import Axios from '@api/Axios'
+import { countMusic } from '@api/musicApi'
 
 export const DurationArea = () => {
   const progress = useAppSelector((state) => state.player.progress)
@@ -84,7 +84,10 @@ const Progressbar = () => {
 
   const triggerCount = useCallback(() => {
     // 서버에 음악의 재생횟수를 증가하도록 요청
-    Axios.patch(`/api/music/${currentMusic?.id}/count`)
+    if (!currentMusic?.id) {
+      return
+    }
+    countMusic(currentMusic.id)
       .then(() => setStartPercent(100))
       .catch(() => setStartPercent(100))
       .finally(() => setCount(true))

@@ -1,4 +1,3 @@
-import Axios from '@api/Axios'
 import { selectUser } from '@redux/features/user/userSlice'
 import { IUserData } from '@redux/features/user/userSlice.interface'
 import { useAppSelector } from '@redux/hook'
@@ -9,6 +8,7 @@ import CanNotFind from '../../components/CanNotFind/CanNotFind'
 import Loading from '@components/Loading/Loading'
 import ProfileHead from './ProfileHead/ProfileHead'
 import ProfileNav from './ProfileNav/ProfileNav'
+import { getUserById } from '@api/userApi'
 
 const ProfilePage = () => {
   const params = useParams()
@@ -22,6 +22,11 @@ const ProfilePage = () => {
 
   useEffect(() => {
     const { userId } = params
+    if (!userId) {
+      setIsLoading(false)
+      return
+    }
+
     if (location.pathname === '/profile') {
       navigate('/profile/you')
     } else if (userId === 'you') {
@@ -32,7 +37,7 @@ const ProfilePage = () => {
         setProfileData(user.userData)
       } else {
         setEditable(false)
-        Axios.get(`/api/auth/${userId}`)
+        getUserById(userId)
           .then((res) => setProfileData(res.data))
           .catch((error) => console.log(error.response))
           .finally(() => setIsLoading(false))

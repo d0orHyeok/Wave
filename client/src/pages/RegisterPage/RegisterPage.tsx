@@ -3,7 +3,7 @@ import * as regex from './regex'
 import React, { useState } from 'react'
 import TextField from '@components/Common/TextField'
 import { useAppDispatch } from '@redux/hook'
-import { userRegister } from '@redux/features/user/userSlice'
+import { userRegister } from '@redux/thunks/userThunks'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '@redux/context/alertProvider'
 

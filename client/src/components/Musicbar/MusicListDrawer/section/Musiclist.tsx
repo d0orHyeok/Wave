@@ -21,10 +21,10 @@ import {
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { AddPlaylistMenuItem, MusicMenuItem } from '@components/Common/MenuItem'
 import { MusicMenu } from '@components/Common/Menu'
-import { useCopyLink } from '@api/MusicHooks'
+import { useCopyLink } from '@api/Hooks'
 import { convertTimeToString } from '@api/functions'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLikeMusic } from '@redux/features/user/userSlice'
+import { userToggleLikeMusic } from '@redux/thunks/userThunks'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()

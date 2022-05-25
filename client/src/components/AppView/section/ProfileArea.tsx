@@ -3,7 +3,7 @@ import * as S from './ProfileArea.style'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { MenuItem } from '@components/Common'
 import { BiLogInCircle } from 'react-icons/bi'
-import { selectUser, userLogout } from '@redux/features/user/userSlice'
+import { userLogout } from '@redux/thunks/userThunks'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate, Link } from 'react-router-dom'
 import EmptyProfileImage from '@styles/EmptyImage/EmptyProfileImage.style'
@@ -15,7 +15,7 @@ interface ProfileAreaProps {
 }
 
 const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
-  const user = useAppSelector(selectUser)
+  const user = useAppSelector((state) => state.user)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 

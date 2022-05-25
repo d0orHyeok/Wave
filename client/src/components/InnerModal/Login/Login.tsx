@@ -3,7 +3,7 @@ import TextField from '@components/Common/TextField'
 import * as S from './Login.style'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '@redux/hook'
-import { userAuth, userLogin } from '@redux/features/user/userSlice'
+import { userAuth, userLogin } from '@redux/thunks/userThunks'
 import { useAlert } from '@redux/context/alertProvider'
 
 interface LoginProps {

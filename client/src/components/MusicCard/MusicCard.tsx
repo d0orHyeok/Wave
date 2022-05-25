@@ -12,7 +12,7 @@ import {
 import { MusicMenu } from '@components/Common/Menu'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLikeMusic } from '@redux/features/user/userSlice'
+import { userToggleLikeMusic } from '@redux/thunks/userThunks'
 
 interface IMusicCardProps {
   music: IMusic

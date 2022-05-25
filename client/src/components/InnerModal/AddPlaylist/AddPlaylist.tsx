@@ -5,13 +5,13 @@ import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import EmptyPlaylistImage from '@styles/EmptyImage/EmptyPlaylistImage.stlye'
-import Axios from '@api/Axios'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 import { BsSoundwave } from 'react-icons/bs'
 import {
   userAddMusicsToPlaylist,
+  userCreatePlaylist,
   userDeleteMusicsFromPlaylist,
-} from '@redux/features/user/userSlice'
+} from '@redux/thunks/playlistThunks'
 
 interface AddPlaylistProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,14 +64,15 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
       status: newPlaylist.privacy,
     }
 
-    Axios.post('/api/playlist/create', body)
-      .then((res) => {
-        console.log(res.data)
-      })
-      .catch((err) => console.error(err))
+    dispatch(userCreatePlaylist(body)).then((value) => {
+      if (value.type.indexOf('fulfilled') !== -1) {
+        console.log('success to create playlist')
+      }
+    })
+
     setNewPlaylist({ title: '', privacy: 'PUBLIC' })
     onClose()
-  }, [musics, newPlaylist, onClose])
+  }, [dispatch, musics, newPlaylist, onClose])
 
   const pullMusic = useCallback(
     // 추가할 음악 제거
@@ -133,6 +134,10 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
             />
             <ul>
               {playlists.map((playlist, index) => {
+                if (playlist.name.indexOf(filter) === -1) {
+                  return
+                }
+
                 let added = false
                 let filteredMusics = musics
                 if (filteredMusics.length === 1) {
