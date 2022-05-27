@@ -118,8 +118,8 @@ const RegisterPage = () => {
     }
     dispatch(userRegister(registerInfo))
       .unwrap()
-      .then((res) => {
-        console.log('Register Success', res)
+      .then(() => {
+        console.log('Register Success')
         navigate('/')
         openAlert('회원가입 되었습니다.')
       })

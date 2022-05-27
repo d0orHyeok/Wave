@@ -102,8 +102,9 @@ export const userSlice = createSlice({
     },
     [playlistThunks.userCreatePlaylist.fulfilled.type]: (state, action) => {
       if (state.userData) {
+        const createPlaylist: IPlaylist = action.payload
         const existPlaylists = state.userData.playlists || []
-        state.userData.playlists = [...existPlaylists, action.payload]
+        state.userData.playlists = [...existPlaylists, createPlaylist]
       }
     },
   },

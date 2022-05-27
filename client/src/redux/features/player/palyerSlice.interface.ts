@@ -61,13 +61,16 @@ export interface IMusic {
   genre?: string
   description?: string
   likes: IUserData[]
+  likesCount: number
   reposts: IUserData[]
+  repostsCount: number
+  playlists: IPlaylist[]
   tags?: string[]
   cover?: string
   status: TypeStatus
   metaData: IMusicMetadata
   userId: string
-  user?: IUserData
+  user: IUserData
   createdAt: string
   updatedAt: string
 }
@@ -84,4 +87,5 @@ export interface IPlaylist {
   userId: string
   user: IUserData
   musics: IMusic[]
+  musicsCount: number
 }

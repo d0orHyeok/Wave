@@ -86,8 +86,8 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
         onClose={handleClose}
         disableScrollLock={true}
         anchorOrigin={{
-          vertical: fold ? 'top' : 'bottom',
-          horizontal: fold ? 'right' : 'left',
+          vertical: fold === 'true' ? 'top' : 'bottom',
+          horizontal: fold === 'true' ? 'right' : 'left',
         }}
         transformOrigin={{
           vertical: 'top',

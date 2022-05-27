@@ -12,7 +12,7 @@ const HomePage = () => {
   useEffect(() => {
     getAllMusic()
       .then((res) => {
-        setMusics(res.data.musics)
+        setMusics(res.data)
       })
       .catch((err) => {
         console.log(err)

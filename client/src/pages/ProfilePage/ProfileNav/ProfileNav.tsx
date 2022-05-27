@@ -171,14 +171,19 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
     (index: number) => (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation()
       const target = ulRef.current
-      if (target) {
-        const length = target.children.length
-        const widths = Array.from(target.children).map((c, index) =>
-          index !== length - 1 ? c.clientWidth + 16 : c.clientWidth
-        )
-        const moveLeft = widths.slice(0, index).reduce((a, b) => a + b)
-        target.scrollTo(moveLeft, 0)
+      if (!target) {
+        return
       }
+
+      const length = target.children.length
+      const widths = Array.from(target.children).map((c, index) =>
+        index !== length - 1 ? c.clientWidth + 16 : c.clientWidth
+      )
+
+      const moveLeft = index
+        ? widths.slice(0, index).reduce((a, b) => a + b)
+        : 0
+      target.scrollTo(moveLeft, 0)
     }
 
   const handleClickEdit = useCallback(() => {
@@ -206,7 +211,11 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
               className={nav === item.path ? 'selected' : undefined}
             >
               <Link
-                to={`/profile/${userId}${item.path ? '/' + item.path : ''}`}
+                to={
+                  index === 0
+                    ? `/profile/${userId}`
+                    : `/profile/${userId}/${item.path}`
+                }
                 onClick={handleClickNavItem(index)}
               >
                 {item.name}

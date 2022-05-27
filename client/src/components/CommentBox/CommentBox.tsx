@@ -41,13 +41,15 @@ const ImageBox = styled.div`
   }
 `
 
-const CommentBox = () => {
+type CommentBoxProps = React.HTMLAttributes<HTMLDivElement>
+
+const CommentBox = (props: CommentBoxProps) => {
   const user = useAppSelector((state) => state.user)
 
   const commentRef = useRef<HTMLInputElement>(null)
 
   return (
-    <Box>
+    <Box {...props}>
       <ImageBox>
         {user.userData?.profileImage ? (
           <img className="img" src={user.userData?.profileImage} alt="" />

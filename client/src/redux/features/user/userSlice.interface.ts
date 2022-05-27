@@ -10,10 +10,13 @@ export interface IUserData {
   profileImage?: string
   description?: string
   musics: IMusic[]
+  musicsCount: number
   likeMusics: IMusic[]
   repostMusics: IMusic[]
   followers: IUserData[]
   following: IUserData[]
+  followersCount: number
+  followingCount: number
   playlists: IPlaylist[]
   createdAt: string
 }
