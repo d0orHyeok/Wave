@@ -42,11 +42,16 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
   }
 
-  async findPlaylistById(playlistId: number) {
-    const playlist = await this.createQueryBuilder('playlist')
+  getDetailPlaylistQuery() {
+    return this.createQueryBuilder('playlist')
       .leftJoinAndSelect('playlist.user', 'user')
       .leftJoinAndSelect('playlist.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
+      .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics');
+  }
+
+  async findPlaylistById(playlistId: number) {
+    const playlist = await this.getDetailPlaylistQuery()
       .where('playlist.id = :id', { id: playlistId })
       .getOne();
 
@@ -57,10 +62,7 @@ export class PlaylistRepository extends Repository<Playlist> {
   }
 
   async findPlaylistByPermalink(userId: string, permalink: string) {
-    const playlist = await this.createQueryBuilder('playlist')
-      .leftJoinAndSelect('playlist.user', 'user')
-      .leftJoinAndSelect('playlist.musics', 'musics')
-      .leftJoinAndSelect('musics.user', 'pmu')
+    const playlist = await this.getDetailPlaylistQuery()
       .where('user.id = :userId', { userId })
       .andWhere('playlist.permalink = :permalink', { permalink })
       .getOne();

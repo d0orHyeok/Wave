@@ -28,15 +28,19 @@ export class UserRepository extends Repository<User> {
 
   getAllColumnQuery() {
     return this.createQueryBuilder('user')
+      .leftJoinAndSelect('user.musics', 'musics')
       .leftJoinAndSelect('user.playlists', 'playlists')
-      .leftJoinAndSelect('playlists.musics', 'musics')
-      .leftJoinAndSelect('musics.user', 'pmu')
-      .leftJoinAndSelect('user.likeMusics', 'likeMusics')
-      .leftJoinAndSelect('likeMusics.user', 'lmu')
+      .leftJoinAndSelect('playlists.musics', 'pm')
+      .leftJoinAndSelect('pm.user', 'pmu')
+      .leftJoinAndSelect('user.likeMusics', 'lm')
+      .leftJoinAndSelect('lm.user', 'lmu')
       .leftJoinAndSelect('user.followers', 'followers')
       .leftJoinAndSelect('user.following', 'following')
-      .leftJoinAndSelect('user.repostMusics', 'repostMusics')
-      .leftJoinAndSelect('repostMusics.user', 'rmu');
+      .leftJoinAndSelect('user.repostMusics', 'rm')
+      .leftJoinAndSelect('rm.user', 'rmu')
+      .loadRelationCountAndMap('user.followersCount', 'user.followers')
+      .loadRelationCountAndMap('user.followingCount', 'user.following')
+      .loadRelationCountAndMap('user.musicsCount', 'user.musics');
   }
 
   async findUserByUsername(username: string): Promise<User> {
@@ -66,11 +70,18 @@ export class UserRepository extends Repository<User> {
   }
 
   async updateRefreshToken(user: User, hashedRefreshToken?: string) {
-    return this.createQueryBuilder()
-      .update(User)
-      .set({ hashedRefreshToken })
-      .where('id = :id', { id: user.id })
-      .execute();
+    try {
+      await this.createQueryBuilder()
+        .update(User)
+        .set({ hashedRefreshToken })
+        .where('id = :id', { id: user.id })
+        .execute();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to update refreshToken',
+      );
+    }
   }
 
   async toggleLikeMusic(user: User, music: Music) {

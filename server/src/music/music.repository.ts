@@ -5,18 +5,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Music } from 'src/entities/music.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { EntityStatus } from 'src/entities/common.types';
 
 @EntityRepository(Music)
 export class MusicRepository extends Repository<Music> {
-  async getAllMusic(): Promise<Music[]> {
-    return await this.createQueryBuilder('music')
-      .leftJoinAndSelect('music.user', 'user')
-      .where('music.status = :status', { status: 'PUBLIC' })
-      .getMany();
-  }
-
   async createMusic(createMusicData: MusicDataDto, user: User): Promise<Music> {
     const { permalink } = createMusicData;
 
@@ -39,13 +32,35 @@ export class MusicRepository extends Repository<Music> {
     }
   }
 
-  async findMusicById(id: number): Promise<Music> {
-    const music = await this.createQueryBuilder('music')
+  orderSelectQuery(query: SelectQueryBuilder<Music>) {
+    return query
+      .orderBy('music.count', 'DESC')
+      .addOrderBy('likesCount', 'DESC')
+      .addOrderBy('repostsCount', 'DESC');
+  }
+
+  musicSimpleQuery() {
+    return this.createQueryBuilder('music')
+      .leftJoinAndSelect('music.user', 'user')
+      .leftJoinAndSelect('music.likes', 'likes')
+      .leftJoinAndSelect('music.reposts', 'reposts')
+      .loadRelationCountAndMap('music.likesCount', 'music.likes')
+      .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
+  }
+
+  musicDetailQuery() {
+    return this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
       .leftJoinAndSelect('music.playlists', 'playlists')
       .leftJoinAndSelect('playlists.user', 'pu')
       .leftJoinAndSelect('music.likes', 'likes')
       .leftJoinAndSelect('music.reposts', 'reposts')
+      .loadRelationCountAndMap('music.likesCount', 'music.likes')
+      .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
+  }
+
+  async findMusicById(id: number): Promise<Music> {
+    const music = await this.musicDetailQuery()
       .where('music.id = :id', { id })
       .getOne();
 
@@ -57,12 +72,7 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicByPermalink(userId: string, permalink: string) {
-    const music = await this.createQueryBuilder('music')
-      .leftJoinAndSelect('music.user', 'user')
-      .leftJoinAndSelect('music.playlists', 'playlists')
-      .leftJoinAndSelect('playlists.user', 'pu')
-      .leftJoinAndSelect('music.likes', 'likes')
-      .leftJoinAndSelect('music.reposts', 'reposts')
+    const music = await this.musicDetailQuery()
       .where('user.id = :userId', { userId })
       .andWhere('music.permalink = :permalink', { permalink })
       .getOne();
@@ -76,11 +86,14 @@ export class MusicRepository extends Repository<Music> {
     return music;
   }
 
-  async findMusicByIds(musicIds: number[]) {
-    return this.createQueryBuilder('music')
-      .leftJoinAndSelect('music.user', 'user')
-      .whereInIds(musicIds)
+  async getAllMusic(): Promise<Music[]> {
+    return await this.musicSimpleQuery()
+      .where('music.status = :status', { status: 'PUBLIC' })
       .getMany();
+  }
+
+  async findMusicByIds(musicIds: number[]) {
+    return this.musicSimpleQuery().whereInIds(musicIds).getMany();
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {
@@ -91,20 +104,27 @@ export class MusicRepository extends Repository<Music> {
     }
   }
 
+  async updateMusic(music: Music) {
+    try {
+      await this.save(music);
+      return music;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to update music, music ID: ${music.id}`,
+      );
+    }
+  }
+
   async updateMusicStatus(id: number, status: EntityStatus): Promise<Music> {
     const music = await this.findMusicById(id);
-
     music.status = status;
-    await this.save(music);
-
-    return music;
+    return this.updateMusic(music);
   }
 
   async updateMusicCount(id: number) {
     const music = await this.findMusicById(id);
     music.count += 1;
-    await this.save(music);
-
-    return music;
+    return this.updateMusic(music);
   }
 }

@@ -49,7 +49,7 @@ export class Music extends BaseEntity {
   @Column('text', { array: true, nullable: true })
   tags: string[];
 
-  @Column('simple-json')
+  @Column('json')
   metadata: MusicMetadataDto;
 
   @Column({ default: EntityStatus.PUBLIC })

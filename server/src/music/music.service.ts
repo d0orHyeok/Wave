@@ -1,3 +1,4 @@
+import { MusicPagingDto } from './dto/music-paging.dto';
 import { AuthService } from './../auth/auth.service';
 import { MusicMetadataDto } from './dto/music-metadata.dto';
 import { MusicDataDto } from './dto/music-data.dto';
@@ -11,6 +12,7 @@ import { getStorage } from 'firebase-admin/storage';
 import * as NodeID3 from 'node-id3';
 import * as uuid from 'uuid';
 import { EntityStatus } from 'src/entities/common.types';
+import { Brackets } from 'typeorm';
 
 @Injectable()
 export class MusicService {
@@ -107,10 +109,6 @@ export class MusicService {
     }
   }
 
-  async updateMusicStatus(id: number, status: EntityStatus): Promise<Music> {
-    return this.musicRepository.updateMusicStatus(id, status);
-  }
-
   createPersistentDownloadUrl = (pathToFile, downloadToken) => {
     const bucket = 'wave-f1616.appspot.com';
     return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(
@@ -145,6 +143,10 @@ export class MusicService {
     }
   }
 
+  async updateMusicStatus(id: number, status: EntityStatus): Promise<Music> {
+    return this.musicRepository.updateMusicStatus(id, status);
+  }
+
   async updateMusicCount(id: number) {
     return this.musicRepository.updateMusicCount(id);
   }
@@ -152,7 +154,38 @@ export class MusicService {
   async deleteFileFirebase(filename: string) {
     const bucket = getStorage().bucket();
     await bucket.file(filename).delete();
+  }
 
-    console.log(`${filename} deleted`);
+  async findRelatedMusic(id: number, musicPagingDto: MusicPagingDto) {
+    // 선택된 음악의 제목, 앨범, 아티스트와 관련있는 음악들을 가져온다
+    const music = await this.musicRepository.findMusicById(id);
+
+    const { title, album, artist } = music.metadata;
+    const { skip, take } = musicPagingDto;
+
+    return this.musicRepository
+      .musicSimpleQuery()
+      .where('music.id != :id', { id: music.id })
+      .andWhere(
+        new Brackets((qb) => {
+          let query = qb.where('music.title LIKE :title', {
+            title: `%${title}%`,
+          });
+          if (album && album.length) {
+            query = query.orWhere('music.album LIKE :album', {
+              album: `%${album}%`,
+            });
+          }
+          if (artist && artist.length) {
+            query = query.orWhere(`music.metadata->>'artist' LIKE :artist`, {
+              artist: `%${artist}%`,
+            });
+          }
+          return query;
+        }),
+      )
+      .skip(skip ? skip : 0)
+      .take(take ? take : 10)
+      .getMany();
   }
 }

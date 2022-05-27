@@ -1,3 +1,4 @@
+import { MusicPagingDto } from './dto/music-paging.dto';
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from 'src/entities/user.entity';
 import { EntityStatusValidationPipe } from '../entities/pipes/entity-status-validation.pipe';
@@ -35,8 +36,7 @@ export class MusicController {
 
   @Get('/')
   async getAllMusic() {
-    const musics = await this.musicService.getAllMusic();
-    return { musics };
+    return this.musicService.getAllMusic();
   }
 
   @Post('/upload')
@@ -96,12 +96,20 @@ export class MusicController {
     return this.musicService.findMusicById(id);
   }
 
-  @Get('/:userId/:permalink')
+  @Get('permalink/:userId/:permalink')
   getMusicByPermalink(
     @Param('userId') userId: string,
     @Param('permalink') permalink: string,
   ) {
     return this.musicService.findMusicByPermalink(userId, permalink);
+  }
+
+  @Post('/related/:id')
+  findRelatedMusic(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() musicPagingDto: MusicPagingDto,
+  ) {
+    return this.musicService.findRelatedMusic(id, musicPagingDto);
   }
 
   @Delete('/:id')

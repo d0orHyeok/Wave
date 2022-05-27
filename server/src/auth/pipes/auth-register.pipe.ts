@@ -23,6 +23,6 @@ export class AuthRegisterPipe implements PipeTransform {
 
   private async hashPasswrod(password: string) {
     const salt = await bcrypt.genSalt();
-    return await bcrypt.hash(password, salt);
+    return bcrypt.hash(password, salt);
   }
 }
