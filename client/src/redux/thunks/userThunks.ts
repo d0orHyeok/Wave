@@ -2,21 +2,6 @@ import Axios from '@api/Axios'
 
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
-interface IUserRegisterBody {
-  username: string
-  password: string
-  email: string
-  nickanem?: string
-}
-
-export const userRegister = createAsyncThunk(
-  'REGISTER',
-  async (registerInfo: IUserRegisterBody) => {
-    const response = await Axios.post('/api/auth/signup', registerInfo)
-    return response
-  }
-)
-
 interface IUserLoginBody {
   username: string
   password: string

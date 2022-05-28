@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import React, { useState, useCallback, useEffect } from 'react'
 import { StyledDivider } from '../common.style'
 import * as S from './AddPlaylist.style'
@@ -16,10 +16,19 @@ import {
 interface AddPlaylistProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSuccess?: (createPlaylist: IPlaylist) => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onFailed?: any
   addMusics?: IMusic[]
 }
 
-const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
+const AddPlaylist = ({
+  onClose,
+  addMusics,
+  onSuccess,
+  onFailed,
+}: AddPlaylistProps) => {
   const dispatch = useAppDispatch()
 
   const playlists =
@@ -66,13 +75,26 @@ const AddPlaylist = ({ onClose, addMusics }: AddPlaylistProps) => {
 
     dispatch(userCreatePlaylist(body)).then((value) => {
       if (value.type.indexOf('fulfilled') !== -1) {
-        console.log('success to create playlist')
+        if (onSuccess) {
+          const createPlaylist: IPlaylist = value.payload
+          onSuccess(createPlaylist)
+        }
+      } else {
+        onFailed && onFailed()
       }
     })
 
     setNewPlaylist({ title: '', privacy: 'PUBLIC' })
     onClose()
-  }, [dispatch, musics, newPlaylist, onClose])
+  }, [
+    dispatch,
+    musics,
+    newPlaylist.privacy,
+    newPlaylist.title,
+    onClose,
+    onFailed,
+    onSuccess,
+  ])
 
   const pullMusic = useCallback(
     // 추가할 음악 제거

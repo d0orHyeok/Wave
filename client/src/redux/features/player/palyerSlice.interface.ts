@@ -20,6 +20,7 @@ export interface IControll {
 export interface IProgress {
   percent: number
   duration: number
+  currentTime: number
   currentStringTime: string
   durationStringTime: string
 }
@@ -27,6 +28,7 @@ export interface IProgress {
 export interface IProgressPayload {
   percent?: number
   duration?: number
+  currentTime?: number
   currentStringTime?: string
   durationStringTime?: string
 }
@@ -65,12 +67,15 @@ export interface IMusic {
   reposts: IUserData[]
   repostsCount: number
   playlists: IPlaylist[]
+  playlistsCount: number
   tags?: string[]
   cover?: string
   status: TypeStatus
   metaData: IMusicMetadata
   userId: string
   user: IUserData
+  comments: ICommnet[]
+  commentsCount: number
   createdAt: string
   updatedAt: string
 }
@@ -88,4 +93,16 @@ export interface IPlaylist {
   user: IUserData
   musics: IMusic[]
   musicsCount: number
+}
+
+export interface ICommnet {
+  id: number
+  text: string
+  commentedAt: number
+  userId: string
+  musicId: number
+  user: IUserData
+  music: IMusic
+  createdAt: string
+  updatedAt: string
 }

@@ -15,7 +15,7 @@ const HomePage = () => {
         setMusics(res.data)
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err.response)
       })
   }, [])
 

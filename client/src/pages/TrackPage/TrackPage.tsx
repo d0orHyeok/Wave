@@ -10,9 +10,7 @@ import { getMusicByPermalink, findRelatedMusics } from '@api/musicApi'
 import { Divider } from '@mui/material'
 import RelatedTrack from './RelatedTrack/RelatedTrack'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
-import { FaComment } from 'react-icons/fa'
-import { EmptyProfileImage } from '@styles/EmptyImage'
-import calculateDateAgo from '@api/functions/calculateDateAgo'
+import TrackComments from './TrackComments/TrackComments'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -81,19 +79,13 @@ const Content = styled.div`
   @media screen and (max-width: 1000px) {
     flex-direction: column;
     & .subcontent {
-      margin: 0 auto;
+      justify-content: center;
     }
     & .media-divider {
       display: block;
     }
     & .musiccontent {
       margin-left: 0;
-    }
-  }
-
-  ${({ theme }) => theme.device.tablet} {
-    & .subcontent {
-      margin: 0;
     }
   }
 `
@@ -160,57 +152,6 @@ const MusicContent = styled.div`
   }
 `
 
-const MusicComments = styled.div`
-  padding: 10px 0;
-
-  & .comment-item {
-    display: flex;
-
-    &:not(:last-child) {
-      margin-bottom: 15px;
-    }
-
-    & .comment-imageBox {
-      flex-shrink: 0;
-      width: 40px;
-      height: 40px;
-      margin-right: 10px;
-      & .comment-imageBox-image,
-      & .comment-imageBox-link {
-        width: 100%;
-        height: 100%;
-        border-radius: 20px;
-        object-fit: cover;
-      }
-    }
-
-    & .comment-content {
-      min-width: 0;
-      & .comment-content-username {
-        margin-bottom: 3px;
-        min-width: 0;
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      & .comment-content-text {
-      }
-
-      & .comment-content-username:hover,
-      & .comment-content-text {
-        color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-      }
-    }
-
-    & .comment-createdAt {
-      margin-left: auto;
-      font-size: 12px;
-    }
-  }
-`
-
 const TrackPage = () => {
   const { '*': permalink } = useParams()
   const navigate = useNavigate()
@@ -232,7 +173,7 @@ const TrackPage = () => {
     if (music?.id) {
       findRelatedMusics(music.id)
         .then((res) => setRelatedMusics(res.data))
-        .catch((err) => console.error(err))
+        .catch((err) => console.error(err.response))
     }
   }, [music?.id])
 
@@ -242,7 +183,7 @@ const TrackPage = () => {
     <Wrapper>
       <TrackHead music={music} />
       <Container>
-        <CommentBox className="comment" />
+        <CommentBox className="comment" music={music} setMusic={setMusic} />
         <InteractionBar
           className="interaction"
           target={music}
@@ -252,9 +193,16 @@ const TrackPage = () => {
         <Content>
           <SubContent className="subcontent">
             <UserSmallCard className="music-uploader" user={music.user} />
-            <SideContent>
-              <RelatedTrack music={music} relatedMusics={relatedMusics} />
-            </SideContent>
+            {relatedMusics.length ||
+            music.playlistsCount ||
+            music.likesCount ||
+            music.repostsCount ? (
+              <SideContent className="sidecontent">
+                <RelatedTrack music={music} relatedMusics={relatedMusics} />
+              </SideContent>
+            ) : (
+              <></>
+            )}
           </SubContent>
           <MusicContent className="musiccontent">
             {music.description?.trim().length || music.tags?.length ? (
@@ -280,50 +228,7 @@ const TrackPage = () => {
               <></>
             )}
 
-            {false ? (
-              <>
-                <h2 className="subtitle-comment">
-                  <FaComment className="icon comment" />
-                  {`${2} comments`}
-                </h2>
-                <StyledDivider />
-                <MusicComments>
-                  {Array.from({ length: 3 }, (v, n) => n).map((v) => (
-                    <div key={v} className="comment-item">
-                      <div className="comment-imageBox">
-                        <Link
-                          className="comment-imageBox-link"
-                          to={`/profile/${v}`}
-                        >
-                          {v === 10 ? (
-                            <img
-                              className="comment-imageBox-image"
-                              src="d"
-                              alt=""
-                            />
-                          ) : (
-                            <EmptyProfileImage className="comment-imageBox-image" />
-                          )}
-                        </Link>
-                      </div>
-                      <div className="comment-content">
-                        <div className="comment-content-username">
-                          <Link to={`/profile/${1}`}>{'samepleuser'}</Link>
-                        </div>
-                        <div className="comment-content-text">
-                          {'sample text'}
-                        </div>
-                      </div>
-                      <div className="comment-createdAt">
-                        {calculateDateAgo(100)}
-                      </div>
-                    </div>
-                  ))}
-                </MusicComments>
-              </>
-            ) : (
-              <></>
-            )}
+            <TrackComments music={music} setMusic={setMusic} />
           </MusicContent>
         </Content>
       </Container>

@@ -1,7 +1,9 @@
 import { useAppSelector } from '@redux/hook'
-import React, { useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import styled from 'styled-components'
+import { ICommnet, IMusic } from '@redux/features/player/palyerSlice.interface'
+import { createComment } from '@api/commentApi'
 
 const Box = styled.div`
   height: 40px;
@@ -41,12 +43,61 @@ const ImageBox = styled.div`
   }
 `
 
-type CommentBoxProps = React.HTMLAttributes<HTMLDivElement>
+interface CommentBoxProps extends React.HTMLAttributes<HTMLDivElement> {
+  music: IMusic
+  setMusic: React.Dispatch<React.SetStateAction<IMusic | undefined>>
+}
 
-const CommentBox = (props: CommentBoxProps) => {
+const CommentBox = ({ music, setMusic, ...props }: CommentBoxProps) => {
   const user = useAppSelector((state) => state.user)
+  const commentedAt = useAppSelector(
+    (state) => state.player.progress.currentTime
+  )
 
   const commentRef = useRef<HTMLInputElement>(null)
+
+  const handleSubminComment = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!user.isLogin || !commentRef.current) {
+        return
+      }
+
+      if (event.key !== 'Enter') {
+        return
+      }
+
+      const text = commentRef.current.value.trim()
+
+      if (!text.length) {
+        commentRef.current.focus()
+        return alert('Please type comment at least 1 character')
+      }
+
+      const body = {
+        text,
+        musicId: music?.id,
+        commentedAt: commentedAt,
+      }
+      createComment(body)
+        .then((res) => {
+          const createdComment: ICommnet = res.data
+          const existComments = music.comments || []
+          const newComments = [createdComment, ...existComments]
+          setMusic({
+            ...music,
+            comments: newComments,
+            commentsCount: newComments.length,
+          })
+          if (commentRef.current) commentRef.current.value = ''
+          return
+        })
+        .catch((error) => {
+          console.error(error.response || error)
+          return alert('Failed to add comment')
+        })
+    },
+    [commentedAt, music, setMusic, user.isLogin]
+  )
 
   return (
     <Box {...props}>
@@ -58,7 +109,12 @@ const CommentBox = (props: CommentBoxProps) => {
         )}
       </ImageBox>
       <div className="textBox">
-        <input ref={commentRef} type="text" placeholder="Write a comment" />
+        <input
+          ref={commentRef}
+          onKeyPress={handleSubminComment}
+          type="text"
+          placeholder="Write a comment"
+        />
       </div>
     </Box>
   )

@@ -105,6 +105,7 @@ const Musicbar = () => {
 
     dispatch(
       setProgress({
+        currentTime,
         percent: (currentTime / duration) * 100,
         currentStringTime: newCurrentStringTime,
       })
@@ -119,6 +120,7 @@ const Musicbar = () => {
 
       dispatch(
         setProgress({
+          currentTime: 0,
           currentStringTime: '0:00',
           durationStringTime: newDurationStringTime,
           percent: 0,

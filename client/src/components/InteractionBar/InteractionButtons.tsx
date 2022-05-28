@@ -86,7 +86,11 @@ const InteractionButtons = ({
             value.payload.type === 'repost'
               ? [...existReposts, userData]
               : existReposts.filter((ru) => ru.id !== userData.id)
-          setTarget({ ...target, reposts: newReposts })
+          setTarget({
+            ...target,
+            reposts: newReposts,
+            repostsCount: newReposts.length,
+          })
         }
       })
     }
@@ -106,11 +110,27 @@ const InteractionButtons = ({
             value.payload.type === 'like'
               ? [...existLikes, userData]
               : existLikes.filter((l) => l.id !== userData.id)
-          setTarget({ ...target, likes: newLikes })
+          setTarget({ ...target, likes: newLikes, likesCount: newLikes.length })
         }
       })
     }
   }, [userData, target, openLogin, dispatch, setTarget])
+
+  const onSuccessCreatePlaylist = useCallback(
+    (createPlaylist: IPlaylist) => {
+      if (!('title' in target) || !setTarget) {
+        return
+      }
+      const existPlaylists = target.playlists || []
+      const newPlaylists = [...existPlaylists, createPlaylist]
+      setTarget({
+        ...target,
+        playlists: newPlaylists,
+        playlistsCount: newPlaylists.length,
+      })
+    },
+    [setTarget, target]
+  )
 
   const handleClickAddPlaylist = useCallback(() => {
     if (!userData) {
@@ -186,7 +206,11 @@ const InteractionButtons = ({
             <span className="text">Add to Playlist</span>
           </StyledButton>
           <Modal open={openModal} onClose={closeModal}>
-            <AddPlaylist addMusics={[target]} onClose={closeModal} />
+            <AddPlaylist
+              addMusics={[target]}
+              onClose={closeModal}
+              onSuccess={onSuccessCreatePlaylist}
+            />
           </Modal>
         </>
       ) : (

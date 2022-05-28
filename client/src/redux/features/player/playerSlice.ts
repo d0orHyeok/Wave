@@ -33,6 +33,7 @@ const initialState: IPlayerState = {
     repeat: undefined,
   },
   progress: {
+    currentTime: 0,
     percent: 0,
     duration: 0,
     durationStringTime: '0:00',
@@ -210,6 +211,7 @@ export const playerSlice = createSlice({
         state.progress = { ...state.progress, ...action.payload }
       } else {
         state.progress = {
+          currentTime: 0,
           currentStringTime: '0:00',
           durationStringTime: '0:00',
           percent: 0,

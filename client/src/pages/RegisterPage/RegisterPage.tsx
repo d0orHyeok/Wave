@@ -2,14 +2,12 @@ import * as S from './RegisterPage.style'
 import * as regex from './regex'
 import React, { useState } from 'react'
 import TextField from '@components/Common/TextField'
-import { useAppDispatch } from '@redux/hook'
-import { userRegister } from '@redux/thunks/userThunks'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '@redux/context/alertProvider'
+import { userSignUp } from '@api/userApi'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
   const openAlert = useAlert()
 
   const [registerInput, setRegisterInput] = useState({
@@ -116,15 +114,14 @@ const RegisterPage = () => {
       email,
       nickname,
     }
-    dispatch(userRegister(registerInfo))
-      .unwrap()
+    userSignUp(registerInfo)
       .then(() => {
         console.log('Register Success')
         navigate('/')
         openAlert('회원가입 되었습니다.')
       })
       .catch((err) => {
-        if (err.status === 409) {
+        if (err.response.status === 409) {
           setRegisterInput({ ...registerInput, username: '' })
           setInputValidate({ ...inputValidate, username: -1 })
           document.getElementById('username')?.focus()

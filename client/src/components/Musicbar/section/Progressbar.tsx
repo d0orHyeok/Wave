@@ -69,6 +69,7 @@ const Progressbar = () => {
 
     dispatch(
       setProgress({
+        currentTime,
         currentStringTime,
         percent: changedPercent,
       })
