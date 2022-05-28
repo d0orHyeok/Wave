@@ -37,7 +37,10 @@ export class PlaylistRepository extends Repository<Playlist> {
         throw new ConflictException('Existing playlist');
       } else {
         console.log(error);
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException(
+          error,
+          'Error to create playlist',
+        );
       }
     }
   }
@@ -87,7 +90,16 @@ export class PlaylistRepository extends Repository<Playlist> {
         playlist[key] = value;
       }
     });
-    return this.save(playlist);
+
+    try {
+      const updatedPlaylist = await this.save(playlist);
+      return updatedPlaylist;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to update playlist info',
+      );
+    }
   }
 
   async addMusicToPlaylist(playlistId: number, musics: Music[]) {
@@ -116,10 +128,13 @@ export class PlaylistRepository extends Repository<Playlist> {
   }
 
   async deletePlaylist(id: number, user: User): Promise<void> {
-    const result = await this.delete({ id, user });
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Can't find Playlist with id ${id}`);
+    try {
+      const result = await this.delete({ id, user });
+      if (result.affected === 0) {
+        throw new NotFoundException(`Can't find Playlist with id ${id}`);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error to delete playlist');
     }
   }
 }

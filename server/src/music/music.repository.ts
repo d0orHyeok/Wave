@@ -27,7 +27,8 @@ export class MusicRepository extends Repository<Music> {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `Error ocuur create music.\n${error}`,
+        error,
+        `Error ocuur create music.`,
       );
     }
   }
@@ -42,9 +43,8 @@ export class MusicRepository extends Repository<Music> {
   musicSimpleQuery() {
     return this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
-      .leftJoinAndSelect('music.likes', 'likes')
-      .leftJoinAndSelect('music.reposts', 'reposts')
       .loadRelationCountAndMap('music.likesCount', 'music.likes')
+      .loadRelationCountAndMap('music.commentsCount', 'music.comments')
       .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
   }
 
@@ -55,6 +55,9 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('playlists.user', 'pu')
       .leftJoinAndSelect('music.likes', 'likes')
       .leftJoinAndSelect('music.reposts', 'reposts')
+      .leftJoinAndSelect('music.comments', 'comments')
+      .leftJoinAndSelect('comments.user', 'cu')
+      .loadRelationCountAndMap('music.commentsCount', 'music.comments')
       .loadRelationCountAndMap('music.likesCount', 'music.likes')
       .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
   }
@@ -72,24 +75,34 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findMusicByPermalink(userId: string, permalink: string) {
-    const music = await this.musicDetailQuery()
-      .where('user.id = :userId', { userId })
-      .andWhere('music.permalink = :permalink', { permalink })
-      .getOne();
+    try {
+      const music = await this.musicDetailQuery()
+        .where('user.id = :userId', { userId })
+        .andWhere('music.permalink = :permalink', { permalink })
+        .getOne();
 
-    if (!music) {
-      throw new NotFoundException(
-        `Can't find ${userId}'s music name: ${permalink}`,
-      );
+      if (!music) {
+        throw new NotFoundException(
+          `Can't find ${userId}'s music name: ${permalink}`,
+        );
+      }
+
+      return music;
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error to get music');
     }
-
-    return music;
   }
 
   async getAllMusic(): Promise<Music[]> {
-    return await this.musicSimpleQuery()
-      .where('music.status = :status', { status: 'PUBLIC' })
-      .getMany();
+    try {
+      const musics = await this.musicSimpleQuery()
+        .where('music.status = :status', { status: 'PUBLIC' })
+        .getMany();
+      return musics;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error, 'Error to get musics');
+    }
   }
 
   async findMusicByIds(musicIds: number[]) {
@@ -97,10 +110,13 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {
-    const result = await this.delete({ id, user });
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Can't find Music with id ${id}`);
+    try {
+      const result = await this.delete({ id, user });
+      if (result.affected === 0) {
+        throw new NotFoundException(`Can't find Music with id ${id}`);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error to delete music');
     }
   }
 

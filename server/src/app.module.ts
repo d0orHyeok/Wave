@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { PlaylistModule } from './playlist/playlist.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PlaylistModule } from './playlist/playlist.module';
     MusicModule,
     AuthModule,
     PlaylistModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

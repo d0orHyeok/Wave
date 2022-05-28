@@ -1,3 +1,4 @@
+import { Comment } from 'src/entities/comment.entity';
 import { Playlist } from 'src/entities/playlist.entity';
 import { MusicMetadataDto } from './../music/dto/music-metadata.dto';
 import { User } from 'src/entities/user.entity';
@@ -9,6 +10,7 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -76,6 +78,9 @@ export class Music extends BaseEntity {
   })
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
+
+  @OneToMany(() => Comment, (comment) => comment.music)
+  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

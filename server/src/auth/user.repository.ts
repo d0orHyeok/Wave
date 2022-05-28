@@ -21,12 +21,23 @@ export class UserRepository extends Repository<User> {
         throw new ConflictException('Existing username');
       } else {
         console.log(error);
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException(error, 'Error to create user');
       }
     }
   }
 
-  getAllColumnQuery() {
+  getSimpleQuery() {
+    return this.createQueryBuilder('user')
+      .loadRelationCountAndMap('user.followersCount', 'user.followers')
+      .loadRelationCountAndMap('user.followingCount', 'user.following')
+      .loadRelationCountAndMap('user.playlistsCount', 'user.playlists')
+      .loadRelationCountAndMap('user.likeMusicsCount', 'user.likeMusics')
+      .loadRelationCountAndMap('user.repostMusicsCount', 'user.repostMusics')
+      .loadRelationCountAndMap('user.commentsCount', 'user.comments')
+      .loadRelationCountAndMap('user.musicsCount', 'user.musics');
+  }
+
+  getDetailQuery() {
     return this.createQueryBuilder('user')
       .leftJoinAndSelect('user.musics', 'musics')
       .leftJoinAndSelect('user.playlists', 'playlists')
@@ -38,13 +49,19 @@ export class UserRepository extends Repository<User> {
       .leftJoinAndSelect('user.following', 'following')
       .leftJoinAndSelect('user.repostMusics', 'rm')
       .leftJoinAndSelect('rm.user', 'rmu')
+      .leftJoinAndSelect('user.comments', 'comments')
+      .leftJoinAndSelect('comments.music', 'cm')
       .loadRelationCountAndMap('user.followersCount', 'user.followers')
       .loadRelationCountAndMap('user.followingCount', 'user.following')
+      .loadRelationCountAndMap('user.playlistsCount', 'user.playlists')
+      .loadRelationCountAndMap('user.likeMusicsCount', 'user.likeMusics')
+      .loadRelationCountAndMap('user.commentsCount', 'user.comments')
+      .loadRelationCountAndMap('user.repostMusicsCount', 'user.repostMusics')
       .loadRelationCountAndMap('user.musicsCount', 'user.musics');
   }
 
   async findUserByUsername(username: string): Promise<User> {
-    const user = await this.getAllColumnQuery()
+    const user = await this.getDetailQuery()
       .addSelect('user.hashedRefreshToken')
       .addSelect('user.password')
       .where('user.username = :username', { username })
@@ -58,7 +75,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserById(id: string) {
-    const user = await this.getAllColumnQuery()
+    const user = await this.getDetailQuery()
       .where('user.id = :id', { id })
       .getOne();
 

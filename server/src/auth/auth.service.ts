@@ -92,10 +92,17 @@ export class AuthService {
     refreshToken: string,
     hashedRefreshToken: string,
   ): Promise<void> {
-    const isMatch = await bcrypt.compare(refreshToken, hashedRefreshToken);
-    if (!isMatch) {
+    try {
+      const isMatch = await bcrypt.compare(refreshToken, hashedRefreshToken);
+      if (!isMatch) {
+        throw new UnauthorizedException(
+          'RefreshToken is not match\nPlease SignIn again',
+        );
+      }
+    } catch (error) {
       throw new UnauthorizedException(
-        'RefreshToken is not match\nPlease SignIn again',
+        error,
+        'Error to compareRefrshToken, please sign in again',
       );
     }
   }

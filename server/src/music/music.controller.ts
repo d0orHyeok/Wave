@@ -16,6 +16,7 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -107,7 +108,7 @@ export class MusicController {
   @Post('/related/:id')
   findRelatedMusic(
     @Param('id', ParseIntPipe) id: number,
-    @Body() musicPagingDto: MusicPagingDto,
+    @Body(ValidationPipe) musicPagingDto: MusicPagingDto,
   ) {
     return this.musicService.findRelatedMusic(id, musicPagingDto);
   }

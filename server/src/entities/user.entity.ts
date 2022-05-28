@@ -1,4 +1,5 @@
 import { Playlist } from './playlist.entity';
+import { Comment } from './comment.entity';
 import { Music } from 'src/entities/music.entity';
 import {
   BaseEntity,
@@ -61,6 +62,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Playlist, (playlist) => playlist.user, { eager: true })
   playlists: Playlist[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;
