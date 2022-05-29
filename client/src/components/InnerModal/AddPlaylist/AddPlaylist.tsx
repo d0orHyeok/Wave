@@ -15,19 +15,31 @@ import {
 
 interface AddPlaylistProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onClose: any
+  onClose: (any?: any) => any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSuccess?: (createPlaylist: IPlaylist) => any
+  onCreateSuccess?: (createPlaylist: IPlaylist) => any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onFailed?: any
+  onCreateFail?: () => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onAddSuccess?: (playlist: IPlaylist) => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onAddFail?: () => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onRemoveSuccess?: (playlistId: number) => any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onRemoveFail?: () => any
   addMusics?: IMusic[]
 }
 
 const AddPlaylist = ({
   onClose,
   addMusics,
-  onSuccess,
-  onFailed,
+  onCreateSuccess,
+  onCreateFail,
+  onAddSuccess,
+  onAddFail,
+  onRemoveSuccess,
+  onRemoveFail,
 }: AddPlaylistProps) => {
   const dispatch = useAppDispatch()
 
@@ -75,12 +87,12 @@ const AddPlaylist = ({
 
     dispatch(userCreatePlaylist(body)).then((value) => {
       if (value.type.indexOf('fulfilled') !== -1) {
-        if (onSuccess) {
+        if (onCreateSuccess) {
           const createPlaylist: IPlaylist = value.payload
-          onSuccess(createPlaylist)
+          onCreateSuccess(createPlaylist)
         }
       } else {
-        onFailed && onFailed()
+        onCreateFail && onCreateFail()
       }
     })
 
@@ -92,8 +104,8 @@ const AddPlaylist = ({
     newPlaylist.privacy,
     newPlaylist.title,
     onClose,
-    onFailed,
-    onSuccess,
+    onCreateFail,
+    onCreateSuccess,
   ])
 
   const pullMusic = useCallback(
@@ -110,10 +122,17 @@ const AddPlaylist = ({
       const playlistId = event.currentTarget.getAttribute('data-playlistid')
       if (playlistId) {
         const params = { playlistId, musicIds: musics.map((music) => music.id) }
-        dispatch(userAddMusicsToPlaylist(params))
+        dispatch(userAddMusicsToPlaylist(params)).then((value) => {
+          if (value.type.indexOf('fulfilled') !== -1) {
+            const updatePlaylist: IPlaylist = value.payload
+            onAddSuccess && onAddSuccess(updatePlaylist)
+          } else {
+            onAddFail && onAddFail()
+          }
+        })
       }
     },
-    [dispatch]
+    [dispatch, onAddFail, onAddSuccess]
   )
 
   const deleteMusicsFromPlaylist = useCallback(
@@ -121,10 +140,16 @@ const AddPlaylist = ({
       const playlistId = event.currentTarget.getAttribute('data-playlistid')
       if (playlistId) {
         const params = { playlistId, musicIds: musics.map((music) => music.id) }
-        dispatch(userDeleteMusicsFromPlaylist(params))
+        dispatch(userDeleteMusicsFromPlaylist(params)).then((value) => {
+          if (value.type.indexOf('fulfilled') !== -1) {
+            onRemoveSuccess && onRemoveSuccess(Number(playlistId))
+          } else {
+            onRemoveFail && onRemoveFail()
+          }
+        })
       }
     },
-    [dispatch, musics]
+    [dispatch, musics, onRemoveFail, onRemoveSuccess]
   )
 
   useEffect(() => {

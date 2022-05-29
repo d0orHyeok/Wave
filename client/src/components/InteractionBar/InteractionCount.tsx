@@ -1,7 +1,7 @@
 import { numberFormat } from '@api/functions'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
-import React from 'react'
-import { FaPlay } from 'react-icons/fa'
+import React, { useEffect, useState } from 'react'
+import { FaPlay, FaComment } from 'react-icons/fa'
 import { GoHeart } from 'react-icons/go'
 import { BiRepost } from 'react-icons/bi'
 import styled from 'styled-components'
@@ -34,14 +34,59 @@ const StyledUl = styled.ul`
   }
 `
 
+export type VisibleOption = 'plays' | 'likes' | 'reposts' | 'comments'
+
 interface InteractionCountProps extends React.HTMLAttributes<HTMLUListElement> {
   target: IPlaylist | IMusic
+  visibleOption?: VisibleOption[]
 }
 
-const InteractionCount = ({ target, ...props }: InteractionCountProps) => {
+interface OptionState {
+  plays: boolean
+  likes: boolean
+  reposts: boolean
+  comments: boolean
+}
+
+const InteractionCount = ({
+  target,
+  visibleOption,
+  ...props
+}: InteractionCountProps) => {
+  const [option, setOption] = useState<OptionState>({
+    plays: true,
+    likes: true,
+    reposts: true,
+    comments: true,
+  })
+
+  useEffect(() => {
+    if (visibleOption) {
+      const initalOption = {
+        plays: false,
+        likes: false,
+        reposts: false,
+        comments: false,
+      }
+
+      visibleOption.forEach((value) => {
+        initalOption[value] = true
+      })
+
+      setOption(initalOption)
+    } else {
+      setOption({
+        plays: true,
+        likes: true,
+        reposts: true,
+        comments: true,
+      })
+    }
+  }, [visibleOption])
+
   return 'title' in target ? (
     <StyledUl {...props}>
-      {target.count > 0 ? (
+      {target.count && option.plays ? (
         <li title={`${target.count.toLocaleString()} plays`}>
           <FaPlay className="icon play" />
           {numberFormat(target.count)}
@@ -49,7 +94,7 @@ const InteractionCount = ({ target, ...props }: InteractionCountProps) => {
       ) : (
         <></>
       )}
-      {target.likesCount > 0 ? (
+      {target.likesCount && option.likes ? (
         <li title={`${numberFormat(target.likesCount)} likes`}>
           <GoHeart className="icon heart" />
           {numberFormat(target.likesCount)}
@@ -57,10 +102,18 @@ const InteractionCount = ({ target, ...props }: InteractionCountProps) => {
       ) : (
         <></>
       )}
-      {target.repostsCount ? (
+      {target.repostsCount && option.reposts ? (
         <li title={`${numberFormat(target.repostsCount)} reposts`}>
           <BiRepost className="icon repost" />
           {numberFormat(target.repostsCount)}
+        </li>
+      ) : (
+        <></>
+      )}
+      {target.commentsCount && option.comments ? (
+        <li title={`${numberFormat(target.commentsCount)} comments`}>
+          <FaComment className="icon comment" />
+          {numberFormat(target.commentsCount)}
         </li>
       ) : (
         <></>

@@ -1,5 +1,5 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'
 import styled from 'styled-components'
@@ -11,6 +11,7 @@ import { Divider } from '@mui/material'
 import RelatedTrack from './RelatedTrack/RelatedTrack'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
+import useInterval from '@api/Hooks/userInterval'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -159,6 +160,23 @@ const TrackPage = () => {
   const [music, setMusic] = useState<IMusic>()
   const [relatedMusics, setRelatedMusics] = useState<IMusic[]>([])
 
+  const reloadMusicData = useCallback(() => {
+    if (!permalink || !music?.id) {
+      return
+    }
+
+    getMusicByPermalink(permalink)
+      .then((res) => setMusic(res.data))
+      .catch((error) => console.error(error.response || error))
+
+    findRelatedMusics(music.id)
+      .then((res) => setRelatedMusics(res.data))
+      .catch((err) => console.error(err.response))
+  }, [music?.id, permalink])
+
+  // 10분에 한번씩 음악정보를 다시 가져온다
+  useInterval(reloadMusicData, 1000 * 60 * 10)
+
   useEffect(() => {
     if (!permalink) {
       return
@@ -188,6 +206,7 @@ const TrackPage = () => {
           className="interaction"
           target={music}
           setTarget={setMusic}
+          visibleOption={['plays', 'likes', 'reposts']}
         />
         <StyledDivider />
         <Content>

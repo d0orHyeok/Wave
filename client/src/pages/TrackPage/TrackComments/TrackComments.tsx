@@ -183,7 +183,7 @@ const TrackComments = ({ music, setMusic }: TrackCommentsProps) => {
     <>
       <h2 className="subtitle-comment">
         <FaComment className="icon comment" />
-        {`${2} comments`}
+        {`${music.commentsCount} comments`}
       </h2>
       <StyledDivider />
       <MusicComments>
@@ -232,6 +232,7 @@ const TrackComments = ({ music, setMusic }: TrackCommentsProps) => {
                   {calculateDateAgo(comment.updatedAt || comment.createdAt)}
                 </div>
                 <DeleteButton
+                  title="delete"
                   className="deleteBtn"
                   onClick={handleClickDeleteButton(comment.id)}
                 >

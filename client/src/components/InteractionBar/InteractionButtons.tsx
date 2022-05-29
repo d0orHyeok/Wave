@@ -132,6 +132,24 @@ const InteractionButtons = ({
     [setTarget, target]
   )
 
+  const onRemoveMusicSuccess = useCallback(
+    (playlistId: number) => {
+      if (!('title' in target) || !setTarget) {
+        return
+      }
+      const existPlaylists = target.playlists || []
+      const newPlaylists = existPlaylists.filter(
+        (playlist) => playlist.id !== playlistId
+      )
+      setTarget({
+        ...target,
+        playlists: newPlaylists,
+        playlistsCount: newPlaylists.length,
+      })
+    },
+    [setTarget, target]
+  )
+
   const handleClickAddPlaylist = useCallback(() => {
     if (!userData) {
       openLogin()
@@ -209,7 +227,9 @@ const InteractionButtons = ({
             <AddPlaylist
               addMusics={[target]}
               onClose={closeModal}
-              onSuccess={onSuccessCreatePlaylist}
+              onCreateSuccess={onSuccessCreatePlaylist}
+              onAddSuccess={onSuccessCreatePlaylist}
+              onRemoveSuccess={onRemoveMusicSuccess}
             />
           </Modal>
         </>
