@@ -16,6 +16,7 @@ import {
   setProgress,
   togglePlay,
 } from '@redux/features/player/playerSlice'
+import PopoverUser from '@components/PopoverUser/PopoverUser'
 
 const StyledDivider = styled(Divider)`
   background-color: ${({ theme }) => theme.colors.border1};
@@ -204,6 +205,7 @@ const TrackComments = ({ music, setMusic }: TrackCommentsProps) => {
                   <EmptyProfileImage className="comment-imageBox-image" />
                 )}
               </Link>
+              <PopoverUser user={comment.user} />
             </div>
             <div className="comment-content">
               <div className="comment-content-username">

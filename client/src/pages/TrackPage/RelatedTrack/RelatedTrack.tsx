@@ -85,10 +85,6 @@ const Item = styled.div`
     & .user {
       position: relative;
       margin-bottom: 5px;
-
-      &:hover .popover {
-        display: flex;
-      }
     }
 
     & .name {
@@ -120,10 +116,6 @@ const UserItem = styled.div`
       object-fit: cover;
       border-radius: inherit;
     }
-  }
-
-  &:hover .popover {
-    display: flex;
   }
 `
 
@@ -175,7 +167,6 @@ const RelatedTrack = ({
                       <Link to={`/profile/${music.userId}`}>
                         {music.user?.nickname || music.userId}
                       </Link>
-                      <PopoverUser className="popover" user={music.user} />
                     </div>
                     <div className="name">
                       <Link to={`/music/${music.userId}/${music.permalink}`}>
@@ -227,7 +218,6 @@ const RelatedTrack = ({
                       <Link to={`/profile/${playlist.userId}`}>
                         {playlist.user.nickname}
                       </Link>
-                      <PopoverUser className="popover" user={playlist.user} />
                     </div>
                     <div className="name">
                       <Link
@@ -264,18 +254,18 @@ const RelatedTrack = ({
             <UserBox>
               {music.likes.slice(0, 8).map((user, index) => (
                 <UserItem key={index}>
-                  <Link to={`/profile/${user.id}`}>
-                    <div className="imgBox">
+                  <div className="imgBox">
+                    <Link className="link" to={`/profile/${user.id}`}>
                       {user.profileImage ? (
                         <img className="img" src={user.profileImage} alt="" />
                       ) : (
                         <EmptyProfileImage className="img" />
                       )}
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
 
                   {/* popover content */}
-                  <PopoverUser className="popover" user={user} />
+                  <PopoverUser user={user} />
                 </UserItem>
               ))}
             </UserBox>
@@ -302,18 +292,18 @@ const RelatedTrack = ({
             <UserBox>
               {music.reposts.slice(0, 8).map((user, index) => (
                 <UserItem key={index}>
-                  <Link to={`/profile/${user.id}`}>
-                    <div className="imgBox">
+                  <div className="imgBox">
+                    <Link className="link" to={`/profile/${user.id}`}>
                       {user.profileImage ? (
                         <img className="img" src={user.profileImage} alt="" />
                       ) : (
                         <EmptyProfileImage className="img" />
                       )}
-                    </div>
-                  </Link>
+                    </Link>
+                  </div>
 
                   {/* popover content */}
-                  <PopoverUser className="popover" user={user} />
+                  <PopoverUser user={user} />
                 </UserItem>
               ))}
             </UserBox>

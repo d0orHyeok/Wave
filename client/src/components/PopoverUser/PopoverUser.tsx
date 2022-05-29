@@ -1,170 +1,123 @@
 import styled from 'styled-components'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { IUserData } from '@redux/features/user/userSlice.interface'
-import { Link } from 'react-router-dom'
-import { EmptyProfileImage } from '@styles/EmptyImage'
-import { IoMdPeople } from 'react-icons/io'
-import { FollowTextButton } from '@components/Common/Button'
-import { numberFormat } from '@api/functions'
-import { useAppDispatch, useAppSelector } from '@redux/hook'
-import { useLoginOpen } from '@redux/context/loginProvider'
-import { userToggleFollow } from '@redux/thunks/userThunks'
+import PopoverContent from './PopoverContent'
 
-const StyledDiv = styled.div<{ open?: boolean }>`
+interface PopoverDivProps {
+  open?: boolean
+  reverse?: boolean
+  parentHeight?: number
+  parentWidth?: number
+}
+
+const PopoverDiv = styled.div<PopoverDivProps>`
   &::before {
-    border-top: 1px solid;
-    border-left: 1px solid;
+    border: 1px solid;
     border-color: inherit;
     content: '';
-    transform: rotate(45deg);
     position: absolute;
-    top: -7px;
+    ${({ reverse }) =>
+      reverse
+        ? 'bottom: -7px; border-left: none; border-top: none;'
+        : 'top: -7px; border-right: none; border-bottom: none;'}
+    left: 50%;
     width: 12px;
     height: 12px;
     background-color: inherit;
+    transform: translateX(-50%) rotate(45deg);
   }
 
   &::after {
     content: '';
     position: absolute;
-    top: -20px;
-    width: 160px;
-    height: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    ${({ reverse }) => (reverse ? 'bottom' : 'top')}: -15px;
+    width: ${({ parentWidth }) => (parentWidth ? `${parentWidth}px` : '160px')};
+    height: 15px;
     opacity: 0;
   }
 
   position: absolute;
-  top: 100%;
+  ${({ reverse }) => (reverse ? 'bottom' : 'top')}: 100%;
   left: 50%;
-  transform: translate(-50%, 12px);
+  transform: translate(-50%, ${({ reverse }) => (reverse ? '-7px' : '7px')});
   z-index: 100;
 
-  width: 160px;
-  padding: 20px 0;
   border: 1px solid;
   border-color: ${({ theme }) => theme.colors.border1};
   border-radius: 4px;
   box-shadow: 0 2px 5px 0 ${({ theme }) => theme.colors.bgTextRGBA(0.16)};
   background-color: ${({ theme }) => theme.colors.bgColor};
 
-  display: ${({ open }) => (open ? 'flex' : 'none')};
-  flex-direction: column;
-  align-items: center;
-
-  & .popover-imageBox {
-    width: 80px;
-    height: 80px;
-    border-radius: 40px;
-
-    & .popover-imageBox-img {
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      object-fit: cover;
-    }
-  }
-
-  & .popover-user-name {
-    margin-top: 10px;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-  }
-
-  & .popover-user-followers {
-    display: flex;
-    align-items: center;
-    margin-top: 5px;
-    font-size: 12px;
-
-    & .popover-icon {
-      font-size: 16px;
-      margin-right: 3px;
-    }
-
-    &:hover {
-      color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-    }
-  }
-`
-
-const StyledFollowBtn = styled(FollowTextButton)`
-  border-radius: 4px;
-  margin-top: 10px;
+  display: ${({ open }) => (open ? 'block' : 'none')};
 `
 
 interface PopoverUserProps extends React.HTMLAttributes<HTMLDivElement> {
   user: IUserData
-  open?: boolean
-  anchorEl?: HTMLElement
 }
 
-const PopoverUser = ({ user, anchorEl, ...props }: PopoverUserProps) => {
-  const dispatch = useAppDispatch()
-  const openLogin = useLoginOpen()
-
-  const userId = useAppSelector((state) => state.user.userData?.id)
-  const following =
-    useAppSelector((state) => state.user.userData?.following) || []
-
+const PopoverUser = ({ user, ...props }: PopoverUserProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
 
-  const handleClickFollow = useCallback(
-    (targetId: string) => (event: React.MouseEvent<HTMLElement>) => {
-      event.preventDefault()
-      event.stopPropagation()
-      if (!userId) {
-        return openLogin()
-      }
+  const [anchorTop, setAnchorTop] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [parentWidth, setParentWidth] = useState<number>()
 
-      dispatch(userToggleFollow(targetId))
-    },
-    [dispatch, openLogin, userId]
-  )
+  const handleOpen = useCallback((event: MouseEvent) => {
+    event.preventDefault()
+    setOpen(true)
+  }, [])
+
+  const handleClose = useCallback((event: MouseEvent) => {
+    event.preventDefault()
+    setAnchorTop(false)
+    setOpen(false)
+  }, [])
 
   useEffect(() => {
-    if (anchorEl && popoverRef.current) {
-      anchorEl.appendChild(popoverRef.current)
+    const parentEl = popoverRef.current?.parentElement
+    if (!parentEl) {
+      return
     }
-  }, [anchorEl])
+
+    parentEl.style.position = 'relative'
+    const parentData = parentEl.getBoundingClientRect()
+    setParentWidth(parentData.width)
+
+    parentEl.addEventListener('mouseenter', handleOpen)
+    parentEl.addEventListener('mouseleave', handleClose)
+    return () => {
+      parentEl.removeEventListener('mouseleave', handleOpen)
+      parentEl.removeEventListener('mouseleave', handleClose)
+    }
+  }, [handleClose, handleOpen])
+
+  useEffect(() => {
+    const popoverEl = popoverRef.current?.children.item(0)
+    if (open && popoverEl) {
+      const popoverRect = popoverEl.getBoundingClientRect()
+
+      const pageHeight = window.innerHeight - 81
+
+      if (pageHeight < popoverRect.bottom) {
+        setAnchorTop(true)
+      } else {
+        setAnchorTop(false)
+      }
+    }
+  }, [open])
 
   return (
-    <StyledDiv ref={popoverRef} {...props}>
-      <Link to={`/profile/${user.id}`}>
-        <div className="popover-imageBox">
-          {user.profileImage ? (
-            <img
-              className="popover-imageBox-img"
-              src={user.profileImage}
-              alt=""
-            />
-          ) : (
-            <EmptyProfileImage className="popover-imageBox-img" />
-          )}
-        </div>
-      </Link>
-      <Link className="popover-user-name" to={`/profile/${user.id}`}>
-        {user.nickname || user.username}
-      </Link>
-      {user.followersCount > 0 ? (
-        <Link
-          className="popover-user-followers"
-          title={`${numberFormat(user.followersCount)} followers`}
-          to={`/profile/${user.id}/followers`}
-        >
-          <IoMdPeople className="popover-icon" />
-          {numberFormat(user.followersCount)}
-        </Link>
-      ) : (
-        <></>
-      )}
-      {userId !== user.id ? (
-        <StyledFollowBtn
-          isFollow={following.findIndex((f) => f.id === user.id) !== -1}
-          onClick={handleClickFollow(user.id)}
-        />
-      ) : (
-        <></>
-      )}
-    </StyledDiv>
+    <PopoverDiv
+      {...props}
+      ref={popoverRef}
+      open={open}
+      reverse={anchorTop}
+      parentWidth={parentWidth}
+    >
+      <PopoverContent user={user} />
+    </PopoverDiv>
   )
 }
 
