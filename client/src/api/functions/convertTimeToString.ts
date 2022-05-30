@@ -4,12 +4,18 @@ const convertTimeToString = (time?: number) => {
     return '0:00'
   }
 
-  const minutes = Math.floor(time / 60)
-  let seconds: number | string = Math.floor(time % 60)
-  if (seconds < 10) {
-    seconds = `0${seconds}`
-  }
-  const stringTime = `${minutes}:${seconds}`
+  const hours = Math.floor(time / 3600)
+  const minutes = Math.floor((time % 3600) / 60)
+  const seconds = Math.floor(time % 60)
+
+  console.log(hours, minutes, seconds)
+
+  let stringTime = !hours ? '' : `${hours}:${minutes < 10 ? '0' : ''}`
+  console.log('hour', stringTime)
+  stringTime += !minutes ? '' : `${minutes}:${seconds < 10 ? '0' : ''}`
+  console.log('minutes', stringTime)
+  stringTime = stringTime + seconds
+  console.log('seconds', stringTime)
 
   return stringTime
 }

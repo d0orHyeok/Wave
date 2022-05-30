@@ -10,6 +10,7 @@ export const AnyHeadWrapper = styled.div<{ background: string }>`
   ${({ theme }) => theme.device.tablet} {
     font-size: 14px;
     line-height: 14px;
+    padding: 20px;
   }
 `
 

@@ -14,10 +14,10 @@ const EmptyMusicCover = styled.div<{ size?: number }>`
 
 export default EmptyMusicCover
 export const EmptyMusicCoverBackgorund = `
-background: rgb(168, 78, 62);
+background: rgba(109, 27, 130, 1);
 background: linear-gradient(
   135deg,
-  rgba(168, 78, 62, 1) 0%,
-  rgba(109, 27, 130, 1) 100%
+  rgba(109, 27, 130, 1) 0%,
+  rgba(168, 78, 62, 1) 100%
 );
 `

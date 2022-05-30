@@ -4,8 +4,8 @@ export const getAllMusic = () => {
   return Axios.get('/api/music/')
 }
 
-export const getMusicByPermalink = (permalink: string) => {
-  return Axios.get(`/api/music/permalink/${permalink}`)
+export const getMusicByPermalink = (userId: string, permalink: string) => {
+  return Axios.get(`/api/music/permalink/${userId}/${permalink}`)
 }
 
 interface findRelatedMusicsPagingOption {

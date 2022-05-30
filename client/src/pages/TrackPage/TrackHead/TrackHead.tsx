@@ -24,16 +24,24 @@ const Container = styled.div`
 
 const MusicCover = styled(AnyHeadStyle.AnyHeadImage)`
   flex-shrink: 0;
-  margin-left: 2em;
+  margin-left: 30px;
 
   @media screen and (max-width: 600px) {
     width: 125px;
     height: 125px;
   }
+
+  ${({ theme }) => theme.device.mobile} {
+    display: none;
+  }
 `
 
 const MusicInfo = styled(AnyHeadStyle.AnyHeadInfo)`
   margin-right: auto;
+
+  & .info.info-link:hover {
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
+  }
 `
 
 const PlayButton = styled(PrimaryButton)`
@@ -58,7 +66,7 @@ const PlayButton = styled(PrimaryButton)`
 const SubInfo = styled.div`
   flex-shrink: 0;
   text-align: right;
-  margin-left: 1em;
+  margin-left: 15px;
 
   & .genre {
     display: inline-block;
@@ -72,6 +80,11 @@ const SubInfo = styled.div`
     &:hover {
       background-color: gray;
     }
+  }
+
+  & .ago {
+    font-size: 0.9em;
+    line-height: 0.9em;
   }
 
   ${({ theme }) => theme.device.tablet} {
@@ -131,7 +144,11 @@ const TrackHead = ({ music }: TrackHeadProps) => {
         </PlayButton>
         <MusicInfo>
           <div className="info info-main">{music.title}</div>
-          <div className="info">{music.user?.nickname || music.userId}</div>
+          <div className="info info-link">
+            <Link to={`/profile/${music.userId}`}>
+              {music.user?.nickname || music.userId}
+            </Link>
+          </div>
         </MusicInfo>
 
         <SubInfo>

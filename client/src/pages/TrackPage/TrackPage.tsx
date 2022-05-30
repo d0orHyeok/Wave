@@ -154,38 +154,43 @@ const MusicContent = styled.div`
 `
 
 const TrackPage = () => {
-  const { '*': permalink } = useParams()
+  const { userId, permalink } = useParams()
   const navigate = useNavigate()
 
   const [music, setMusic] = useState<IMusic>()
   const [relatedMusics, setRelatedMusics] = useState<IMusic[]>([])
 
   const reloadMusicData = useCallback(() => {
-    if (!permalink || !music?.id) {
-      return
+    if (!permalink || !userId) {
+      return navigate('/track/notfound')
     }
 
-    getMusicByPermalink(permalink)
+    getMusicByPermalink(userId, permalink)
       .then((res) => setMusic(res.data))
       .catch((error) => console.error(error.response || error))
 
-    findRelatedMusics(music.id)
+    if (!music?.id) {
+      return
+    }
+
+    findRelatedMusics(music?.id)
       .then((res) => setRelatedMusics(res.data))
       .catch((err) => console.error(err.response))
-  }, [music?.id, permalink])
+  }, [music?.id, navigate, permalink, userId])
 
   // 10분에 한번씩 음악정보를 다시 가져온다
   useInterval(reloadMusicData, 1000 * 60 * 10)
 
   useEffect(() => {
-    if (!permalink) {
+    if (!userId || !permalink) {
+      navigate('/track/notfound')
       return
     }
 
-    getMusicByPermalink(permalink)
+    getMusicByPermalink(userId, permalink)
       .then((res) => setMusic(res.data))
       .catch(() => navigate('/track/notfound'))
-  }, [navigate, permalink])
+  }, [navigate, permalink, userId])
 
   useEffect(() => {
     if (music?.id) {
