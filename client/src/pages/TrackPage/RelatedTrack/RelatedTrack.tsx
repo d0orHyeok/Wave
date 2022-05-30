@@ -169,7 +169,7 @@ const RelatedTrack = ({
                       </Link>
                     </div>
                     <div className="name">
-                      <Link to={`/music/${music.userId}/${music.permalink}`}>
+                      <Link to={`/track/${music.userId}/${music.permalink}`}>
                         {music.title}
                       </Link>
                     </div>

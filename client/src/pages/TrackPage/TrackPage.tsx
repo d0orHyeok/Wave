@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   min-height: 100%;
   max-width: 1200px;
   width: 100%;
-  margin: auto;
+  margin: 0 auto;
   font-size: 14px;
   line-height: 14px;
 `
