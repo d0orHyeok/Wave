@@ -93,6 +93,10 @@ export interface IPlaylist {
   user: IUserData
   musics: IMusic[]
   musicsCount: number
+  likes: IUserData[]
+  reposts: IUserData[]
+  likesCount: number
+  repostsCount: number
 }
 
 export interface ICommnet {

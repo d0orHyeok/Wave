@@ -1,5 +1,5 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'
 import styled from 'styled-components'
@@ -8,7 +8,9 @@ import CommentBox from '@components/CommentBox/CommentBox'
 import InteractionBar from '@components/InteractionBar/InteractionBar'
 import { getMusicByPermalink, findRelatedMusics } from '@api/musicApi'
 import { Divider } from '@mui/material'
-import RelatedTrack from './RelatedTrack/RelatedTrack'
+import RelatedTarget, {
+  RelatedTargetHandler,
+} from '../../components/RelatedTarget/RelatedTarget'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
 import useInterval from '@api/Hooks/userInterval'
@@ -22,10 +24,17 @@ const Wrapper = styled.div`
   line-height: 14px;
 `
 
-const Container = styled.div`
+interface ContainerProps {
+  related?: boolean
+  minHeight?: string
+}
+
+const Container = styled.div<ContainerProps>`
   position: relative;
   padding: 20px;
-  padding-right: 320px;
+  padding-right: ${({ related }) => (related ? '320px' : '20px')};
+  height: 100%;
+  ${({ minHeight }) => minHeight && `min-height: ${minHeight};`}
 
   & .interaction {
     margin: 15px 0 10px 0;
@@ -69,17 +78,20 @@ const StyledDivider = styled(Divider)`
   background-color: ${({ theme }) => theme.colors.border1};
 `
 
-const Content = styled.div`
+const Content = styled.div<{ media?: number }>`
   padding-top: 15px;
   display: flex;
+  align-items: flex-start;
+  width: 100%;
 
   & .media-divider {
     display: none;
   }
 
-  @media screen and (max-width: 1000px) {
+  @media screen and (max-width: ${({ media }) => (media ? media : '800')}px) {
     flex-direction: column;
     & .subcontent {
+      width: 100%;
       justify-content: center;
     }
     & .media-divider {
@@ -107,6 +119,7 @@ const SubContent = styled.div`
 `
 
 const MusicContent = styled.div`
+  min-width: 0;
   width: 100%;
   margin-left: 20px;
   color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
@@ -115,11 +128,14 @@ const MusicContent = styled.div`
     &:not(:last-child) {
       margin-bottom: 20px;
     }
+
+    &.music-description {
+      white-space: normal;
+      word-wrap: break-word;
+    }
   }
 
   & .music-tags {
-    min-width: 0;
-    width: 100%;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -159,6 +175,10 @@ const TrackPage = () => {
 
   const [music, setMusic] = useState<IMusic>()
   const [relatedMusics, setRelatedMusics] = useState<IMusic[]>([])
+  const [existRelated, setExistRelated] = useState(false)
+  const [minHeight, setMinHeight] = useState<string>()
+
+  const relatedTargetRef = useRef<RelatedTargetHandler>(null)
 
   const reloadMusicData = useCallback(() => {
     if (!permalink || !userId) {
@@ -200,12 +220,35 @@ const TrackPage = () => {
     }
   }, [music?.id])
 
+  useEffect(() => {
+    if (
+      relatedMusics.length ||
+      music?.playlistsCount ||
+      music?.likesCount ||
+      music?.repostsCount
+    ) {
+      setExistRelated(true)
+    } else {
+      false
+    }
+  }, [music, relatedMusics])
+
+  useEffect(() => {
+    if (existRelated) {
+      const height = relatedTargetRef.current?.getContentSize().height
+      console.log(height)
+      setMinHeight(height ? `${height + 40}px` : undefined)
+    } else {
+      setMinHeight(undefined)
+    }
+  }, [existRelated, music, relatedMusics])
+
   return !music ? (
     <Loading />
   ) : (
     <Wrapper>
       <TrackHead music={music} />
-      <Container>
+      <Container related={existRelated} minHeight={minHeight}>
         <CommentBox className="comment" music={music} setMusic={setMusic} />
         <InteractionBar
           className="interaction"
@@ -214,15 +257,16 @@ const TrackPage = () => {
           visibleOption={['plays', 'likes', 'reposts']}
         />
         <StyledDivider />
-        <Content>
+        <Content media={existRelated ? 1000 : undefined}>
           <SubContent className="subcontent">
             <UserSmallCard className="music-uploader" user={music.user} />
-            {relatedMusics.length ||
-            music.playlistsCount ||
-            music.likesCount ||
-            music.repostsCount ? (
+            {existRelated ? (
               <SideContent className="sidecontent">
-                <RelatedTrack music={music} relatedMusics={relatedMusics} />
+                <RelatedTarget
+                  ref={relatedTargetRef}
+                  target={music}
+                  relatedMusics={relatedMusics}
+                />
               </SideContent>
             ) : (
               <></>

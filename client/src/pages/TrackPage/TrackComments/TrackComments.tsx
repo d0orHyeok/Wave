@@ -74,6 +74,7 @@ const MusicComments = styled.div`
       }
 
       & .comment-content-text {
+        overflow-wrap: break-word;
       }
 
       & .comment-content-username .comment-link:hover,
@@ -111,6 +112,32 @@ const DeleteButton = styled(Button)`
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.bgText};
+  }
+`
+
+const EmptyComment = styled.div`
+  padding: 10px 0;
+  text-align: center;
+  font-size: 10px;
+
+  & .icon.comment {
+    font-size: 15em;
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.15)};
+  }
+
+  & .text-main {
+    font-size: 2em;
+    color: ${({ theme }) => theme.colors.bgText};
+    margin: 1em 0;
+  }
+
+  & .text-light {
+    font-size: 1.6em;
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+  }
+
+  ${({ theme }) => theme.device.tablet} {
+    font-size: 8px;
   }
 `
 
@@ -247,7 +274,11 @@ const TrackComments = ({ music, setMusic }: TrackCommentsProps) => {
       </MusicComments>
     </>
   ) : (
-    <></>
+    <EmptyComment>
+      <FaComment className="icon comment" />
+      <div className="text-main">Seems a little quiet over here</div>
+      <div className="text-light">Be the first to comment on this track</div>
+    </EmptyComment>
   )
 }
 

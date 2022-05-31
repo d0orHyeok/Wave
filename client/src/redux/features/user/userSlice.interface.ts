@@ -15,6 +15,10 @@ export interface IUserData {
   likeMusicsCount: number
   repostMusics: IMusic[]
   repostMusicsCount: number
+  likePlaylists: IPlaylist[]
+  likePlaylistsCount: number
+  repostPlaylists: IPlaylist[]
+  repostPlaylistsCount: number
   followers: IUserData[]
   following: IUserData[]
   followersCount: number

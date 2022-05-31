@@ -45,6 +45,7 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('music.user', 'user')
       .loadRelationCountAndMap('music.likesCount', 'music.likes')
       .loadRelationCountAndMap('music.commentsCount', 'music.comments')
+      .loadRelationCountAndMap('music.playlistsCount', 'music.playlists')
       .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
   }
 
@@ -59,6 +60,7 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('comments.user', 'cu')
       .loadRelationCountAndMap('music.commentsCount', 'music.comments')
       .loadRelationCountAndMap('music.likesCount', 'music.likes')
+      .loadRelationCountAndMap('music.playlistsCount', 'music.playlists')
       .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
   }
 

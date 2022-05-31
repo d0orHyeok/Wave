@@ -84,9 +84,9 @@ const InteractionCount = ({
     }
   }, [visibleOption])
 
-  return 'title' in target ? (
+  return (
     <StyledUl {...props}>
-      {target.count && option.plays ? (
+      {'title' in target && target.count && option.plays ? (
         <li title={`${target.count.toLocaleString()} plays`}>
           <FaPlay className="icon play" />
           {numberFormat(target.count)}
@@ -110,7 +110,7 @@ const InteractionCount = ({
       ) : (
         <></>
       )}
-      {target.commentsCount && option.comments ? (
+      {'title' in target && target.commentsCount && option.comments ? (
         <li title={`${numberFormat(target.commentsCount)} comments`}>
           <FaComment className="icon comment" />
           {numberFormat(target.commentsCount)}
@@ -119,26 +119,6 @@ const InteractionCount = ({
         <></>
       )}
     </StyledUl>
-  ) : (
-    <></>
-    // <StyledUl {...props}>
-    //   {target.likes?.length > 0 ? (
-    //     <li title={`${numberFormat(target.likes.length)} likes`}>
-    //       <GoHeart className="icon heart" />
-    //       {numberFormat(target.likes.length)}
-    //     </li>
-    //   ) : (
-    //     <></>
-    //   )}
-    //   {target.reposts?.length ? (
-    //     <li title={`${numberFormat(target.reposts.length)} reposts`}>
-    //       <BiRepost className="icon repost" />
-    //       {numberFormat(target.reposts.length)}
-    //     </li>
-    //   ) : (
-    //     <></>
-    //   )}
-    // </StyledUl>
   )
 }
 

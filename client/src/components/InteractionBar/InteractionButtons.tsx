@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { IoMdLink } from 'react-icons/io'
 import { GoHeart } from 'react-icons/go'
@@ -54,8 +54,10 @@ const StyledButton = styled(Button)<{ active?: boolean }>`
   }
 `
 
+type TargetType = IMusic | IPlaylist
+
 interface InteractionButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
-  target: IMusic | IPlaylist
+  target: TargetType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setTarget?: React.Dispatch<React.SetStateAction<any>>
 }
@@ -71,6 +73,8 @@ const InteractionButtons = ({
 
   const userData = useAppSelector((state) => state.user.userData)
   const [openModal, setOpenModal] = useState(false)
+  const [isLike, setIsLike] = useState(false)
+  const [isReposts, setIsReposts] = useState(false)
 
   const handleClickRepost = useCallback(() => {
     if (!userData) {
@@ -179,28 +183,39 @@ const InteractionButtons = ({
     }
   }, [dispatch, target])
 
+  useEffect(() => {
+    if (!userData) {
+      setIsLike(false)
+      setIsReposts(false)
+      return
+    }
+
+    let userLikes: TargetType[] = []
+    let userReposts: TargetType[] = []
+    if ('title' in target) {
+      userLikes = userData.likeMusics || []
+      userReposts = userData.repostMusics || []
+    } else {
+      userLikes = userData.likePlaylists || []
+      userReposts = userData.repostPlaylists || []
+    }
+
+    const booleanLike = userLikes.findIndex((l) => l.id === target.id) !== -1
+    const booleanRepost =
+      userReposts.findIndex((r) => r.id === target.id) !== -1
+    setIsLike(booleanLike)
+    setIsReposts(booleanRepost)
+  }, [target, userData])
+
   return (
     <div {...props}>
-      <StyledButton
-        title="Like"
-        active={
-          userData?.likeMusics
-            ? userData.likeMusics.findIndex((lm) => lm.id === target.id) !== -1
-            : false
-        }
-        onClick={handleClickLike}
-      >
+      <StyledButton title="Like" active={isLike} onClick={handleClickLike}>
         <GoHeart className="icon" />
         <span className="text">Like</span>
       </StyledButton>
       <StyledButton
         title="Repost"
-        active={
-          userData?.repostMusics
-            ? userData.repostMusics.findIndex((rm) => rm.id === target.id) !==
-              -1
-            : false
-        }
+        active={isReposts}
         onClick={handleClickRepost}
       >
         <BiRepost className="icon" />
