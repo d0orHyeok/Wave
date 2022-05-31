@@ -22,6 +22,13 @@ const StyledDivider = styled(Divider)`
   background-color: ${({ theme }) => theme.colors.border1};
 `
 
+const CommentHead = styled.div`
+  margin-bottom: 10px;
+  & .icon.comment {
+    margin-right: 5px;
+  }
+`
+
 const MusicComments = styled.div`
   padding: 10px 0;
 
@@ -209,10 +216,10 @@ const TrackComments = ({ music, setMusic }: TrackCommentsProps) => {
 
   return music.commentsCount > 0 ? (
     <>
-      <h2 className="subtitle-comment">
+      <CommentHead>
         <FaComment className="icon comment" />
         {`${music.commentsCount} comments`}
-      </h2>
+      </CommentHead>
       <StyledDivider />
       <MusicComments>
         {music.comments.map((comment, index) => (

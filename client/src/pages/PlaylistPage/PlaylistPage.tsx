@@ -1,25 +1,26 @@
 import { getPlaylistByPermalink } from '@api/playlistApi'
+import InteractionBar from '@components/InteractionBar/InteractionBar'
 import Loading from '@components/Loading/Loading'
+import RelatedTarget, {
+  RelatedTargetHandler,
+} from '@components/RelatedTarget/RelatedTarget'
+import UserSmallCard from '@components/UserCard/UserSmallCard'
 import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import styled from 'styled-components'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import PlaylistHead from './PlaylistHead/PlaylistHead'
-
-const Wrapper = styled.div`
-  min-height: 100%;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  font-size: 14px;
-  line-height: 14px;
-`
+import * as PageStyle from '@styles/TargetPageStyle/TargetPage.style'
+import PlaylistMusics from './PlaylistMusics/PlaylistMusics'
 
 const PlaylistPage = () => {
   const { userId, permalink } = useParams()
   const navigate = useNavigate()
 
   const [playlist, setPlaylist] = useState<IPlaylist | null>(null)
+  const [existRelated, setExistRelated] = useState(false)
+  const [minHeight, setMinHeight] = useState<string>()
+
+  const relatedTargetRef = useRef<RelatedTargetHandler>(null)
 
   const getPlaylistDataFromServer = useCallback(() => {
     if (!userId || !permalink) {
@@ -39,15 +40,74 @@ const PlaylistPage = () => {
     getPlaylistDataFromServer()
   }, [getPlaylistDataFromServer])
 
-  console.log(playlist)
+  useEffect(() => {
+    if (playlist?.likesCount || playlist?.repostsCount) {
+      setExistRelated(true)
+    } else {
+      false
+    }
+  }, [playlist])
+
+  useEffect(() => {
+    if (existRelated) {
+      const height = relatedTargetRef.current?.getContentSize().height
+      setMinHeight(height ? `${height + 40}px` : undefined)
+    } else {
+      setMinHeight(undefined)
+    }
+  }, [existRelated, playlist])
 
   return !playlist ? (
     <Loading />
   ) : (
-    <Wrapper>
+    <PageStyle.Wrapper>
       <PlaylistHead playlist={playlist} />
-      <div>PlaylistPage</div>
-    </Wrapper>
+      <PageStyle.Container related={existRelated} minHeight={minHeight}>
+        <InteractionBar
+          className="interaction"
+          target={playlist}
+          setTarget={setPlaylist}
+        />
+        <PageStyle.StyledDivider />
+        <PageStyle.Content media={existRelated ? 1000 : undefined}>
+          <PageStyle.SubContent className="subcontent">
+            <UserSmallCard className="content-uploader" user={playlist.user} />
+            {playlist.likesCount || playlist.repostsCount ? (
+              <PageStyle.SideContent className="sidecontent">
+                <RelatedTarget ref={relatedTargetRef} target={playlist} />
+              </PageStyle.SideContent>
+            ) : (
+              <></>
+            )}
+          </PageStyle.SubContent>
+          <PageStyle.MainContent className="maincontent">
+            {playlist.description?.trim().length || playlist.tags?.length ? (
+              <PageStyle.StyledDivider
+                className="media-divider"
+                sx={{ margin: '20px 0' }}
+              />
+            ) : (
+              <></>
+            )}
+            <div className="content-info content-description">
+              {playlist.description}
+            </div>
+            {playlist.tags ? (
+              <ul className="content-info content-tags">
+                {playlist.tags.map((tag, index) => (
+                  <li key={index} className="content-tags-item">
+                    <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <></>
+            )}
+            <PlaylistMusics playlist={playlist} />
+          </PageStyle.MainContent>
+        </PageStyle.Content>
+      </PageStyle.Container>
+    </PageStyle.Wrapper>
   )
 }
 

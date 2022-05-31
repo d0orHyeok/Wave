@@ -2,172 +2,17 @@ import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'
-import styled from 'styled-components'
+import * as PageStyle from '@styles/TargetPageStyle/TargetPage.style'
 import Loading from '@components/Loading/Loading'
 import CommentBox from '@components/CommentBox/CommentBox'
 import InteractionBar from '@components/InteractionBar/InteractionBar'
 import { getMusicByPermalink, findRelatedMusics } from '@api/musicApi'
-import { Divider } from '@mui/material'
 import RelatedTarget, {
   RelatedTargetHandler,
 } from '../../components/RelatedTarget/RelatedTarget'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
 import useInterval from '@api/Hooks/userInterval'
-
-const Wrapper = styled.div`
-  min-height: 100%;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  font-size: 14px;
-  line-height: 14px;
-`
-
-interface ContainerProps {
-  related?: boolean
-  minHeight?: string
-}
-
-const Container = styled.div<ContainerProps>`
-  position: relative;
-  padding: 20px;
-  padding-right: ${({ related }) => (related ? '320px' : '20px')};
-  height: 100%;
-  ${({ minHeight }) => minHeight && `min-height: ${minHeight};`}
-
-  & .interaction {
-    margin: 15px 0 10px 0;
-  }
-
-  ${({ theme }) => theme.device.tablet} {
-    position: static;
-    padding-right: 20px;
-  }
-`
-
-const SideContent = styled.div`
-  flex-shrink: 0;
-  width: 300px;
-  padding: 0 20px;
-  border-left: 1px solid ${({ theme }) => theme.colors.border1};
-
-  position: absolute;
-  top: 20px;
-  right: 0;
-  height: calc(100% - 40px);
-
-  ${({ theme }) => theme.device.tablet} {
-    position: static;
-    margin-left: 20px;
-    flex-grow: 1;
-    padding-right: 0;
-    width: auto;
-    height: auto;
-  }
-
-  @media screen and (max-width: 600px) {
-    border-left: none;
-    padding: 0;
-    margin: 0;
-    margin-top: 20px;
-  }
-`
-
-const StyledDivider = styled(Divider)`
-  background-color: ${({ theme }) => theme.colors.border1};
-`
-
-const Content = styled.div<{ media?: number }>`
-  padding-top: 15px;
-  display: flex;
-  align-items: flex-start;
-  width: 100%;
-
-  & .media-divider {
-    display: none;
-  }
-
-  @media screen and (max-width: ${({ media }) => (media ? media : '800')}px) {
-    flex-direction: column;
-    & .subcontent {
-      width: 100%;
-      justify-content: center;
-    }
-    & .media-divider {
-      display: block;
-    }
-    & .musiccontent {
-      margin-left: 0;
-    }
-  }
-`
-
-const SubContent = styled.div`
-  display: flex;
-
-  @media screen and (max-width: 600px) {
-    display: block;
-    position: relative;
-
-    & .music-uploader {
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
-`
-
-const MusicContent = styled.div`
-  min-width: 0;
-  width: 100%;
-  margin-left: 20px;
-  color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-
-  & .music-info {
-    &:not(:last-child) {
-      margin-bottom: 20px;
-    }
-
-    &.music-description {
-      white-space: normal;
-      word-wrap: break-word;
-    }
-  }
-
-  & .music-tags {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    font-size: 13px;
-
-    & .music-tags-item {
-      flex-shrink: 0;
-      color: white;
-      background-color: gray;
-      padding: 0 5px;
-      height: 20px;
-      line-height: 20px;
-      border-radius: 10px;
-      margin-bottom: 6px;
-
-      &:hover {
-        background-color: #616161;
-      }
-
-      &:not(:last-child) {
-        margin-right: 10px;
-      }
-    }
-  }
-
-  & .subtitle-comment {
-    margin-bottom: 10px;
-    & .icon.comment {
-      margin-right: 5px;
-    }
-  }
-`
 
 const TrackPage = () => {
   const { userId, permalink } = useParams()
@@ -236,7 +81,6 @@ const TrackPage = () => {
   useEffect(() => {
     if (existRelated) {
       const height = relatedTargetRef.current?.getContentSize().height
-      console.log(height)
       setMinHeight(height ? `${height + 40}px` : undefined)
     } else {
       setMinHeight(undefined)
@@ -246,9 +90,9 @@ const TrackPage = () => {
   return !music ? (
     <Loading />
   ) : (
-    <Wrapper>
+    <PageStyle.Wrapper>
       <TrackHead music={music} />
-      <Container related={existRelated} minHeight={minHeight}>
+      <PageStyle.Container related={existRelated} minHeight={minHeight}>
         <CommentBox className="comment" music={music} setMusic={setMusic} />
         <InteractionBar
           className="interaction"
@@ -256,38 +100,38 @@ const TrackPage = () => {
           setTarget={setMusic}
           visibleOption={['plays', 'likes', 'reposts']}
         />
-        <StyledDivider />
-        <Content media={existRelated ? 1000 : undefined}>
-          <SubContent className="subcontent">
-            <UserSmallCard className="music-uploader" user={music.user} />
+        <PageStyle.StyledDivider />
+        <PageStyle.Content media={existRelated ? 1000 : undefined}>
+          <PageStyle.SubContent className="subcontent">
+            <UserSmallCard className="content-uploader" user={music.user} />
             {existRelated ? (
-              <SideContent className="sidecontent">
+              <PageStyle.SideContent className="sidecontent">
                 <RelatedTarget
                   ref={relatedTargetRef}
                   target={music}
                   relatedMusics={relatedMusics}
                 />
-              </SideContent>
+              </PageStyle.SideContent>
             ) : (
               <></>
             )}
-          </SubContent>
-          <MusicContent className="musiccontent">
+          </PageStyle.SubContent>
+          <PageStyle.MainContent className="maincontent">
             {music.description?.trim().length || music.tags?.length ? (
-              <StyledDivider
+              <PageStyle.StyledDivider
                 className="media-divider"
                 sx={{ margin: '20px 0' }}
               />
             ) : (
               <></>
             )}
-            <div className="music-info music-description">
+            <div className="content-info content-description">
               {music.description}
             </div>
             {music.tags ? (
-              <ul className="music-info music-tags">
+              <ul className="content-info content-tags">
                 {music.tags.map((tag, index) => (
-                  <li key={index} className="music-tags-item">
+                  <li key={index} className="content-tags-item">
                     <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
                   </li>
                 ))}
@@ -297,10 +141,10 @@ const TrackPage = () => {
             )}
 
             <TrackComments music={music} setMusic={setMusic} />
-          </MusicContent>
-        </Content>
-      </Container>
-    </Wrapper>
+          </PageStyle.MainContent>
+        </PageStyle.Content>
+      </PageStyle.Container>
+    </PageStyle.Wrapper>
   )
 }
 
