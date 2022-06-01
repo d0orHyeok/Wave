@@ -16,7 +16,8 @@ export class AuthRegisterPipe implements PipeTransform {
       };
     } catch (error) {
       throw new InternalServerErrorException(
-        `Error occur encrypting the password.\n${error} `,
+        error,
+        `Error occur encrypting the password. `,
       );
     }
   }

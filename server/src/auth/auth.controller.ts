@@ -24,6 +24,7 @@ import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CheckTargetPipe } from './pipes/check-target.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -113,24 +114,33 @@ export class AuthController {
     return this.authService.findUserById(id);
   }
 
-  @Patch('/:musicId/like')
-  @UseGuards(JwtAuthGuard)
-  async likeMusic(
-    @GetUser() user: User,
-    @Param('musicId', ParseIntPipe) musicId: number,
-  ) {
-    return this.authService.toggleLikeMusic(user, musicId);
-  }
-
-  @Patch('/:targetId/follow')
+  @Patch('/follow/:targetId')
   @UseGuards(JwtAuthGuard)
   async followUser(@GetUser() user: User, @Param('targetId') targetId: string) {
     return this.authService.toggleFollow(user, targetId);
   }
 
-  @Patch('/:musicId/repost/music')
+  @Patch('/like/:target/:targetId')
   @UseGuards(JwtAuthGuard)
-  async repostMusic(@GetUser() user: User, @Param('musicId') musicId: number) {
-    return this.authService.toggleRepostMusic(user, musicId);
+  async likeTarget(
+    @GetUser() user: User,
+    @Param('target', CheckTargetPipe) target: string,
+    @Param('targetId', ParseIntPipe) targetId: number,
+  ) {
+    return target === 'music'
+      ? this.authService.toggleTypeMusic(user, targetId, 'like')
+      : this.authService.toggleTypePlaylist(user, targetId, 'like');
+  }
+
+  @Patch('/repost/:target/:targetId')
+  @UseGuards(JwtAuthGuard)
+  async repostTarget(
+    @GetUser() user: User,
+    @Param('target', CheckTargetPipe) target: string,
+    @Param('targetId', ParseIntPipe) targetId: number,
+  ) {
+    return target === 'music'
+      ? this.authService.toggleTypeMusic(user, targetId, 'repost')
+      : this.authService.toggleTypePlaylist(user, targetId, 'repost');
   }
 }

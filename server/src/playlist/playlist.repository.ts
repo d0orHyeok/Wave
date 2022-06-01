@@ -50,7 +50,9 @@ export class PlaylistRepository extends Repository<Playlist> {
       .leftJoinAndSelect('playlist.user', 'user')
       .leftJoinAndSelect('playlist.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
-      .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics');
+      .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics')
+      .loadRelationCountAndMap('playlist.likesCount', 'playlist.likes')
+      .loadRelationCountAndMap('playlist.repostsCount', 'playlist.reposts');
   }
 
   async findPlaylistById(playlistId: number) {

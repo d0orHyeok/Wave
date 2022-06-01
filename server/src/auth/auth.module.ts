@@ -1,3 +1,4 @@
+import { PlaylistRepository } from './../playlist/playlist.repository';
 import { MusicRepository } from 'src/music/music.repository';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +13,11 @@ import { UserRepository } from './user.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository, MusicRepository]),
+    TypeOrmModule.forFeature([
+      UserRepository,
+      MusicRepository,
+      PlaylistRepository,
+    ]),
     // JWT Module
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({

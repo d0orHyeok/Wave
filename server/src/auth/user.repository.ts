@@ -8,6 +8,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Music } from 'src/entities/music.entity';
+import { Playlist } from 'src/entities/playlist.entity';
+
+type TargetType = Music | Playlist;
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -33,6 +36,11 @@ export class UserRepository extends Repository<User> {
       .loadRelationCountAndMap('user.playlistsCount', 'user.playlists')
       .loadRelationCountAndMap('user.likeMusicsCount', 'user.likeMusics')
       .loadRelationCountAndMap('user.repostMusicsCount', 'user.repostMusics')
+      .loadRelationCountAndMap('user.likePlaylistsCount', 'user.likePlaylists')
+      .loadRelationCountAndMap(
+        'user.repostPlaylistsCount',
+        'user.repostPlaylists',
+      )
       .loadRelationCountAndMap('user.commentsCount', 'user.comments')
       .loadRelationCountAndMap('user.musicsCount', 'user.musics');
   }
@@ -45,18 +53,27 @@ export class UserRepository extends Repository<User> {
       .leftJoinAndSelect('pm.user', 'pmu')
       .leftJoinAndSelect('user.likeMusics', 'lm')
       .leftJoinAndSelect('lm.user', 'lmu')
-      .leftJoinAndSelect('user.followers', 'followers')
-      .leftJoinAndSelect('user.following', 'following')
       .leftJoinAndSelect('user.repostMusics', 'rm')
       .leftJoinAndSelect('rm.user', 'rmu')
+      .leftJoinAndSelect('user.likePlaylists', 'lp')
+      .leftJoinAndSelect('lp.user', 'lpu')
+      .leftJoinAndSelect('user.repostPlaylists', 'rp')
+      .leftJoinAndSelect('rp.user', 'rpu')
+      .leftJoinAndSelect('user.followers', 'followers')
+      .leftJoinAndSelect('user.following', 'following')
       .leftJoinAndSelect('user.comments', 'comments')
       .leftJoinAndSelect('comments.music', 'cm')
       .loadRelationCountAndMap('user.followersCount', 'user.followers')
       .loadRelationCountAndMap('user.followingCount', 'user.following')
       .loadRelationCountAndMap('user.playlistsCount', 'user.playlists')
       .loadRelationCountAndMap('user.likeMusicsCount', 'user.likeMusics')
-      .loadRelationCountAndMap('user.commentsCount', 'user.comments')
       .loadRelationCountAndMap('user.repostMusicsCount', 'user.repostMusics')
+      .loadRelationCountAndMap('user.likePlaylistsCount', 'user.likePlaylists')
+      .loadRelationCountAndMap(
+        'user.repostPlaylistsCount',
+        'user.repostPlaylists',
+      )
+      .loadRelationCountAndMap('user.commentsCount', 'user.comments')
       .loadRelationCountAndMap('user.musicsCount', 'user.musics');
   }
 
@@ -101,6 +118,34 @@ export class UserRepository extends Repository<User> {
     }
   }
 
+  async toggleFollow(user: User, target: User) {
+    const following = user.following || [];
+    let findIndex = -1;
+    const newFollowing = following.filter((f, index) => {
+      if (f.id !== target.id) {
+        return true;
+      } else {
+        findIndex = index;
+        return false;
+      }
+    });
+
+    if (findIndex === -1) {
+      newFollowing.push(target);
+    }
+    user.following = newFollowing;
+
+    try {
+      await this.save(user);
+      return {
+        type: findIndex === -1 ? 'follow' : 'unfollow',
+        following: newFollowing,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error, `Error to update follow`);
+    }
+  }
+
   async toggleLikeMusic(user: User, music: Music) {
     const likeMusics = user.likeMusics || [];
     let findIndex = -1;
@@ -132,11 +177,16 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async toggleFollow(user: User, target: User) {
-    const following = user.following || [];
+  async toggleTypeTarget(
+    user: User,
+    target: TargetType,
+    type: 'like' | 'repost',
+  ) {
+    const targetName = type + ('title' in target ? 'Musics' : 'Playlists');
+    const targetItems: TargetType[] = user[targetName] || [];
     let findIndex = -1;
-    const newFollowing = following.filter((f, index) => {
-      if (f.id !== target.id) {
+    const newTargetItems = targetItems.filter((item, index) => {
+      if (item.id !== target.id) {
         return true;
       } else {
         findIndex = index;
@@ -145,18 +195,21 @@ export class UserRepository extends Repository<User> {
     });
 
     if (findIndex === -1) {
-      newFollowing.push(target);
+      newTargetItems.push(target);
     }
-    user.following = newFollowing;
+    user[targetName] = newTargetItems;
 
     try {
       await this.save(user);
       return {
-        type: findIndex === -1 ? 'follow' : 'unfollow',
-        following: newFollowing,
+        toggleType: findIndex === -1 ? type : `un${type}`,
+        [targetName]: newTargetItems,
       };
     } catch (error) {
-      throw new InternalServerErrorException(error, `Error to update follow`);
+      throw new InternalServerErrorException(
+        error,
+        `Error to update ${targetName}`,
+      );
     }
   }
 

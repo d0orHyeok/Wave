@@ -11,10 +11,7 @@ import { useLoginOpen } from '@redux/context/loginProvider'
 import { useCopyLink } from '@api/Hooks'
 import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
-import {
-  userToggleLikeMusic,
-  userToggleRepostMusic,
-} from '@redux/thunks/userThunks'
+import { userToggleLike, userToggleRepost } from '@redux/thunks/userThunks'
 
 const StyledButton = styled(Button)<{ active?: boolean }>`
   position: relative;
@@ -82,12 +79,13 @@ const InteractionButtons = ({
       return
     }
 
-    if ('title' in target) {
-      dispatch(userToggleRepostMusic(target.id)).then((value) => {
+    const targetType = 'title' in target ? 'music' : 'playlist'
+    dispatch(userToggleRepost({ targetId: target.id, targetType })).then(
+      (value) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
           const existReposts = target.reposts || []
           const newReposts =
-            value.payload.type === 'repost'
+            value.payload.data.toggleType === 'repost'
               ? [...existReposts, userData]
               : existReposts.filter((ru) => ru.id !== userData.id)
           setTarget({
@@ -96,8 +94,8 @@ const InteractionButtons = ({
             repostsCount: newReposts.length,
           })
         }
-      })
-    }
+      }
+    )
   }, [dispatch, openLogin, setTarget, target, userData])
 
   const handleClickLike = useCallback(() => {
@@ -106,18 +104,19 @@ const InteractionButtons = ({
       return
     }
 
-    if ('title' in target) {
-      dispatch(userToggleLikeMusic(target.id)).then((value) => {
+    const targetType = 'title' in target ? 'music' : 'playlist'
+    dispatch(userToggleLike({ targetId: target.id, targetType })).then(
+      (value) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
-          const existLikes = target.likes
+          const existLikes = target.likes || []
           const newLikes =
-            value.payload.type === 'like'
+            value.payload.data.toggleType === 'like'
               ? [...existLikes, userData]
               : existLikes.filter((l) => l.id !== userData.id)
           setTarget({ ...target, likes: newLikes, likesCount: newLikes.length })
         }
-      })
-    }
+      }
+    )
   }, [userData, target, openLogin, dispatch, setTarget])
 
   const onSuccessCreatePlaylist = useCallback(

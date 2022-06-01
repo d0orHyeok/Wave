@@ -38,6 +38,12 @@ export class Playlist {
   @Column({ nullable: true, name: 'userId' })
   userId: string;
 
+  @ManyToMany(() => User, (user) => user.repostPlaylists)
+  reposts: User[];
+
+  @ManyToMany(() => User, (user) => user.likePlaylists)
+  likes: User[];
+
   @ManyToOne(() => User, (user) => user.playlists, {
     cascade: true,
     onDelete: 'CASCADE',

@@ -1,7 +1,8 @@
+import { UserRepository } from 'src/auth/user.repository';
 import { UpdatePlaylistDto } from './dto/updatePlaylistDto';
 import { CreatePlaylistDto } from './dto/createPlaylistDto';
 import { MusicRepository } from './../music/music.repository';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { PlaylistRepository } from './playlist.repository';
@@ -12,6 +13,7 @@ export class PlaylistService {
     @InjectRepository(PlaylistRepository)
     private playlistRepository: PlaylistRepository,
     private musicRepository: MusicRepository,
+    private userRepository: UserRepository,
   ) {}
 
   async createPlaylist(user: User, createPlaylistDto: CreatePlaylistDto) {
@@ -25,15 +27,18 @@ export class PlaylistService {
   }
 
   async findPlaylistById(id: number) {
-    const playlist = await this.playlistRepository.findOne({ id });
-    if (!playlist) {
-      throw new NotFoundException(`Can't find playlist with id ${id}`);
-    }
-    return playlist;
+    const playlist = await this.playlistRepository.findPlaylistById(id);
+    const user = await this.userRepository.findUserById(playlist.userId);
+    return { ...playlist, user };
   }
 
   async findPlaylistByPermalink(userId: string, permalink: string) {
-    return this.playlistRepository.findPlaylistByPermalink(userId, permalink);
+    const playlist = await this.playlistRepository.findPlaylistByPermalink(
+      userId,
+      permalink,
+    );
+    const user = await this.userRepository.findUserById(playlist.userId);
+    return { ...playlist, user };
   }
 
   async updatePlaylistInfo(

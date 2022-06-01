@@ -1,3 +1,4 @@
+import { PlaylistRepository } from './../playlist/playlist.repository';
 import { AuthProfileDto } from './dto/auth-profile.dto';
 import { deleteFileDisk, uploadFileDisk } from 'src/upload';
 import { MusicRepository } from 'src/music/music.repository';
@@ -22,6 +23,7 @@ export class AuthService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
     private musicRepository: MusicRepository,
+    private playlistRepository: PlaylistRepository,
     private jwtService: JwtService,
     private config: ConfigService,
   ) {}
@@ -157,19 +159,22 @@ export class AuthService {
       description: updateUser.description,
     };
   }
-
-  async toggleLikeMusic(user: User, musicId: number) {
-    const music = await this.musicRepository.findMusicById(musicId);
-    return this.userRepository.toggleLikeMusic(user, music);
-  }
-
   async toggleFollow(user: User, targetId: string) {
     const target = await this.userRepository.findUserById(targetId);
     return this.userRepository.toggleFollow(user, target);
   }
 
-  async toggleRepostMusic(user: User, musicId: number) {
+  async toggleTypeMusic(user: User, musicId: number, type: 'like' | 'repost') {
     const music = await this.musicRepository.findMusicById(musicId);
-    return this.userRepository.toggleRepostMusic(user, music);
+    return this.userRepository.toggleTypeTarget(user, music, type);
+  }
+
+  async toggleTypePlaylist(
+    user: User,
+    playlistId: number,
+    type: 'like' | 'repost',
+  ) {
+    const playlist = await this.playlistRepository.findPlaylistById(playlistId);
+    return this.userRepository.toggleTypeTarget(user, playlist, type);
   }
 }

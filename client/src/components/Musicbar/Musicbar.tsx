@@ -29,7 +29,7 @@ import {
 } from '@redux/features/player/playerSlice'
 import Musiclist from './MusicListDrawer/section/Musiclist'
 import { selectUser } from '@redux/features/user/userSlice'
-import { userToggleFollow, userToggleLikeMusic } from '@redux/thunks/userThunks'
+import { userToggleFollow, userToggleLike } from '@redux/thunks/userThunks'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 
 // 로컬스토리지에 저장된 볼륨값을 확인하여 가져오고 없다면 100을 리턴
@@ -133,7 +133,9 @@ const Musicbar = () => {
 
   const handleClickLike = () => {
     if (currentMusic) {
-      dispatch(userToggleLikeMusic(currentMusic.id))
+      dispatch(
+        userToggleLike({ targetId: currentMusic.id, targetType: 'music' })
+      )
     }
   }
 

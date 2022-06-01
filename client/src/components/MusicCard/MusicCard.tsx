@@ -12,7 +12,7 @@ import {
 import { MusicMenu } from '@components/Common/Menu'
 import { LikeFilledButton, MoreButton } from '@components/Common/Button'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLikeMusic } from '@redux/thunks/userThunks'
+import { userToggleLike } from '@redux/thunks/userThunks'
 
 interface IMusicCardProps {
   music: IMusic
@@ -56,7 +56,7 @@ const MusicCard = ({ music, style }: IMusicCardProps) => {
   const handleClickLike = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation()
     event.preventDefault()
-    dispatch(userToggleLikeMusic(music.id))
+    dispatch(userToggleLike({ targetId: music.id, targetType: 'music' }))
   }
 
   useEffect(() => {

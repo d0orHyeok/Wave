@@ -24,18 +24,10 @@ export const userLogout = createAsyncThunk('LOGOUT', async () => {
   await Axios.post('/api/auth/signout')
 })
 
-export const userToggleLikeMusic = createAsyncThunk(
-  'TOGGLE_LIKES',
-  async (musicId: number) => {
-    const response = await Axios.patch(`/api/auth/${musicId}/like`)
-    return response.data
-  }
-)
-
 export const userToggleFollow = createAsyncThunk(
   'TOGGLE_FOLLOW',
   async (targetId: string) => {
-    const response = await Axios.patch(`/api/auth/${targetId}/follow`)
+    const response = await Axios.patch(`/api/auth/follow/${targetId}`)
     return response.data
   }
 )
@@ -71,10 +63,29 @@ export const userUpdateProfile = createAsyncThunk(
   }
 )
 
-export const userToggleRepostMusic = createAsyncThunk(
-  'USER_MUSIC_REPOST',
-  async (musicId: number) => {
-    const response = await Axios.patch(`/api/auth/${musicId}/repost/music`)
-    return response.data
+interface UserToggleTargetParam {
+  targetType: 'music' | 'playlist'
+  targetId: number
+}
+
+export const userToggleLike = createAsyncThunk(
+  'TOGGLE_LIKES',
+  async (param: UserToggleTargetParam) => {
+    const { targetId, targetType } = param
+    const response = await Axios.patch(
+      `/api/auth/like/${targetType}/${targetId}`
+    )
+    return { targetType, data: response.data }
+  }
+)
+
+export const userToggleRepost = createAsyncThunk(
+  'USER_REPOST',
+  async (param: UserToggleTargetParam) => {
+    const { targetId, targetType } = param
+    const response = await Axios.patch(
+      `/api/auth/repost/${targetType}/${targetId}`
+    )
+    return { targetType, data: response.data }
   }
 )

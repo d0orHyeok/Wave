@@ -46,11 +46,7 @@ export const userSlice = createSlice({
       state.isLogin = false
       state.userData = undefined
     },
-    [userThunks.userToggleLikeMusic.fulfilled.type]: (state, action) => {
-      if (state.userData) {
-        state.userData.likeMusics = action.payload.likeMusics
-      }
-    },
+
     [userThunks.userToggleFollow.fulfilled.type]: (state, action) => {
       if (state.userData) {
         state.userData.following = action.payload.following
@@ -73,9 +69,20 @@ export const userSlice = createSlice({
         state.userData.description = description
       }
     },
-    [userThunks.userToggleRepostMusic.fulfilled.type]: (state, action) => {
+    [userThunks.userToggleLike.fulfilled.type]: (state, action) => {
       if (state.userData) {
-        state.userData.repostMusics = action.payload.reposts
+        const { targetType, data } = action.payload
+        const affectColumn =
+          targetType === 'music' ? 'likeMusics' : 'likePlaylists'
+        state.userData[affectColumn] = data[affectColumn]
+      }
+    },
+    [userThunks.userToggleRepost.fulfilled.type]: (state, action) => {
+      if (state.userData) {
+        const { targetType, data } = action.payload
+        const affectColumn =
+          targetType === 'music' ? 'repostMusics' : 'repostPlaylists'
+        state.userData[affectColumn] = data[affectColumn]
       }
     },
     [playlistThunks.userAddMusicsToPlaylist.fulfilled.type]: (

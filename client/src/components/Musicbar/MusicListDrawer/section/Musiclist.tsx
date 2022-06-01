@@ -24,7 +24,7 @@ import { MusicMenu } from '@components/Common/Menu'
 import { useCopyLink } from '@api/Hooks'
 import { convertTimeToString } from '@api/functions'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLikeMusic } from '@redux/thunks/userThunks'
+import { userToggleLike } from '@redux/thunks/userThunks'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()
@@ -112,10 +112,15 @@ const Musiclist = () => {
     event.stopPropagation()
     if (anchorEl) {
       const musicId = musics[Number(anchorEl.value)].id
-      dispatch(userToggleLikeMusic(musicId))
+      dispatch(userToggleLike({ targetId: musicId, targetType: 'music' }))
       setAnchorEl(null)
     } else {
-      dispatch(userToggleLikeMusic(Number(event.currentTarget.ariaValueText)))
+      dispatch(
+        userToggleLike({
+          targetId: Number(event.currentTarget.ariaValueText),
+          targetType: 'music',
+        })
+      )
     }
   }
 
