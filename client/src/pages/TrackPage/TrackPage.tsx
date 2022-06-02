@@ -74,7 +74,7 @@ const TrackPage = () => {
     ) {
       setExistRelated(true)
     } else {
-      false
+      setExistRelated(false)
     }
   }, [music, relatedMusics])
 

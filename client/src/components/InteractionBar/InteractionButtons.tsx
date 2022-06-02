@@ -174,12 +174,9 @@ const InteractionButtons = ({
   }, [copyLink, target])
 
   const handleClickNextup = useCallback(() => {
-    if ('title' in target) {
-      dispatch(addMusic(target))
-    } else {
-      const { musics } = target
-      dispatch(addMusic(musics))
-    }
+    const additem = 'title' in target ? [target] : target.musics || []
+
+    dispatch(addMusic(additem))
   }, [dispatch, target])
 
   useEffect(() => {

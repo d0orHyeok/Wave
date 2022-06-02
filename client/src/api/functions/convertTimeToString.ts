@@ -8,9 +8,10 @@ const convertTimeToString = (time?: number) => {
   const minutes = Math.floor((time % 3600) / 60)
   const seconds = Math.floor(time % 60)
 
-  let stringTime = !hours ? '' : `${hours}:${minutes < 10 ? '0' : ''}`
-  stringTime += !minutes ? '' : `${minutes}:${seconds < 10 ? '0' : ''}`
-  stringTime = stringTime + seconds
+  let stringTime = !hours ? '' : `${hours}:`
+  stringTime +=
+    (stringTime.length ? `${minutes < 10 ? '0' : ''}` : '') + `${minutes}:`
+  stringTime = stringTime + (seconds < 10 ? `0${seconds}` : seconds)
 
   return stringTime
 }

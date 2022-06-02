@@ -87,7 +87,8 @@ const Item = styled.div`
       margin-bottom: 5px;
     }
 
-    & .name {
+    & .name,
+    & .user a:hover {
       color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
     }
   }
@@ -153,9 +154,96 @@ const RelatedTarget = forwardRef<RelatedTargetHandler, RelatedTargetProps>(
       []
     )
 
+    const drawRelatedPlaylist = (target: IMusic | IPlaylist) => {
+      const playlists: IPlaylist[] = []
+      const isMusic = 'title' in target
+
+      if ('title' in target) {
+        if (target.playlists?.length) {
+          playlists.push(...target.playlists.slice(0, 3))
+        }
+      } else {
+        let count = 0
+        playlists.push(
+          ...target.user.playlists.slice(0, 4).filter((playlist) => {
+            if (count > 2) {
+              return false
+            }
+            if (playlist.id !== target.id) {
+              count += 1
+              return true
+            }
+          })
+        )
+      }
+
+      if (!playlists.length) {
+        return
+      }
+
+      return (
+        <>
+          <BoxTitle>
+            <RiCheckboxMultipleBlankFill className="icon" />
+            <div className="text">
+              {isMusic
+                ? 'In Playlist'
+                : `${target.user.nickname || target.user.username}'s playlists`}
+            </div>
+
+            <div className="view">
+              <Link
+                to={
+                  isMusic
+                    ? `/track/${target.userId}/${target.permalink}/playlists`
+                    : `/profile/${target.userId}/playlists`
+                }
+              >
+                View all
+              </Link>
+            </div>
+          </BoxTitle>
+          <StyledDivider />
+          <ItemBox>
+            {playlists.map((playlist, index) => (
+              <Item key={index}>
+                <Link to={`/playlist/${playlist.userId}/${playlist.permalink}`}>
+                  <div className="imgBox">
+                    {playlist.image ? (
+                      <img className="img" src={playlist.image} alt="" />
+                    ) : (
+                      <EmptyPlaylistImage className="img" />
+                    )}
+                  </div>
+                </Link>
+                <div className="info">
+                  <div className="user">
+                    <Link to={`/profile/${playlist.userId}`}>
+                      {isMusic
+                        ? playlist.user.nickname
+                        : target.user.nickname || target.user.username}
+                    </Link>
+                  </div>
+                  <div className="name">
+                    <Link
+                      to={`/playlist/${playlist.userId}/${playlist.permalink}`}
+                    >
+                      {playlist.name}
+                    </Link>
+                  </div>
+                  <InteractionCount target={playlist} />
+                </div>
+              </Item>
+            ))}
+          </ItemBox>
+        </>
+      )
+    }
+
     return (
       <>
         <Container {...props} ref={contentRef}>
+          {/* Related Musics */}
           {relatedMusics && relatedMusics.length ? (
             <>
               <BoxTitle>
@@ -208,57 +296,7 @@ const RelatedTarget = forwardRef<RelatedTargetHandler, RelatedTargetProps>(
           )}
 
           {/* In Playlist */}
-          {'title' in target && target.playlists?.length ? (
-            <>
-              <BoxTitle>
-                <RiCheckboxMultipleBlankFill className="icon" />
-                <div className="text">In Playlist</div>
-
-                <div className="view">
-                  <Link
-                    to={`/track/${target.userId}/${target.permalink}/playlists`}
-                  >
-                    View all
-                  </Link>
-                </div>
-              </BoxTitle>
-              <StyledDivider />
-              <ItemBox>
-                {target.playlists.slice(0, 3).map((playlist, index) => (
-                  <Item key={index}>
-                    <Link
-                      to={`/playlist/${playlist.userId}/${playlist.permalink}`}
-                    >
-                      <div className="imgBox">
-                        {playlist.image ? (
-                          <img className="img" src={playlist.image} alt="" />
-                        ) : (
-                          <EmptyPlaylistImage className="img" />
-                        )}
-                      </div>
-                    </Link>
-                    <div className="info">
-                      <div className="user">
-                        <Link to={`/profile/${playlist.userId}`}>
-                          {playlist.user.nickname}
-                        </Link>
-                      </div>
-                      <div className="name">
-                        <Link
-                          to={`/playlist/${playlist.userId}/${playlist.permalink}`}
-                        >
-                          {playlist.name}
-                        </Link>
-                      </div>
-                      <InteractionCount target={playlist} />
-                    </div>
-                  </Item>
-                ))}
-              </ItemBox>
-            </>
-          ) : (
-            <></>
-          )}
+          {drawRelatedPlaylist(target)}
 
           {/* likes */}
           {target.likesCount ? (

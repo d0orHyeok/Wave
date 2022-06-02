@@ -134,6 +134,13 @@ export const playerSlice = createSlice({
       state.currentMusic = null
       state.indexing = { currentIndex: 0, indexArray: [] }
       state.musics = []
+      state.progress = {
+        currentStringTime: '0:00',
+        currentTime: 0,
+        duration: 0,
+        durationStringTime: '0:00',
+        percent: 0,
+      }
     },
     setCurrentIndex: (state, action: PayloadAction<number>) => {
       if (!state.musics.length) {
@@ -164,6 +171,11 @@ export const playerSlice = createSlice({
       if (!state.musics.length) {
         return
       }
+
+      if (!state.currentMusic) {
+        state.currentMusic = state.musics[state.indexing.indexArray[0]]
+      }
+
       state.controll.isPlay =
         action.payload === undefined ? !state.controll.isPlay : action.payload
     },

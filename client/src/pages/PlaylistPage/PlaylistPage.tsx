@@ -41,10 +41,14 @@ const PlaylistPage = () => {
   }, [getPlaylistDataFromServer])
 
   useEffect(() => {
-    if (playlist?.likesCount || playlist?.repostsCount) {
+    if (
+      playlist?.likesCount ||
+      playlist?.repostsCount ||
+      (playlist?.user && playlist.user.playlistsCount > 1)
+    ) {
       setExistRelated(true)
     } else {
-      false
+      setExistRelated(false)
     }
   }, [playlist])
 
@@ -72,7 +76,7 @@ const PlaylistPage = () => {
         <PageStyle.Content media={existRelated ? 1000 : undefined}>
           <PageStyle.SubContent className="subcontent">
             <UserSmallCard className="content-uploader" user={playlist.user} />
-            {playlist.likesCount || playlist.repostsCount ? (
+            {existRelated ? (
               <PageStyle.SideContent className="sidecontent">
                 <RelatedTarget ref={relatedTargetRef} target={playlist} />
               </PageStyle.SideContent>

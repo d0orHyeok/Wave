@@ -67,8 +67,6 @@ interface PlaylistMusicsProps {
 }
 
 const PlaylistMusics = ({ playlist }: PlaylistMusicsProps) => {
-  console.log(playlist)
-
   return (
     <>
       {playlist.musics ? (
