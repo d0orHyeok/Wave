@@ -11,6 +11,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import PlaylistHead from './PlaylistHead/PlaylistHead'
 import * as PageStyle from '@styles/TargetPageStyle/TargetPage.style'
 import PlaylistMusics from './PlaylistMusics/PlaylistMusics'
+import { Helmet } from 'react-helmet'
 
 const PlaylistPage = () => {
   const { userId, permalink } = useParams()
@@ -64,54 +65,64 @@ const PlaylistPage = () => {
   return !playlist ? (
     <Loading />
   ) : (
-    <PageStyle.Wrapper>
-      <PlaylistHead playlist={playlist} />
-      <PageStyle.Container related={existRelated} minHeight={minHeight}>
-        <InteractionBar
-          className="interaction"
-          target={playlist}
-          setTarget={setPlaylist}
-        />
-        <PageStyle.StyledDivider />
-        <PageStyle.Content media={existRelated ? 1000 : undefined}>
-          <PageStyle.SubContent className="subcontent">
-            <UserSmallCard className="content-uploader" user={playlist.user} />
-            {existRelated ? (
-              <PageStyle.SideContent className="sidecontent">
-                <RelatedTarget ref={relatedTargetRef} target={playlist} />
-              </PageStyle.SideContent>
-            ) : (
-              <></>
-            )}
-          </PageStyle.SubContent>
-          <PageStyle.MainContent className="maincontent">
-            {playlist.description?.trim().length || playlist.tags?.length ? (
-              <PageStyle.StyledDivider
-                className="media-divider"
-                sx={{ margin: '20px 0' }}
+    <>
+      <Helmet>
+        <title>{`${playlist.name} by ${
+          playlist.user.nickname || playlist.user.username
+        }  | Wave`}</title>
+      </Helmet>
+      <PageStyle.Wrapper>
+        <PlaylistHead playlist={playlist} />
+        <PageStyle.Container related={existRelated} minHeight={minHeight}>
+          <InteractionBar
+            className="interaction"
+            target={playlist}
+            setTarget={setPlaylist}
+          />
+          <PageStyle.StyledDivider />
+          <PageStyle.Content media={existRelated ? 1000 : undefined}>
+            <PageStyle.SubContent className="subcontent">
+              <UserSmallCard
+                className="content-uploader"
+                user={playlist.user}
               />
-            ) : (
-              <></>
-            )}
-            <div className="content-info content-description">
-              {playlist.description}
-            </div>
-            {playlist.tags ? (
-              <ul className="content-info content-tags">
-                {playlist.tags.map((tag, index) => (
-                  <li key={index} className="content-tags-item">
-                    <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <></>
-            )}
-            <PlaylistMusics playlist={playlist} />
-          </PageStyle.MainContent>
-        </PageStyle.Content>
-      </PageStyle.Container>
-    </PageStyle.Wrapper>
+              {existRelated ? (
+                <PageStyle.SideContent className="sidecontent">
+                  <RelatedTarget ref={relatedTargetRef} target={playlist} />
+                </PageStyle.SideContent>
+              ) : (
+                <></>
+              )}
+            </PageStyle.SubContent>
+            <PageStyle.MainContent className="maincontent">
+              {playlist.description?.trim().length || playlist.tags?.length ? (
+                <PageStyle.StyledDivider
+                  className="media-divider"
+                  sx={{ margin: '20px 0' }}
+                />
+              ) : (
+                <></>
+              )}
+              <div className="content-info content-description">
+                {playlist.description}
+              </div>
+              {playlist.tags ? (
+                <ul className="content-info content-tags">
+                  {playlist.tags.map((tag, index) => (
+                    <li key={index} className="content-tags-item">
+                      <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <></>
+              )}
+              <PlaylistMusics playlist={playlist} />
+            </PageStyle.MainContent>
+          </PageStyle.Content>
+        </PageStyle.Container>
+      </PageStyle.Wrapper>
+    </>
   )
 }
 

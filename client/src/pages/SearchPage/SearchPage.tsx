@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import * as S from './SearchPage.style'
+import { Helmet } from 'react-helmet'
 
 const SearchPage = () => {
   const location = useLocation()
@@ -15,9 +16,14 @@ const SearchPage = () => {
   }, [location])
 
   return (
-    <S.Wrapper>
-      <S.Container>{`"${keyward}" 검색결과`}</S.Container>
-    </S.Wrapper>
+    <>
+      <Helmet>
+        <title>{`${'Serach: Text'} | Wave`}</title>
+      </Helmet>
+      <S.Wrapper>
+        <S.Container>{`"${keyward}" 검색결과`}</S.Container>
+      </S.Wrapper>
+    </>
   )
 }
 

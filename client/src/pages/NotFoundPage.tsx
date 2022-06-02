@@ -1,6 +1,7 @@
 import Logo from '@components/Logo/Logo'
 import React from 'react'
 import styled from 'styled-components'
+import { Helmet } from 'react-helmet'
 
 const StyledContainer = styled.div`
   height: 100%;
@@ -17,13 +18,19 @@ const StyledContainer = styled.div`
 
 const NotFoundPage = () => {
   return (
-    <StyledContainer>
-      <Logo />
-      <h1 className="notfound-title">페이지가 존재하지 않습니다.</h1>
-      <p className="notfound-description">
-        링크를 잘못입력하셨거나 페이지가 삭제/이동 되었을 수 있습니다.
-      </p>
-    </StyledContainer>
+    <>
+      <Helmet>
+        <title>Notfound | Wave</title>
+      </Helmet>
+      <StyledContainer>
+        <Logo />
+        <h1 className="notfound-title">Page Notfound</h1>
+        <p className="notfound-description">
+          You may have entered the link incorrectly or the page may have been
+          deleted/moved.
+        </p>
+      </StyledContainer>
+    </>
   )
 }
 

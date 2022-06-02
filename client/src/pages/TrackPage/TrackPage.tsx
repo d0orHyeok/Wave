@@ -13,6 +13,7 @@ import RelatedTarget, {
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
 import useInterval from '@api/Hooks/userInterval'
+import { Helmet } from 'react-helmet'
 
 const TrackPage = () => {
   const { userId, permalink } = useParams()
@@ -90,61 +91,68 @@ const TrackPage = () => {
   return !music ? (
     <Loading />
   ) : (
-    <PageStyle.Wrapper>
-      <TrackHead music={music} />
-      <PageStyle.Container related={existRelated} minHeight={minHeight}>
-        <CommentBox className="comment" music={music} setMusic={setMusic} />
-        <InteractionBar
-          className="interaction"
-          target={music}
-          setTarget={setMusic}
-          visibleOption={['plays', 'likes', 'reposts']}
-        />
-        <PageStyle.StyledDivider />
-        <PageStyle.Content media={existRelated ? 1000 : undefined}>
-          <PageStyle.SubContent className="subcontent">
-            <UserSmallCard className="content-uploader" user={music.user} />
-            {existRelated ? (
-              <PageStyle.SideContent className="sidecontent">
-                <RelatedTarget
-                  ref={relatedTargetRef}
-                  target={music}
-                  relatedMusics={relatedMusics}
+    <>
+      <Helmet>
+        <title>{`${music.title} by ${
+          music.user.nickname || music.user.username
+        } | Wave`}</title>
+      </Helmet>
+      <PageStyle.Wrapper>
+        <TrackHead music={music} />
+        <PageStyle.Container related={existRelated} minHeight={minHeight}>
+          <CommentBox className="comment" music={music} setMusic={setMusic} />
+          <InteractionBar
+            className="interaction"
+            target={music}
+            setTarget={setMusic}
+            visibleOption={['plays', 'likes', 'reposts']}
+          />
+          <PageStyle.StyledDivider />
+          <PageStyle.Content media={existRelated ? 1000 : undefined}>
+            <PageStyle.SubContent className="subcontent">
+              <UserSmallCard className="content-uploader" user={music.user} />
+              {existRelated ? (
+                <PageStyle.SideContent className="sidecontent">
+                  <RelatedTarget
+                    ref={relatedTargetRef}
+                    target={music}
+                    relatedMusics={relatedMusics}
+                  />
+                </PageStyle.SideContent>
+              ) : (
+                <></>
+              )}
+            </PageStyle.SubContent>
+            <PageStyle.MainContent className="maincontent">
+              {music.description?.trim().length || music.tags?.length ? (
+                <PageStyle.StyledDivider
+                  className="media-divider"
+                  sx={{ margin: '20px 0' }}
                 />
-              </PageStyle.SideContent>
-            ) : (
-              <></>
-            )}
-          </PageStyle.SubContent>
-          <PageStyle.MainContent className="maincontent">
-            {music.description?.trim().length || music.tags?.length ? (
-              <PageStyle.StyledDivider
-                className="media-divider"
-                sx={{ margin: '20px 0' }}
-              />
-            ) : (
-              <></>
-            )}
-            <div className="content-info content-description">
-              {music.description}
-            </div>
-            {music.tags ? (
-              <ul className="content-info content-tags">
-                {music.tags.map((tag, index) => (
-                  <li key={index} className="content-tags-item">
-                    <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <></>
-            )}
+              ) : (
+                <></>
+              )}
+              <div className="content-info content-description">
+                {music.description}
+              </div>
+              {music.tags ? (
+                <ul className="content-info content-tags">
+                  {music.tags.map((tag, index) => (
+                    <li key={index} className="content-tags-item">
+                      <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <></>
+              )}
 
-            <TrackComments music={music} setMusic={setMusic} />
-          </PageStyle.MainContent>
-        </PageStyle.Content>
-      </PageStyle.Container>
-    </PageStyle.Wrapper>
+              <TrackComments music={music} setMusic={setMusic} />
+            </PageStyle.MainContent>
+          </PageStyle.Content>
+        </PageStyle.Container>
+      </PageStyle.Wrapper>
+    </>
   )
 }
 

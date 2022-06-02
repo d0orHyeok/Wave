@@ -9,6 +9,7 @@ import Loading from '@components/Loading/Loading'
 import ProfileHead from './ProfileHead/ProfileHead'
 import ProfileNav from './ProfileNav/ProfileNav'
 import { getUserById } from '@api/userApi'
+import { Helmet } from 'react-helmet'
 
 const ProfilePage = () => {
   const params = useParams()
@@ -58,11 +59,18 @@ const ProfilePage = () => {
       ) : !profileData ? (
         <CanNotFind text="user" />
       ) : (
-        <S.Wrapper>
-          <ProfileHead data={profileData} />
-          <ProfileNav editable={editable} />
-          <S.Container></S.Container>
-        </S.Wrapper>
+        <>
+          <Helmet>
+            <title>{`Profile ${
+              profileData.nickname || profileData.username
+            }  | Wave`}</title>
+          </Helmet>
+          <S.Wrapper>
+            <ProfileHead data={profileData} />
+            <ProfileNav editable={editable} />
+            <S.Container></S.Container>
+          </S.Wrapper>
+        </>
       )}
     </>
   )
