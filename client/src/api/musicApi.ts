@@ -8,17 +8,8 @@ export const getMusicByPermalink = (userId: string, permalink: string) => {
   return Axios.get(`/api/music/permalink/${userId}/${permalink}`)
 }
 
-interface findRelatedMusicsPagingOption {
-  take?: number
-  skip?: number
-}
-
-export const findRelatedMusics = (
-  musicId: number,
-  pagingOption?: findRelatedMusicsPagingOption
-) => {
-  const body = pagingOption ? pagingOption : { skip: 0, take: 10 }
-  return Axios.post(`/api/music/related/${musicId}`, body)
+export const findRelatedMusics = (musicId: number, skip = 0, take = 10) => {
+  return Axios.get(`/api/music/related/${musicId}?skip=${skip}&take=${take}`)
 }
 
 export const uploadMusic = (formData: FormData) => {

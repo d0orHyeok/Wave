@@ -3,13 +3,13 @@ const numberFormat = (number: number) => {
     return `${number}`
   }
 
-  const k = Math.floor(number / 1000)
+  const k = number / 1000
   if (k < 1000) {
-    return `${k}k`
+    return `${k.toFixed(1)}K`
   }
 
-  const m = Math.floor(k / 1000)
-  return `${m}m`
+  const m = k / 1000
+  return `${m.toFixed(2)}M`
 }
 
 export default numberFormat
