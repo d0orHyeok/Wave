@@ -195,7 +195,7 @@ const RelatedTarget = forwardRef<RelatedTargetHandler, RelatedTargetProps>(
               <Link
                 to={
                   isMusic
-                    ? `/track/${target.userId}/${target.permalink}/playlists`
+                    ? `/track/${target.userId}/${target.permalink}/in-playlists`
                     : `/profile/${target.userId}/playlists`
                 }
               >

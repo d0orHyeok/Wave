@@ -14,9 +14,10 @@ import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
 import useInterval from '@api/Hooks/userInterval'
 import { Helmet } from 'react-helmet'
+import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
 
 const TrackPage = () => {
-  const { userId, permalink } = useParams()
+  const { userId, permalink, detail } = useParams()
   const navigate = useNavigate()
 
   const [music, setMusic] = useState<IMusic>()
@@ -90,6 +91,8 @@ const TrackPage = () => {
 
   return !music ? (
     <Loading />
+  ) : detail ? (
+    <TrackDetailPage music={music} relatedMusics={relatedMusics} />
   ) : (
     <>
       <Helmet>

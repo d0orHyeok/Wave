@@ -32,14 +32,14 @@ const Box = styled.div`
   }
 `
 
-const ImageBox = styled.div`
+const ImgBox = styled.div`
   width: 40px;
   height: 40px;
   & .img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
+    border-radius: 0;
   }
 `
 
@@ -101,13 +101,13 @@ const CommentBox = ({ music, setMusic, ...props }: CommentBoxProps) => {
 
   return (
     <Box {...props}>
-      <ImageBox>
+      <ImgBox>
         {user.userData?.profileImage ? (
           <img className="img" src={user.userData?.profileImage} alt="" />
         ) : (
           <EmptyProfileImage className="img" />
         )}
-      </ImageBox>
+      </ImgBox>
       <div className="textBox">
         <input
           ref={commentRef}
