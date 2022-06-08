@@ -13,7 +13,12 @@ import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
 import { userToggleLike, userToggleRepost } from '@redux/thunks/userThunks'
 
-const StyledButton = styled(Button)<{ active?: boolean }>`
+interface StyledButtonProps {
+  active?: boolean
+  mediaSize?: number | string
+}
+
+const StyledButton = styled(Button)<StyledButtonProps>`
   position: relative;
   height: 27px;
   margin-right: 5px;
@@ -45,7 +50,12 @@ const StyledButton = styled(Button)<{ active?: boolean }>`
     height: 25px;
     margin-right: 5px;
 
-    ${({ theme }) => theme.device.desktop} {
+    @media screen and (max-width: ${({ mediaSize }) =>
+        mediaSize === undefined
+          ? '1200px'
+          : typeof mediaSize === 'string'
+          ? mediaSize
+          : `${mediaSize}px`}) {
       display: none;
     }
   }
@@ -57,11 +67,13 @@ interface InteractionButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   target: TargetType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setTarget?: React.Dispatch<React.SetStateAction<any>>
+  mediaSize?: number | string
 }
 
 const InteractionButtons = ({
   target,
   setTarget,
+  mediaSize,
   ...props
 }: InteractionButtonsProps) => {
   const dispatch = useAppDispatch()
@@ -205,23 +217,37 @@ const InteractionButtons = ({
 
   return (
     <div {...props}>
-      <StyledButton title="Like" active={isLike} onClick={handleClickLike}>
+      <StyledButton
+        title="Like"
+        active={isLike}
+        mediaSize={mediaSize}
+        onClick={handleClickLike}
+      >
         <GoHeart className="icon" />
         <span className="text">Like</span>
       </StyledButton>
       <StyledButton
         title="Repost"
         active={isReposts}
+        mediaSize={mediaSize}
         onClick={handleClickRepost}
       >
         <BiRepost className="icon" />
         <span className="text">Repost</span>
       </StyledButton>
-      <StyledButton title="Copy Link" onClick={handleClickCopyLink}>
+      <StyledButton
+        title="Copy Link"
+        mediaSize={mediaSize}
+        onClick={handleClickCopyLink}
+      >
         <IoMdLink className="icon" />
         <span className="text">Copy Link</span>
       </StyledButton>
-      <StyledButton title="Add to Next up" onClick={handleClickNextup}>
+      <StyledButton
+        title="Add to Next up"
+        mediaSize={mediaSize}
+        onClick={handleClickNextup}
+      >
         <MdPlaylistPlay className="icon" />
         <span className="text">Add to Next up</span>
       </StyledButton>
@@ -229,6 +255,7 @@ const InteractionButtons = ({
         <>
           <StyledButton
             title="Add to Playlist"
+            mediaSize={mediaSize}
             onClick={handleClickAddPlaylist}
           >
             <MdPlaylistAdd className="icon" />
