@@ -1,3 +1,4 @@
+import { PagingDto } from './../common/dto/paging.dto';
 import { MusicDataDto } from './dto/music-data.dto';
 import { User } from 'src/entities/user.entity';
 import {
@@ -5,7 +6,12 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Music } from 'src/entities/music.entity';
-import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
+import {
+  Brackets,
+  EntityRepository,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { EntityStatus } from 'src/entities/common.types';
 
 @EntityRepository(Music)
@@ -147,5 +153,43 @@ export class MusicRepository extends Repository<Music> {
     const music = await this.findMusicById(id);
     music.count += 1;
     return this.updateMusic(music);
+  }
+
+  async findRelatedMusic(id: number, musicPagingDto: PagingDto) {
+    const music = await this.findMusicById(id);
+
+    const { title, album, artist } = music.metadata;
+    const { skip, take } = musicPagingDto;
+
+    try {
+      return this.musicSimpleQuery()
+        .where('music.id != :id', { id: music.id })
+        .andWhere(
+          new Brackets((qb) => {
+            let query = qb.where('music.title LIKE :title', {
+              title: `%${title}%`,
+            });
+            if (album && album.length) {
+              query = query.orWhere('music.album LIKE :album', {
+                album: `%${album}%`,
+              });
+            }
+            if (artist && artist.length) {
+              query = query.orWhere(`music.metadata->>'artist' LIKE :artist`, {
+                artist: `%${artist}%`,
+              });
+            }
+            return query;
+          }),
+        )
+        .skip(skip)
+        .take(take)
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        `Error to get related musics`,
+      );
+    }
   }
 }

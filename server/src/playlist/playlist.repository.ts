@@ -9,6 +9,7 @@ import { User } from 'src/entities/user.entity';
 import { Playlist } from './../entities/playlist.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { Music } from 'src/entities/music.entity';
+import { PagingDto } from 'src/common/dto/paging.dto';
 
 @EntityRepository(Playlist)
 export class PlaylistRepository extends Repository<Playlist> {
@@ -137,6 +138,27 @@ export class PlaylistRepository extends Repository<Playlist> {
       }
     } catch (error) {
       throw new InternalServerErrorException(error, 'Error to delete playlist');
+    }
+  }
+
+  async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      const result = await this.createQueryBuilder('playlist')
+        .leftJoinAndSelect('playlist.musics', 'musics')
+        .select('playlist.id')
+        .where('musics.id = :musicsid', { musicsid: id })
+        .skip(skip)
+        .take(take)
+        .getMany();
+      const playlistIds = result.map((value) => value.id);
+      return this.getDetailPlaylistQuery().whereInIds(playlistIds).getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to get detail playlists',
+      );
     }
   }
 }

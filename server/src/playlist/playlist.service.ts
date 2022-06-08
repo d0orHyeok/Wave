@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { PlaylistRepository } from './playlist.repository';
+import { PagingDto } from 'src/common/dto/paging.dto';
 
 @Injectable()
 export class PlaylistService {
@@ -62,5 +63,9 @@ export class PlaylistService {
 
   async deletePlaylist(playlistId: number, user: User) {
     return this.playlistRepository.deletePlaylist(playlistId, user);
+  }
+
+  async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
+    return this.playlistRepository.findDetailPlaylistsById(id, pagingDto);
   }
 }

@@ -164,17 +164,21 @@ export class AuthService {
     return this.userRepository.toggleFollow(user, target);
   }
 
-  async toggleTypeMusic(user: User, musicId: number, type: 'like' | 'repost') {
+  async toggleColumnMusic(
+    user: User,
+    musicId: number,
+    column: 'like' | 'repost',
+  ) {
     const music = await this.musicRepository.findMusicById(musicId);
-    return this.userRepository.toggleTypeTarget(user, music, type);
+    return this.userRepository.toggleColumnTarget(user, music, column);
   }
 
-  async toggleTypePlaylist(
+  async toggleColumnPlaylist(
     user: User,
     playlistId: number,
-    type: 'like' | 'repost',
+    column: 'like' | 'repost',
   ) {
     const playlist = await this.playlistRepository.findPlaylistById(playlistId);
-    return this.userRepository.toggleTypeTarget(user, playlist, type);
+    return this.userRepository.toggleColumnTarget(user, playlist, column);
   }
 }

@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional } from 'class-validator';
 
-export class MusicPagingDto {
+export class PagingDto {
   @IsOptional()
   @IsNumber()
   take?: number;

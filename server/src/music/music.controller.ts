@@ -1,7 +1,6 @@
-import { MusicPagingDto } from './dto/music-paging.dto';
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from 'src/entities/user.entity';
-import { EntityStatusValidationPipe } from '../entities/pipes/entity-status-validation.pipe';
+import { EntityStatusValidationPipe } from '../common/pipes/entity-status-validation.pipe';
 import { MusicService } from './music.service';
 import {
   Body,
@@ -13,10 +12,10 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
-  ValidationPipe,
 } from '@nestjs/common';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
@@ -38,6 +37,29 @@ export class MusicController {
   @Get('/')
   async getAllMusic() {
     return this.musicService.getAllMusic();
+  }
+
+  @Get('/:id')
+  getMusicById(@Param('id', ParseIntPipe) id: number) {
+    return this.musicService.findMusicById(id);
+  }
+
+  @Get('permalink/:userId/:permalink')
+  getMusicByPermalink(
+    @Param('userId') userId: string,
+    @Param('permalink') permalink: string,
+  ) {
+    return this.musicService.findMusicByPermalink(userId, permalink);
+  }
+
+  @Get('/related/:id')
+  findRelatedMusic(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.musicService.findRelatedMusic(id, pagingDto);
   }
 
   @Post('/upload')
@@ -90,27 +112,6 @@ export class MusicController {
     };
 
     return this.musicService.createMusic(createMusicData, user);
-  }
-
-  @Get('/:id')
-  getMusicById(@Param('id', ParseIntPipe) id: number) {
-    return this.musicService.findMusicById(id);
-  }
-
-  @Get('permalink/:userId/:permalink')
-  getMusicByPermalink(
-    @Param('userId') userId: string,
-    @Param('permalink') permalink: string,
-  ) {
-    return this.musicService.findMusicByPermalink(userId, permalink);
-  }
-
-  @Post('/related/:id')
-  findRelatedMusic(
-    @Param('id', ParseIntPipe) id: number,
-    @Body(ValidationPipe) musicPagingDto: MusicPagingDto,
-  ) {
-    return this.musicService.findRelatedMusic(id, musicPagingDto);
   }
 
   @Delete('/:id')

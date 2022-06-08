@@ -128,8 +128,8 @@ export class AuthController {
     @Param('targetId', ParseIntPipe) targetId: number,
   ) {
     return target === 'music'
-      ? this.authService.toggleTypeMusic(user, targetId, 'like')
-      : this.authService.toggleTypePlaylist(user, targetId, 'like');
+      ? this.authService.toggleColumnMusic(user, targetId, 'like')
+      : this.authService.toggleColumnPlaylist(user, targetId, 'like');
   }
 
   @Patch('/repost/:target/:targetId')
@@ -140,7 +140,7 @@ export class AuthController {
     @Param('targetId', ParseIntPipe) targetId: number,
   ) {
     return target === 'music'
-      ? this.authService.toggleTypeMusic(user, targetId, 'repost')
-      : this.authService.toggleTypePlaylist(user, targetId, 'repost');
+      ? this.authService.toggleColumnMusic(user, targetId, 'repost')
+      : this.authService.toggleColumnPlaylist(user, targetId, 'repost');
   }
 }

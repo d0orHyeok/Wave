@@ -146,44 +146,13 @@ export class UserRepository extends Repository<User> {
     }
   }
 
-  async toggleLikeMusic(user: User, music: Music) {
-    const likeMusics = user.likeMusics || [];
-    let findIndex = -1;
-    const newLikeMusics = likeMusics.filter((lm, index) => {
-      if (lm.id !== music.id) {
-        return true;
-      } else {
-        findIndex = index;
-        return false;
-      }
-    });
-
-    if (findIndex === -1) {
-      newLikeMusics.push(music);
-    }
-    user.likeMusics = newLikeMusics;
-
-    try {
-      await this.save(user);
-      return {
-        type: findIndex === -1 ? 'like' : 'unlike',
-        likeMusics: newLikeMusics,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        `Error to update likeMusics`,
-      );
-    }
-  }
-
-  async toggleTypeTarget(
+  async toggleColumnTarget(
     user: User,
     target: TargetType,
-    type: 'like' | 'repost',
+    column: 'like' | 'repost',
   ) {
-    const targetName = type + ('title' in target ? 'Musics' : 'Playlists');
-    const targetItems: TargetType[] = user[targetName] || [];
+    const columnName = column + ('title' in target ? 'Musics' : 'Playlists');
+    const targetItems: TargetType[] = user[columnName] || [];
     let findIndex = -1;
     const newTargetItems = targetItems.filter((item, index) => {
       if (item.id !== target.id) {
@@ -197,47 +166,19 @@ export class UserRepository extends Repository<User> {
     if (findIndex === -1) {
       newTargetItems.push(target);
     }
-    user[targetName] = newTargetItems;
+    user[columnName] = newTargetItems;
 
     try {
       await this.save(user);
       return {
-        toggleType: findIndex === -1 ? type : `un${type}`,
-        [targetName]: newTargetItems,
+        toggleType: findIndex === -1 ? column : `un${column}`,
+        [columnName]: newTargetItems,
       };
     } catch (error) {
       throw new InternalServerErrorException(
         error,
-        `Error to update ${targetName}`,
+        `Error to update ${columnName}`,
       );
-    }
-  }
-
-  async toggleRepostMusic(user: User, music: Music) {
-    const reposts = user.repostMusics || [];
-    let findIndex = -1;
-    const newReposts = reposts.filter((m, index) => {
-      if (m.id !== music.id) {
-        return true;
-      } else {
-        findIndex = index;
-        return false;
-      }
-    });
-
-    if (findIndex === -1) {
-      newReposts.push(music);
-    }
-    user.repostMusics = newReposts;
-
-    try {
-      await this.save(user);
-      return {
-        type: findIndex === -1 ? 'repost' : 'unrepost',
-        reposts: newReposts,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(error, `Error to update reposts`);
     }
   }
 }

@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -21,6 +22,24 @@ import { PlaylistService } from './playlist.service';
 export class PlaylistController {
   constructor(private playlistService: PlaylistService) {}
 
+  @Get('/:userId/:permalink')
+  async getPlaylist(
+    @Param('userId') userId: string,
+    @Param('permalink') permalink: string,
+  ) {
+    return this.playlistService.findPlaylistByPermalink(userId, permalink);
+  }
+
+  @Get('/playlists/detail/:id')
+  async findDetailPlaylistsById(
+    @Param('id') id: number,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 30, skip: skip || 0 };
+    return this.playlistService.findDetailPlaylistsById(id, pagingDto);
+  }
+
   @Post('/create')
   @UseGuards(JwtAuthGuard)
   async createPlaylist(
@@ -28,14 +47,6 @@ export class PlaylistController {
     @Body(ValidationPipe) createPlaylistDto: CreatePlaylistDto,
   ) {
     return this.playlistService.createPlaylist(user, createPlaylistDto);
-  }
-
-  @Get('/:userId/:permalink')
-  async getPlaylist(
-    @Param('userId') userId: string,
-    @Param('permalink') permalink: string,
-  ) {
-    return this.playlistService.findPlaylistByPermalink(userId, permalink);
   }
 
   @Patch('/update/:id')

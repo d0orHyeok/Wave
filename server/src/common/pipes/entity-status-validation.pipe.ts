@@ -1,4 +1,4 @@
-import { EntityStatus } from '../common.types';
+import { EntityStatus } from 'src/entities/common.types';
 import { BadRequestException, PipeTransform } from '@nestjs/common';
 
 export class EntityStatusValidationPipe implements PipeTransform {
