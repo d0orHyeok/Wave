@@ -1,126 +1,80 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useEffect, useState } from 'react'
+import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
+import { EmptyMusicCover } from '@styles/EmptyImage'
+import React, { useCallback } from 'react'
+import { FaPause, FaPlay } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import * as S from './MusicCard.style'
-import { FaPlay, FaPause } from 'react-icons/fa'
-import { useAppDispatch, useAppSelector } from '@redux/hook'
-import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
-import {
-  AddMusicMenuItem,
-  AddPlaylistMenuItem,
-} from '@components/Common/MenuItem'
-import { MusicMenu } from '@components/Common/Menu'
-import { LikeFilledButton, MoreButton } from '@components/Common/Button'
-import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLike } from '@redux/thunks/userThunks'
 
-interface IMusicCardProps {
+interface MusicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   music: IMusic
-  style?: React.CSSProperties
 }
 
-const MusicCard = ({ music, style }: IMusicCardProps) => {
+const MusicCard = ({ music, ...props }: MusicCardProps) => {
   const dispatch = useAppDispatch()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
-  const likeMusics =
-    useAppSelector((state) => state.user.userData?.likeMusics) || []
 
-  const [cardIsCurrentMusic, setCardIsCurrentMusic] = useState(false)
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-  const openMenu = Boolean(anchorEl)
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null)
-  }
-
-  const handleClickPlay = async (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    dispatch(setCurrentMusic(music))
-    if (cardIsCurrentMusic) {
-      dispatch(togglePlay())
-    } else {
+  const handleClickPlay = useCallback(() => {
+    if (currentMusic?.id !== music.id) {
+      dispatch(setCurrentMusic(music))
       dispatch(togglePlay(true))
-    }
-  }
-
-  const handleClickMore = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation()
-    event.preventDefault()
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClickLike = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation()
-    event.preventDefault()
-    dispatch(userToggleLike({ targetId: music.id, targetType: 'music' }))
-  }
-
-  useEffect(() => {
-    if (music.id === currentMusic?.id) {
-      // 현재 재생중인 음악인지 확인
-      setCardIsCurrentMusic(true)
     } else {
-      setCardIsCurrentMusic(false)
+      dispatch(togglePlay())
     }
-  }, [currentMusic?.id, music])
+  }, [currentMusic?.id, dispatch, music])
 
   return (
-    <>
-      <S.CardContainer style={style}>
-        <S.ImageBox>
-          <Link to={`/track/${music.userId}/${music.permalink}`}>
-            {music.cover ? (
-              <img className="img" src={music.cover} alt="cover" />
+    <S.Container {...props}>
+      <div className="musicCard-imageBox">
+        <Link
+          className="musicCard-imageBox-link"
+          to={`/track/${music.userId}/${music.permalink}`}
+        >
+          {music.cover ? (
+            <img
+              className="musicCard-imageBox-image"
+              src={music.cover}
+              alt=""
+            />
+          ) : (
+            <EmptyMusicCover className="musicCard-imageBox-image" />
+          )}
+        </Link>
+      </div>
+      <div className="musicCard-infoBox">
+        <S.MusicInfo>
+          <S.PlayBtn
+            className="musicCard-infoBox-play"
+            onClick={handleClickPlay}
+          >
+            {currentMusic?.id === music.id && isPlay ? (
+              <FaPause className="icon pause" />
             ) : (
-              <EmptyMusicCover className="img" />
+              <FaPlay className="icon play" />
             )}
-            {/* when hover on image  */}
-            <S.CardPlayButton
-              isPlay={cardIsCurrentMusic.toString()}
-              className="cardHoverBtn"
-              onClick={handleClickPlay}
-            >
-              {!cardIsCurrentMusic || !isPlay ? (
-                <FaPlay style={{ marginLeft: '2px' }} />
-              ) : (
-                <FaPause />
-              )}
-            </S.CardPlayButton>
-            <S.CardHoverControl className="cardHoverControl">
-              <LikeFilledButton
-                isLike={likeMusics.findIndex((lm) => lm.id === music.id) !== -1}
-                onClick={handleClickLike}
-              />
-              <MoreButton
-                onClick={handleClickMore}
-                style={{ fontSize: '1.2em' }}
-              />
-            </S.CardHoverControl>
-          </Link>
-        </S.ImageBox>
-        {/* description */}
-        <S.CartInfoBox>
-          <div className="musicCard-title">
-            <Link to={`/track/${music.userId}/${music.permalink}`}>
-              {music.title}
-            </Link>
+          </S.PlayBtn>
+          <div className="musicCard-infoBox-info">
+            <div className="musicCard-uploader">
+              <Link to={`/profile/${music.userId}`}>
+                {music.user.nickname || music.user.username || music.userId}
+              </Link>
+            </div>
+            <div className="musicCard-title">
+              <Link to={`/track/${music.userId}/${music.permalink}`}>
+                {music.title}
+              </Link>
+            </div>
           </div>
-          <div className="musicCard-uploader">
-            <Link to={`/profile/${music.userId}`}>
-              {music.user?.nickname || music.userId}
-            </Link>
-          </div>
-        </S.CartInfoBox>
-      </S.CardContainer>
-      <MusicMenu anchorEl={anchorEl} open={openMenu} onClose={handleCloseMenu}>
-        <AddMusicMenuItem music={music} onClose={handleCloseMenu} />
-        <AddPlaylistMenuItem musics={[music]} onClose={handleCloseMenu} />
-      </MusicMenu>
-    </>
+        </S.MusicInfo>
+        <S.StyledInteractionBar
+          className="musicCard-infoBox-interaction"
+          target={music}
+        />
+      </div>
+    </S.Container>
   )
 }
 

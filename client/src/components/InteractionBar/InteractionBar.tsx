@@ -28,8 +28,16 @@ const InteractionBar = ({
 }: InteractionBarProps) => {
   return (
     <Container {...props}>
-      <InteractionButtons target={target} setTarget={setTarget} />
-      <InteractionCount target={target} visibleOption={visibleOption} />
+      <InteractionButtons
+        className="interactionButtons"
+        target={target}
+        setTarget={setTarget}
+      />
+      <InteractionCount
+        className="interactionCount"
+        target={target}
+        visibleOption={visibleOption}
+      />
     </Container>
   )
 }

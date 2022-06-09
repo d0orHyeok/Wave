@@ -7,6 +7,7 @@ import React from 'react'
 import { IoMdPeople } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import NoItem from './NoItem.style'
 
 const StyledUl = styled.ul`
   display: flex;
@@ -59,14 +60,6 @@ const StyledLi = styled.li`
 
 const StyledFollowButton = styled(FollowTextButton)`
   border-radius: 4px;
-`
-
-const NoUser = styled.div`
-  padding: 10vh 0;
-  text-align: center;
-  font-size: 20px;
-  line-height: 30px;
-  color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
 `
 
 interface TrackDetailUsersPorps extends React.HTMLAttributes<HTMLUListElement> {
@@ -131,9 +124,9 @@ const TrackDetailUsers = ({
       ))}
     </StyledUl>
   ) : (
-    <NoUser>
+    <NoItem>
       {`Thers's no ${isLikes ? 'like' : isReposts ? 'repost' : ''} user`}
-    </NoUser>
+    </NoItem>
   )
 }
 

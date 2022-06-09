@@ -9,6 +9,7 @@ import TrackDetailUsers from './DetailTab/TrackDetailUsers'
 import TrackDetailPlaylists from './DetailTab/TrackDetailPlaylists'
 import Loading from '@components/Loading/Loading'
 import { getMusicByPermalink } from '@api/musicApi'
+import TrackDetailRelatedTracks from './DetailTab/TrackDetailRelatedTracks'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -192,6 +193,8 @@ const TrackDetailPage = () => {
             />
           ) : navIndex === 2 ? (
             <TrackDetailPlaylists musicId={music.id} />
+          ) : navIndex === 3 ? (
+            <TrackDetailRelatedTracks musicId={music.id} />
           ) : (
             <></>
           )}

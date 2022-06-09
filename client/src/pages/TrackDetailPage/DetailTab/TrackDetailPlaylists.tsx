@@ -5,14 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'
 import LoadingBar from '@components/Loading/LoadingBar'
-
-const NoPlaylsts = styled.div`
-  padding: 10vh 0;
-  text-align: center;
-  font-size: 20px;
-  line-height: 30px;
-  color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-`
+import NoItem from './NoItem.style'
 
 const LoadingArea = styled.div<{ hide?: boolean }>`
   display: ${({ hide }) => (hide ? 'none' : 'flex')};
@@ -51,8 +44,8 @@ const TrackDetailPlaylists = ({
       const skip = page * 15
       const response = await findPlaylistsContainsMusic(
         musicId,
-        skip + 15,
-        skip
+        skip,
+        skip + 15
       )
       const getItems: IPlaylist[] = response.data
       if (!getItems || getItems.length < 15) {
@@ -89,11 +82,11 @@ const TrackDetailPlaylists = ({
             </LoadingArea>
           </>
         ) : (
-          <NoPlaylsts>
+          <NoItem>
             Sorry...
             <br />
             {`There's no playlist`}
-          </NoPlaylsts>
+          </NoItem>
         )}
       </div>
     </>

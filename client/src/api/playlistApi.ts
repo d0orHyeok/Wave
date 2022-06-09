@@ -6,8 +6,8 @@ export const getPlaylistByPermalink = (userId: string, permalink: string) => {
 
 export const findPlaylistsContainsMusic = (
   musicId: number,
-  take = 15,
-  skip = 0
+  skip = 0,
+  take = 15
 ) => {
   return Axios.get(
     `api/playlist/playlists/detail/${musicId}?skip=${skip}&take=${take}`

@@ -1,111 +1,108 @@
+import { PrimaryButton } from '@components/Common/Button'
 import styled from 'styled-components'
+import InteractionBar from '@components/InteractionBar/InteractionBar'
 
-export const CardContainer = styled.div`
-  display: inline-block;
-  width: 170px;
-  font-size: 0.9rem;
-  line-height: 0.9rem;
-
-  ${({ theme }) => theme.device.tablet} {
-    width: 140px;
-    font-size: 0.85rem;
-  }
-
-  ${({ theme }) => theme.device.mobile} {
-    width: 110px;
-    font-size: 0.8rem;
-  }
-`
-
-export const ImageBox = styled.div`
-  position: relative;
-  width: 100%;
-  height: 170px;
-
-  ${({ theme }) => theme.device.tablet} {
-    height: 140px;
-  }
-
-  ${({ theme }) => theme.device.mobile} {
-    height: 110px;
-  }
-
-  & .img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: ease 0.2s all;
-  }
-
-  & .cardHoverBtn,
-  & .cardHoverControl {
-    display: none;
-  }
-
-  &:hover {
-    & .img {
-      filter: saturate(100%) brightness(40%);
-    }
-
-    & .cardHoverBtn {
-      display: block;
-    }
-    & .cardHoverControl {
-      display: flex;
-    }
-  }
-`
-
-export const CardHoverControl = styled.div`
-  position: absolute;
-  bottom: 0;
-  right: 0;
+export const Container = styled.div`
+  padding: 10px 0;
   display: flex;
-  align-items: center;
-  font-size: 1.1em;
-  color: white;
 
-  & button {
-    margin-right: 8px;
+  & .musicCard-imageBox {
+    width: 160px;
+    height: 160px;
+    margin-right: 10px;
+
+    & .musicCard-imageBox-link,
+    & .musicCard-imageBox-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  & .musicCard-imageBox {
+    flex-shrink: 0;
+  }
+
+  & .musicCard-infoBox {
+    height: 160px;
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  ${({ theme }) => theme.device.tablet} {
+    & .musicCard-imageBox {
+      width: 120px;
+      height: 120px;
+    }
+
+    & .musicCard-infoBox {
+      height: 120px;
+    }
   }
 `
 
-export const CardPlayButton = styled.button<{ isPlay: string }>`
-  position: absolute;
-  border: none;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 0;
-  color: ${({ theme, isPlay }) =>
-    isPlay === 'true' ? theme.colors.primaryColor : 'white'};
-  font-size: 2em;
+export const PlayBtn = styled(PrimaryButton)`
+  font-size: 20px;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+
+  & .icon.play {
+    transform: translateX(2px);
+  }
 `
 
-export const CardControlBox = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
+export const MusicInfo = styled.div`
+  min-width: 0;
   width: 100%;
-  height: 100%;
-`
-
-export const CartInfoBox = styled.div`
-  width: 100%;
-  font-size: inherit;
-  padding: 6px 3px;
-  & .musicCard-title,
-  & .musicCard-uploader {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  & .musicCard-infoBox-play {
+    float: left;
   }
 
-  & .musicCard-uploader a {
-    font-size: 0.85em;
-    opacity: 0.6;
-    &:hover {
-      opacity: 1;
+  & .musicCard-infoBox-info {
+    & .musicCard-uploader {
+      font-size: 13px;
+      color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+
+      & a:hover {
+        color: ${({ theme }) => theme.colors.bgText};
+      }
+    }
+
+    & .musicCard-title {
+      font-size: 16px;
+    }
+
+    & .musicCard-title,
+    & .musicCard-uploader {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &::after {
+    content: '';
+    display: inline-block;
+    clear: both;
+  }
+`
+
+export const StyledInteractionBar = styled(InteractionBar)`
+  min-width: 0;
+  width: 100%;
+  flex-shrink: 0;
+
+  @media screen and (max-width: 700px) {
+    & .interactionCount {
+      display: none;
     }
   }
 `
