@@ -5,8 +5,8 @@ import { Helmet } from 'react-helmet'
 import NotFoundPage from '@pages/NotFoundPage'
 import styled from 'styled-components'
 import { EmptyMusicCover } from '@styles/EmptyImage'
-import TrackDetailUsers from './TrackDetailUsers/TrackDetailUsers'
-import TrackDetailPlaylists from './TrackDetailPlaylists/TrackDetailPlaylists'
+import TrackDetailUsers from './DetailTab/TrackDetailUsers'
+import TrackDetailPlaylists from './DetailTab/TrackDetailPlaylists'
 
 interface TrackDetailPageProps {
   music: IMusic

@@ -1,6 +1,6 @@
-import { CircularProgress } from '@mui/material'
 import React from 'react'
 import styled from 'styled-components'
+import LoadingBar from './LoadingBar'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 const Loading = () => {
   return (
     <Wrapper>
-      <CircularProgress color="secondary" size={100} />
+      <LoadingBar />
     </Wrapper>
   )
 }

@@ -1,10 +1,8 @@
-import { PrimaryButton } from '@components/Common/Button'
-import InteractionButtons from '@components/InteractionBar/InteractionButtons'
+import * as S from './PlaylistCard.style'
 import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import { EmptyPlaylistImage, EmptyMusicCover } from '@styles/EmptyImage'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import { numberFormat } from '@api/functions'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
@@ -15,177 +13,17 @@ import {
   togglePlay,
 } from '@redux/features/player/playerSlice'
 
-const Container = styled.div`
-  padding: 10px 0;
-  display: flex;
-`
-
-const ImageBox = styled.div`
-  flex-shrink: 0;
-  margin-right: 10px;
-
-  & .link,
-  & .img {
-    width: 100%;
-    height: 100%;
-  }
-`
-
-const PlaylistImageBox = styled(ImageBox)`
-  width: 140px;
-  height: 140px;
-
-  ${({ theme }) => theme.device.tablet} {
-    width: 100px;
-    height: 100px;
-  }
-`
-
-const MusicImageBox = styled(ImageBox)`
-  width: 20px;
-  height: 20px;
-`
-
-const PlaylistCardInfo = styled.div`
-  width: 100%;
-  min-width: 0;
-
-  & .playlist-info {
-    & .playlist-info-user {
-      font-size: 14px;
-      color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-
-      &:hover {
-        color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-      }
-    }
-
-    & .playlist-info-name {
-      font-size: 16px;
-      color: ${({ theme }) => theme.colors.bgText};
-    }
-
-    & .playlist-info-user,
-    & .playlist-info-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    &:after {
-      content: '';
-      display: block;
-      clear: both;
-    }
-  }
-`
-
-const PlayBtn = styled(PrimaryButton)`
-  font-size: 20px;
-  float: left;
-
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
-  margin-right: 10px;
-
-  & .icon.play {
-    transform: translateX(2px);
-  }
-`
-
-const PlaylistMusicUl = styled.ul`
-  margin-top: 10px;
-  border: 1px solid ${({ theme }) => theme.colors.border1};
-
-  & .playlist-musicItem {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    height: 30px;
-    padding: 0 5px;
-
-    &:not(:last-child) {
-      border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
-    }
-
-    & .musicItem-info {
-      font-size: 13px;
-      color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-
-      &.musicItem-index {
-        flex-shrink: 0;
-        margin-right: 5px;
-      }
-
-      &.musicItem-uploader {
-        flex-shrink: 0;
-        color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-        &:hover {
-          color: inherit;
-        }
-
-        ${({ theme }) => theme.device.mobile} {
-          display: none;
-        }
-
-        &::after {
-          content: '-';
-          color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
-          margin: 0 4px;
-        }
-      }
-
-      &.musicItem-title {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-right: auto;
-      }
-
-      &.musicItem-play {
-        margin-left: 4px;
-        flex-shrink: 0;
-
-        & .icon.play {
-          font-size: 10px;
-          margin-right: 3px;
-        }
-
-        @media screen and (max-width: 600px) {
-          display: none;
-        }
-      }
-    }
-  }
-
-  & .viewMore {
-    border: none;
-    width: 100%;
-    padding: 5px 0;
-    font-size: 13px;
-    text-align: center;
-    cursor: pointer;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-
-    &:hover {
-      color: ${({ theme }) => theme.colors.bgText};
-    }
-  }
-`
-
-const StyledInteractionButtons = styled(InteractionButtons)`
-  margin-top: 10px;
-`
-
-interface PlaylistCardProps {
+interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPlaylist?: any
 }
 
-const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
+const PlaylistCard = ({
+  playlist,
+  setPlaylist,
+  ...props
+}: PlaylistCardProps) => {
   const dispatch = useAppDispatch()
 
   const isPlay = useAppSelector((state) => state.player.controll.isPlay)
@@ -240,8 +78,8 @@ const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
   }, [playerMusics, playlist.musics])
 
   return (
-    <Container>
-      <PlaylistImageBox className="imageBox">
+    <S.Container {...props}>
+      <S.PlaylistImageBox>
         <Link
           to={`/playlist/${playlist.userId}/${playlist.permalink}`}
           className="link"
@@ -252,15 +90,15 @@ const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
             <EmptyPlaylistImage className="img" />
           )}
         </Link>
-      </PlaylistImageBox>
-      <PlaylistCardInfo className="playlistCard-info">
-        <PlayBtn onClick={handleClickPlay}>
+      </S.PlaylistImageBox>
+      <S.PlaylistCardInfo className="playlistCard-info">
+        <S.PlayBtn onClick={handleClickPlay}>
           {isPlay && playlistPlay ? (
             <FaPause className="icon pause" />
           ) : (
             <FaPlay className="icon play" />
           )}
-        </PlayBtn>
+        </S.PlayBtn>
         <div className="playlist-info">
           <div className="playlist-info-user">
             <Link to={`/profile/${playlist.userId}`}>
@@ -276,10 +114,10 @@ const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
         {!playlistMusics || playlistMusics.length === 0 ? (
           <></>
         ) : (
-          <PlaylistMusicUl className="playlist-musics">
+          <S.PlaylistMusicUl className="playlist-musics">
             {playlistMusics.map((music, index) => (
               <li key={index} className="playlist-musicItem">
-                <MusicImageBox>
+                <S.MusicImageBox>
                   <Link
                     className="link"
                     to={`/track/${music.userId}/${music.permalink}`}
@@ -290,7 +128,7 @@ const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
                       <EmptyMusicCover className="img" />
                     )}
                   </Link>
-                </MusicImageBox>
+                </S.MusicImageBox>
                 <div className="musicItem-info musicItem-index">{index}</div>
                 <div className="musicItem-info musicItem-uploader">
                   <Link to={`/profile/${music.userId}`}>
@@ -323,15 +161,15 @@ const PlaylistCard = ({ playlist, setPlaylist }: PlaylistCardProps) => {
             ) : (
               <></>
             )}
-          </PlaylistMusicUl>
+          </S.PlaylistMusicUl>
         )}
-        <StyledInteractionButtons
+        <S.StyledInteractionButtons
           target={playlist}
           setTarget={setPlaylist}
           mediaSize={800}
         />
-      </PlaylistCardInfo>
-    </Container>
+      </S.PlaylistCardInfo>
+    </S.Container>
   )
 }
 

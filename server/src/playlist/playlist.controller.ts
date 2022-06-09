@@ -36,7 +36,7 @@ export class PlaylistController {
     @Query('skip') skip?: number,
     @Query('take') take?: number,
   ) {
-    const pagingDto = { take: take || 30, skip: skip || 0 };
+    const pagingDto = { take: take || 15, skip: skip || 0 };
     return this.playlistService.findDetailPlaylistsById(id, pagingDto);
   }
 
