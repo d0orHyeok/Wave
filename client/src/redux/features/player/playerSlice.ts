@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IMusic, IPlayerState, IProgressPayload } from './palyerSlice.interface'
 
 // 랜덤 셔플 알고리즘
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shuffle = (array: number[]) => {
   const arraySize = array.length
   const indexArray = Array.from({ length: arraySize }, (_, i) => i)

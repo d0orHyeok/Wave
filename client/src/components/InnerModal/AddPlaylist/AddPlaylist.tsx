@@ -14,19 +14,12 @@ import {
 } from '@redux/thunks/playlistThunks'
 
 interface AddPlaylistProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose: (any?: any) => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCreateSuccess?: (createPlaylist: IPlaylist) => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onCreateFail?: () => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onAddSuccess?: (playlist: IPlaylist) => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onAddFail?: () => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onRemoveSuccess?: (playlistId: number) => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onRemoveFail?: () => any
   addMusics?: IMusic[]
 }

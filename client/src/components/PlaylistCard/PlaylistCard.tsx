@@ -15,7 +15,6 @@ import {
 
 interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setPlaylist?: any
 }
 

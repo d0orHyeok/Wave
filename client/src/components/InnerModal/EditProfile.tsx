@@ -159,7 +159,6 @@ const ButtonArea = styled.div`
 `
 
 interface EditProfileProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose?: any
 }
 

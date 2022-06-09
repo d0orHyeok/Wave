@@ -16,7 +16,6 @@ const Container = styled.div`
 
 interface InteractionBarProps extends React.HTMLAttributes<HTMLDivElement> {
   target: IMusic | IPlaylist
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setTarget?: React.Dispatch<React.SetStateAction<any>>
   visibleOption?: VisibleOption[]
 }

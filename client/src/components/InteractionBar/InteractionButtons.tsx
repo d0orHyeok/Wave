@@ -65,7 +65,6 @@ type TargetType = IMusic | IPlaylist
 
 interface InteractionButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
   target: TargetType
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setTarget?: React.Dispatch<React.SetStateAction<any>>
   mediaSize?: number | string
 }

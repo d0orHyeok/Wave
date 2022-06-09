@@ -12,6 +12,7 @@ import TrackPage from '@pages/TrackPage/TrackPage'
 import ProfilePage from '@pages/ProfilePage/ProfilePage'
 import SearchPage from '@pages/SearchPage/SearchPage'
 import PlaylistPage from '@pages/PlaylistPage/PlaylistPage'
+import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -33,17 +34,25 @@ const Router = () => {
       <Route path="/register" element={withUser(RegisterPage, false)} />
       <Route path="/upload" element={withUser(UploadPage, true)} />
       <Route path="/settings" element={withUser(SettingsPage, true)}></Route>
-      <Route path="/track/:userId/:permalink" element={<TrackPage />}>
-        <Route path=":detail" element={<TrackPage />} />
-      </Route>
+      {/* Track Page */}
+      <Route path="/track/:userId/:permalink" element={<TrackPage />} />
+      <Route
+        path="/track/:userId/:permalink/:detail"
+        element={<TrackDetailPage />}
+      />
       <Route path="/track/notfound" element={<NotFoundPage />} />
+      {/* Profile Page */}
       <Route path="/profile" element={<ProfilePage />}>
         <Route path=":userId/*" element={<ProfilePage />} />
       </Route>
+      {/* Playlsit Page */}
       <Route path="/playlist/notfound" element={<NotFoundPage />} />
-      <Route path="/playlist/:userId/:permalink" element={<PlaylistPage />}>
-        <Route path=":detail" element={<PlaylistPage />} />
-      </Route>
+      <Route path="/playlist/:userId/:permalink" element={<PlaylistPage />} />
+      <Route
+        path="/playlist/:userId/:permalink/:detail"
+        element={<PlaylistPage />}
+      />
+      {/* Search Page */}
       <Route path="/search" element={<SearchPage />}></Route>
     </Routes>
   )

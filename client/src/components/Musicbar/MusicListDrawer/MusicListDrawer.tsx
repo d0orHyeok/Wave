@@ -3,7 +3,6 @@ import * as S from './MusicListDrawer.style'
 
 interface IMusicListDrawer {
   open: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClose: any
   children?: React.ReactNode
 }

@@ -1,5 +1,5 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import NotFoundPage from '@pages/NotFoundPage'
@@ -7,11 +7,8 @@ import styled from 'styled-components'
 import { EmptyMusicCover } from '@styles/EmptyImage'
 import TrackDetailUsers from './DetailTab/TrackDetailUsers'
 import TrackDetailPlaylists from './DetailTab/TrackDetailPlaylists'
-
-interface TrackDetailPageProps {
-  music: IMusic
-  relatedMusics: IMusic[]
-}
+import Loading from '@components/Loading/Loading'
+import { getMusicByPermalink } from '@api/musicApi'
 
 const Wrapper = styled.div`
   min-height: 100%;
@@ -81,14 +78,29 @@ const detailItems = [
   { displayName: 'Related Tracks', pathName: 'related-tracks' },
 ]
 
-const TrackDetailPage = ({ music, relatedMusics }: TrackDetailPageProps) => {
-  const { detail } = useParams()
+const TrackDetailPage = () => {
+  const { userId, permalink, detail } = useParams()
 
+  const [music, setMusic] = useState<IMusic>()
   const [isNotfound, setIsNotfound] = useState(false)
   const [title, setTitle] = useState<string | null>('')
   const [navIndex, setNavIndex] = useState(0)
 
-  console.log(relatedMusics)
+  const getMusicData = useCallback(async () => {
+    if (title === null || !userId || !permalink) {
+      setIsNotfound(true)
+      return
+    }
+    setIsNotfound(false)
+
+    try {
+      const response = await getMusicByPermalink(userId, permalink)
+      setMusic(response.data)
+    } catch (error: any) {
+      setIsNotfound(true)
+      console.error(error.response || error)
+    }
+  }, [permalink, title, userId])
 
   useEffect(() => {
     if (detail === 'likes' || detail === 'reposts') {
@@ -106,11 +118,13 @@ const TrackDetailPage = ({ music, relatedMusics }: TrackDetailPageProps) => {
   }, [detail])
 
   useEffect(() => {
-    title !== null ? setIsNotfound(false) : setIsNotfound(true)
-  }, [title])
+    getMusicData()
+  }, [getMusicData])
 
   return isNotfound ? (
     <NotFoundPage />
+  ) : !music ? (
+    <Loading />
   ) : (
     <>
       <Helmet>

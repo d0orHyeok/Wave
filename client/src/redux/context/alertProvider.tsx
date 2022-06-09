@@ -24,7 +24,6 @@ interface IOpenAlertProps {
   anchorOrigin?: SnackbarOrigin
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AlertContext = createContext<any>({})
 
 export const AlertProvider = ({ children }: IAlertProviderProps) => {

@@ -23,18 +23,19 @@ const PlaylistPage = () => {
 
   const relatedTargetRef = useRef<RelatedTargetHandler>(null)
 
-  const getPlaylistDataFromServer = useCallback(() => {
+  const getPlaylistDataFromServer = useCallback(async () => {
     if (!userId || !permalink) {
       navigate('/playlist/notfound')
       return
     }
 
-    getPlaylistByPermalink(userId, permalink)
-      .then((res) => setPlaylist(res.data))
-      .catch((error) => {
-        console.error(error.response || error)
-        navigate('playlist/notfound')
-      })
+    try {
+      const response = await getPlaylistByPermalink(userId, permalink)
+      setPlaylist(response.data)
+    } catch (error: any) {
+      console.error(error.response || error)
+      navigate('playlist/notfound')
+    }
   }, [navigate, permalink, userId])
 
   useEffect(() => {

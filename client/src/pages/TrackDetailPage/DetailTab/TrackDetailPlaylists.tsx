@@ -59,7 +59,6 @@ const TrackDetailPlaylists = ({
         setDone(true)
       }
       setPlaylists((prevState) => [...prevState, ...getItems])
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error.response || error)
     }
