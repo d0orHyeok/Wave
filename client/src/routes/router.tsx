@@ -13,6 +13,7 @@ import ProfilePage from '@pages/ProfilePage/ProfilePage'
 import SearchPage from '@pages/SearchPage/SearchPage'
 import PlaylistPage from '@pages/PlaylistPage/PlaylistPage'
 import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
+import PlaylistDetailPage from '@pages/PlaylistDetailPage/playlistDetailPage'
 
 const Router = () => {
   const dispatch = useAppDispatch()
@@ -50,7 +51,7 @@ const Router = () => {
       <Route path="/playlist/:userId/:permalink" element={<PlaylistPage />} />
       <Route
         path="/playlist/:userId/:permalink/:detail"
-        element={<PlaylistPage />}
+        element={<PlaylistDetailPage />}
       />
       {/* Search Page */}
       <Route path="/search" element={<SearchPage />}></Route>
