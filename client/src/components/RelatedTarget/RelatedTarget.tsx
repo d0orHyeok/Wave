@@ -316,22 +316,27 @@ const RelatedTarget = forwardRef<RelatedTargetHandler, RelatedTargetProps>(
               </BoxTitle>
               <StyledDivider />
               <UserBox>
-                {target.likes.slice(0, 8).map((user, index) => (
-                  <UserItem key={index}>
-                    <div className="imgBox">
-                      <Link className="link" to={`/profile/${user.id}`}>
-                        {user.profileImage ? (
-                          <img className="img" src={user.profileImage} alt="" />
-                        ) : (
-                          <EmptyProfileImage className="img" />
-                        )}
-                      </Link>
-                    </div>
+                {target.likes &&
+                  target.likes.slice(0, 8).map((user, index) => (
+                    <UserItem key={index}>
+                      <div className="imgBox">
+                        <Link className="link" to={`/profile/${user.id}`}>
+                          {user.profileImage ? (
+                            <img
+                              className="img"
+                              src={user.profileImage}
+                              alt=""
+                            />
+                          ) : (
+                            <EmptyProfileImage className="img" />
+                          )}
+                        </Link>
+                      </div>
 
-                    {/* popover content */}
-                    <PopoverUser user={user} />
-                  </UserItem>
-                ))}
+                      {/* popover content */}
+                      <PopoverUser user={user} />
+                    </UserItem>
+                  ))}
               </UserBox>
             </>
           ) : (
@@ -356,22 +361,27 @@ const RelatedTarget = forwardRef<RelatedTargetHandler, RelatedTargetProps>(
               </BoxTitle>
               <StyledDivider />
               <UserBox>
-                {target.reposts.slice(0, 8).map((user, index) => (
-                  <UserItem key={index}>
-                    <div className="imgBox">
-                      <Link className="link" to={`/profile/${user.id}`}>
-                        {user.profileImage ? (
-                          <img className="img" src={user.profileImage} alt="" />
-                        ) : (
-                          <EmptyProfileImage className="img" />
-                        )}
-                      </Link>
-                    </div>
+                {target.reposts &&
+                  target.reposts.slice(0, 8).map((user, index) => (
+                    <UserItem key={index}>
+                      <div className="imgBox">
+                        <Link className="link" to={`/profile/${user.id}`}>
+                          {user.profileImage ? (
+                            <img
+                              className="img"
+                              src={user.profileImage}
+                              alt=""
+                            />
+                          ) : (
+                            <EmptyProfileImage className="img" />
+                          )}
+                        </Link>
+                      </div>
 
-                    {/* popover content */}
-                    <PopoverUser user={user} />
-                  </UserItem>
-                ))}
+                      {/* popover content */}
+                      <PopoverUser user={user} />
+                    </UserItem>
+                  ))}
               </UserBox>
             </>
           ) : (
