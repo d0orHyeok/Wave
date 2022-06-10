@@ -24,7 +24,7 @@ import { MusicMenu } from '@components/Common/Menu'
 import { useCopyLink } from '@api/Hooks'
 import { convertTimeToString } from '@api/functions'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { userToggleLike } from '@redux/thunks/userThunks'
+import { userToggleLike, userToggleRepost } from '@redux/thunks/userThunks'
 
 const Musiclist = () => {
   const copyLink = useCopyLink()
@@ -40,6 +40,7 @@ const Musiclist = () => {
   )
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
   const musics = useAppSelector((state) => state.player.musics)
+  const userId = useAppSelector((state) => state.user.userData?.id)
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null)
   const openMenu = Boolean(anchorEl)
@@ -121,6 +122,16 @@ const Musiclist = () => {
           targetType: 'music',
         })
       )
+    }
+  }
+
+  const handleClickRepost = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    if (anchorEl) {
+      const musicId = musics[Number(anchorEl.value)].id
+      dispatch(userToggleRepost({ targetId: musicId, targetType: 'music' }))
+      setAnchorEl(null)
     }
   }
 
@@ -249,10 +260,14 @@ const Musiclist = () => {
           <IoMdHeart className="icon" />
           <span>Like</span>
         </MusicMenuItem>
-        <MusicMenuItem onClick={handleCloseMenu}>
-          <BiRepost className="icon" />
-          <span>Repost</span>
-        </MusicMenuItem>
+        {anchorEl && musics[Number(anchorEl.value)].userId !== userId ? (
+          <MusicMenuItem onClick={handleClickRepost}>
+            <BiRepost className="icon" />
+            <span>Repost</span>
+          </MusicMenuItem>
+        ) : (
+          <></>
+        )}
         <MusicMenuItem onClick={handleClickCopy}>
           <IoMdLink className="icon" />
           <span>Copy Link</span>
