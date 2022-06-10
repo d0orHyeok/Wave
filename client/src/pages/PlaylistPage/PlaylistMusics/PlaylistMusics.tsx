@@ -6,10 +6,14 @@ import { FaPlay } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+const StyledUl = styled.ul`
+  border: 1px solid ${({ theme }) => theme.colors.border1};
+`
+
 const MusicItem = styled.li`
   display: flex;
   align-items: center;
-  padding: 7px 0;
+  padding: 5px;
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
   }
@@ -70,47 +74,45 @@ const PlaylistMusics = ({ playlist }: PlaylistMusicsProps) => {
   return (
     <>
       {playlist.musics ? (
-        <div>
-          <ul>
-            {playlist.musics.map((music, index) => (
-              <MusicItem key={index}>
-                <div className="musicItem-imgBox">
-                  <Link
-                    className="link"
-                    to={`/track/${music.userId}/${music.permalink}`}
-                  >
-                    {music.cover ? (
-                      <img className="img" src={music.cover} alt="" />
-                    ) : (
-                      <EmptyMusicCover className="img" />
-                    )}
+        <StyledUl>
+          {playlist.musics.map((music, index) => (
+            <MusicItem key={index}>
+              <div className="musicItem-imgBox">
+                <Link
+                  className="link"
+                  to={`/track/${music.userId}/${music.permalink}`}
+                >
+                  {music.cover ? (
+                    <img className="img" src={music.cover} alt="" />
+                  ) : (
+                    <EmptyMusicCover className="img" />
+                  )}
+                </Link>
+              </div>
+              <div className="musicItem-info">
+                <div className="index">{index}</div>
+                <div className="uploader">
+                  <Link to={`/profile/${music.userId}`}>
+                    {music.user.nickname || music.userId}
                   </Link>
                 </div>
-                <div className="musicItem-info">
-                  <div className="index">{index}</div>
-                  <div className="uploader">
-                    <Link to={`/profile/${music.userId}`}>
-                      {music.user.nickname || music.userId}
-                    </Link>
-                  </div>
-                  <div className="title">
-                    <Link to={`/track/${music.userId}/${music.permalink}`}>
-                      {music.title}
-                    </Link>
-                  </div>
-                  {music.count ? (
-                    <div className="count">
-                      <FaPlay className="icon play" />
-                      {numberFormat(music.count)}
-                    </div>
-                  ) : (
-                    <></>
-                  )}
+                <div className="title">
+                  <Link to={`/track/${music.userId}/${music.permalink}`}>
+                    {music.title}
+                  </Link>
                 </div>
-              </MusicItem>
-            ))}
-          </ul>
-        </div>
+                {music.count ? (
+                  <div className="count">
+                    <FaPlay className="icon play" />
+                    {numberFormat(music.count)}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </MusicItem>
+          ))}
+        </StyledUl>
       ) : (
         <></>
       )}

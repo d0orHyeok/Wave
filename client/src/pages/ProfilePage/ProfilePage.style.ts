@@ -6,4 +6,11 @@ export const Wrapper = styled.div`
   margin: auto;
 `
 
-export const Container = styled.div``
+export const Container = styled.div`
+  padding: 0 30px;
+
+  & .profileNav {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+`

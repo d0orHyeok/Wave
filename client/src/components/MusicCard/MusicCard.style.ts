@@ -64,9 +64,16 @@ export const MusicInfo = styled.div`
   width: 100%;
   & .musicCard-infoBox-play {
     float: left;
+
+    &::after {
+      content: '';
+      display: inline-block;
+      clear: both;
+    }
   }
 
   & .musicCard-infoBox-info {
+    width: 100%;
     & .musicCard-uploader {
       font-size: 13px;
       color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
@@ -88,10 +95,20 @@ export const MusicInfo = styled.div`
     }
   }
 
-  &::after {
-    content: '';
-    display: inline-block;
-    clear: both;
+  & .musicCard-createdAt {
+    float: right;
+    font-size: 13px;
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+
+    &::after {
+      content: '';
+      display: inline-block;
+      clear: both;
+    }
+
+    @media screen and (max-width: 600px) {
+      display: none;
+    }
   }
 `
 

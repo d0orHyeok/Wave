@@ -11,13 +11,8 @@ import { useCopyLink } from '@api/Hooks'
 import { useLoginOpen } from '@redux/context/loginProvider'
 import { userToggleFollow } from '@redux/thunks/userThunks'
 
-interface ProfileNavProps {
-  editable?: boolean
-}
-
 const Nav = styled.div`
   font-size: 16px;
-  margin: 8px 16px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.colors.bgColorRGBA(0.1)};
@@ -105,8 +100,12 @@ const ButtonContainer = styled.div`
   }
 `
 
-const ProfileNav = ({ editable }: ProfileNavProps) => {
-  const { userId, '*': nav } = useParams()
+interface ProfileNavProps extends React.HTMLAttributes<HTMLDivElement> {
+  editable?: boolean
+}
+
+const ProfileNav = ({ editable, ...props }: ProfileNavProps) => {
+  const { userId, nav } = useParams()
 
   const dispatch = useAppDispatch()
   const copyLink = useCopyLink()
@@ -199,7 +198,7 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
 
   return (
     <>
-      <Nav>
+      <Nav {...props}>
         <ScrollButton onClick={handleClickArrowButton(-1)}>
           <BsFillCaretLeftFill />
         </ScrollButton>
@@ -208,7 +207,7 @@ const ProfileNav = ({ editable }: ProfileNavProps) => {
             <li
               id={`profile-nav-${index}`}
               key={item.name}
-              className={nav === item.path ? 'selected' : undefined}
+              className={(nav || '') === item.path ? 'selected' : undefined}
             >
               <Link
                 to={

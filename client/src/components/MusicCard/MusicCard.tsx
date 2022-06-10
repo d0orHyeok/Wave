@@ -1,3 +1,4 @@
+import calculateDateAgo from '@api/functions/calculateDateAgo'
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
@@ -61,6 +62,9 @@ const MusicCard = ({ music, ...props }: MusicCardProps) => {
               <Link to={`/profile/${music.userId}`}>
                 {music.user.nickname || music.user.username || music.userId}
               </Link>
+              <div className="musicCard-createdAt">
+                {calculateDateAgo(music.createdAt)}
+              </div>
             </div>
             <div className="musicCard-title">
               <Link to={`/track/${music.userId}/${music.permalink}`}>

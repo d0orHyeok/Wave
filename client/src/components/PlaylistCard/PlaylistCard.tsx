@@ -12,6 +12,7 @@ import {
   setCurrentMusic,
   togglePlay,
 } from '@redux/features/player/playerSlice'
+import calculateDateAgo from '@api/functions/calculateDateAgo'
 
 interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
@@ -103,6 +104,9 @@ const PlaylistCard = ({
             <Link to={`/profile/${playlist.userId}`}>
               {playlist.user.nickname || playlist.user.username}
             </Link>
+            <div className="playlistCard-createdAt">
+              {calculateDateAgo(playlist.createdAt)}
+            </div>
           </div>
           <div className="playlist-info-name">
             <Link to={`/playlist/${playlist.userId}/${playlist.permalink}`}>

@@ -39,11 +39,26 @@ export const PlaylistCardInfo = styled.div`
 
   & .playlist-info {
     & .playlist-info-user {
-      font-size: 14px;
+      font-size: 13px;
       color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
 
-      &:hover {
+      & a:hover {
         color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
+      }
+
+      & .playlistCard-createdAt {
+        float: right;
+        color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+
+        &::after {
+          content: '';
+          display: inline-block;
+          clear: both;
+        }
+
+        @media screen and (max-width: 600px) {
+          display: none;
+        }
       }
     }
 

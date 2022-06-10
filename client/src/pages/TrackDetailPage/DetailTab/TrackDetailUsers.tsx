@@ -1,13 +1,15 @@
 import { numberFormat } from '@api/functions'
 import { FollowTextButton } from '@components/Common/Button'
+import LoadingBar from '@components/Loading/LoadingBar'
 import { IUserData } from '@redux/features/user/userSlice.interface'
 import { useAppSelector } from '@redux/hook'
 import { EmptyProfileImage } from '@styles/EmptyImage'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { IoMdPeople } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import NoItem from './NoItem.style'
+import { useInView } from 'react-intersection-observer'
 
 const StyledUl = styled.ul`
   display: flex;
@@ -62,6 +64,13 @@ const StyledFollowButton = styled(FollowTextButton)`
   border-radius: 4px;
 `
 
+const LoadingArea = styled.div<{ hide?: boolean }>`
+  display: ${({ hide }) => (hide ? 'none' : 'flex')};
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+`
+
 interface TrackDetailUsersPorps extends React.HTMLAttributes<HTMLUListElement> {
   users: IUserData[]
   isLikes?: boolean
@@ -74,13 +83,49 @@ const TrackDetailUsers = ({
   isReposts,
   ...props
 }: TrackDetailUsersPorps) => {
+  const displayNum = 20
+
+  const { ref, inView } = useInView()
+
   const userId = useAppSelector((state) => state.user.userData?.id)
   const following =
     useAppSelector((state) => state.user.userData?.following) || []
 
+  const [displayUsers, setDisplayUsers] = useState<IUserData[]>([])
+  const [page, setPage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+
+  const getUserItems = useCallback(() => {
+    if (done) {
+      return
+    }
+
+    setLoading(true)
+
+    const skip = page * displayNum
+    const getItems = users.slice(skip, skip + displayNum)
+    if (!getItems || getItems.length < displayNum) {
+      setDone(true)
+    }
+    setDisplayUsers((prevState) => [...prevState, ...getItems])
+
+    setLoading(false)
+  }, [done, page, users])
+
+  useEffect(() => {
+    getUserItems()
+  }, [getUserItems])
+
+  useEffect(() => {
+    if (inView && !loading && !done) {
+      setPage((prevState) => prevState + 1)
+    }
+  }, [inView, loading, done])
+
   return users?.length ? (
     <StyledUl {...props}>
-      {users.map((user, index) => (
+      {displayUsers.map((user, index) => (
         <StyledLi key={index}>
           <div className="detailUsers-item-imageBox">
             <Link className="detailUsers-item-link" to={`/profile/${user.id}`}>
@@ -122,6 +167,7 @@ const TrackDetailUsers = ({
           </div>
         </StyledLi>
       ))}
+      <LoadingArea ref={ref}>{loading ? <LoadingBar /> : <></>}</LoadingArea>
     </StyledUl>
   ) : (
     <NoItem>

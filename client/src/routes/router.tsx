@@ -43,8 +43,8 @@ const Router = () => {
       />
       <Route path="/track/notfound" element={<NotFoundPage />} />
       {/* Profile Page */}
-      <Route path="/profile" element={<ProfilePage />}>
-        <Route path=":userId/*" element={<ProfilePage />} />
+      <Route path="/profile/:userId" element={<ProfilePage />}>
+        <Route path=":nav" element={<ProfilePage />} />
       </Route>
       {/* Playlsit Page */}
       <Route path="/playlist/notfound" element={<NotFoundPage />} />
