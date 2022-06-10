@@ -225,15 +225,19 @@ const InteractionButtons = ({
         <GoHeart className="icon" />
         <span className="text">Like</span>
       </StyledButton>
-      <StyledButton
-        title="Repost"
-        active={isReposts}
-        mediaSize={mediaSize}
-        onClick={handleClickRepost}
-      >
-        <BiRepost className="icon" />
-        <span className="text">Repost</span>
-      </StyledButton>
+      {userData && target.userId === userData.id ? (
+        <></>
+      ) : (
+        <StyledButton
+          title="Repost"
+          active={isReposts}
+          mediaSize={mediaSize}
+          onClick={handleClickRepost}
+        >
+          <BiRepost className="icon" />
+          <span className="text">Repost</span>
+        </StyledButton>
+      )}
       <StyledButton
         title="Copy Link"
         mediaSize={mediaSize}
