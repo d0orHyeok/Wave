@@ -18,12 +18,14 @@ interface InteractionBarProps extends React.HTMLAttributes<HTMLDivElement> {
   target: IMusic | IPlaylist
   setTarget?: React.Dispatch<React.SetStateAction<any>>
   visibleOption?: VisibleOption[]
+  mediaSize?: string | number
 }
 
 const InteractionBar = ({
   target,
   setTarget,
   visibleOption,
+  mediaSize,
   ...props
 }: InteractionBarProps) => {
   return (
@@ -32,6 +34,7 @@ const InteractionBar = ({
         className="interactionButtons"
         target={target}
         setTarget={setTarget}
+        mediaSize={mediaSize}
       />
       <InteractionCount
         className="interactionCount"

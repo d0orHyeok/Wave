@@ -13,15 +13,19 @@ import {
   togglePlay,
 } from '@redux/features/player/playerSlice'
 import calculateDateAgo from '@api/functions/calculateDateAgo'
+import { IUserData } from '@redux/features/user/userSlice.interface'
+import { BiRepost } from 'react-icons/bi'
 
 interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
   setPlaylist?: any
+  repostUser?: IUserData
 }
 
 const PlaylistCard = ({
   playlist,
   setPlaylist,
+  repostUser,
   ...props
 }: PlaylistCardProps) => {
   const dispatch = useAppDispatch()
@@ -92,26 +96,41 @@ const PlaylistCard = ({
         </Link>
       </S.PlaylistImageBox>
       <S.PlaylistCardInfo className="playlistCard-info">
-        <S.PlayBtn onClick={handleClickPlay}>
-          {isPlay && playlistPlay ? (
-            <FaPause className="icon pause" />
-          ) : (
-            <FaPlay className="icon play" />
-          )}
-        </S.PlayBtn>
-        <div className="playlist-info">
-          <div className="playlist-info-user">
-            <Link to={`/profile/${playlist.userId}`}>
-              {playlist.user.nickname || playlist.user.username}
-            </Link>
-            <div className="playlistCard-createdAt">
-              {calculateDateAgo(playlist.createdAt)}
+        <div>
+          <S.PlayBtn onClick={handleClickPlay}>
+            {isPlay && playlistPlay ? (
+              <FaPause className="icon pause" />
+            ) : (
+              <FaPlay className="icon play" />
+            )}
+          </S.PlayBtn>
+          <div className="playlist-info">
+            <div className="playlist-info-user">
+              <Link to={`/profile/${playlist.userId}`}>
+                {playlist.user.nickname || playlist.user.username}
+              </Link>
+              {repostUser ? (
+                <>
+                  <Link
+                    className="playlistCard-uploader-repost"
+                    to={`/profile/${repostUser.id}`}
+                  >
+                    <BiRepost className="icon repost" />
+                    {repostUser.nickname || repostUser.username}
+                  </Link>
+                </>
+              ) : (
+                <></>
+              )}
+              <div className="playlistCard-createdAt">
+                {calculateDateAgo(playlist.createdAt)}
+              </div>
             </div>
-          </div>
-          <div className="playlist-info-name">
-            <Link to={`/playlist/${playlist.userId}/${playlist.permalink}`}>
-              {playlist.name}
-            </Link>
+            <div className="playlist-info-name">
+              <Link to={`/playlist/${playlist.userId}/${playlist.permalink}`}>
+                {playlist.name}
+              </Link>
+            </div>
           </div>
         </div>
         {!playlistMusics || playlistMusics.length === 0 ? (
@@ -169,7 +188,7 @@ const PlaylistCard = ({
         <S.StyledInteractionButtons
           target={playlist}
           setTarget={setPlaylist}
-          mediaSize={800}
+          mediaSize={1000}
         />
       </S.PlaylistCardInfo>
     </S.Container>

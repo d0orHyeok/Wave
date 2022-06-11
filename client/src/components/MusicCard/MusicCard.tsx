@@ -1,18 +1,21 @@
 import calculateDateAgo from '@api/functions/calculateDateAgo'
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
+import { IUserData } from '@redux/features/user/userSlice.interface'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { EmptyMusicCover } from '@styles/EmptyImage'
 import React, { useCallback } from 'react'
 import { FaPause, FaPlay } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import * as S from './MusicCard.style'
+import { BiRepost } from 'react-icons/bi'
 
 interface MusicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   music: IMusic
+  repostUser?: IUserData
 }
 
-const MusicCard = ({ music, ...props }: MusicCardProps) => {
+const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {
   const dispatch = useAppDispatch()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
@@ -62,6 +65,19 @@ const MusicCard = ({ music, ...props }: MusicCardProps) => {
               <Link to={`/profile/${music.userId}`}>
                 {music.user.nickname || music.user.username || music.userId}
               </Link>
+              {repostUser ? (
+                <>
+                  <Link
+                    className="musicCard-uploader-repost"
+                    to={`/profile/${repostUser.id}`}
+                  >
+                    <BiRepost className="icon repost" />
+                    {repostUser.nickname || repostUser.username}
+                  </Link>
+                </>
+              ) : (
+                <></>
+              )}
               <div className="musicCard-createdAt">
                 {calculateDateAgo(music.createdAt)}
               </div>
@@ -76,6 +92,7 @@ const MusicCard = ({ music, ...props }: MusicCardProps) => {
         <S.StyledInteractionBar
           className="musicCard-infoBox-interaction"
           target={music}
+          mediaSize={1000}
         />
       </div>
     </S.Container>

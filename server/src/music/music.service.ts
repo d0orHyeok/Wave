@@ -99,6 +99,13 @@ export class MusicService {
     return { ...music, user };
   }
 
+  async findMusicsByIds(musicIds: number[]) {
+    return this.musicRepository
+      .musicDetailQuery()
+      .whereInIds(musicIds)
+      .getMany();
+  }
+
   async deleteMusic(id: number, user: User): Promise<void> {
     const music = await this.musicRepository.findOne({ id, user });
     if (music) {

@@ -260,13 +260,11 @@ const Musiclist = () => {
           <IoMdHeart className="icon" />
           <span>Like</span>
         </MusicMenuItem>
-        {anchorEl && musics[Number(anchorEl.value)].userId !== userId ? (
+        {anchorEl && musics[Number(anchorEl.value)].userId !== userId && (
           <MusicMenuItem onClick={handleClickRepost}>
             <BiRepost className="icon" />
             <span>Repost</span>
           </MusicMenuItem>
-        ) : (
-          <></>
         )}
         <MusicMenuItem onClick={handleClickCopy}>
           <IoMdLink className="icon" />

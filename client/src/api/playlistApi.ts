@@ -13,3 +13,7 @@ export const findPlaylistsContainsMusic = (
     `api/playlist/playlists/detail/${musicId}?skip=${skip}&take=${take}`
   )
 }
+
+export const getPlaylistsByIds = (playlistIds: number[]) => {
+  return Axios.get(`/api/playlist/ids?ids=${playlistIds.join(',')}`)
+}

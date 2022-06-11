@@ -33,6 +33,13 @@ export class PlaylistService {
     return { ...playlist, user };
   }
 
+  async findPlaylistsByIds(playlistIds: number[]) {
+    return this.playlistRepository
+      .getDetailPlaylistQuery()
+      .whereInIds(playlistIds)
+      .getMany();
+  }
+
   async findPlaylistByPermalink(userId: string, permalink: string) {
     const playlist = await this.playlistRepository.findPlaylistByPermalink(
       userId,

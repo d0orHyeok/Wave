@@ -39,12 +39,13 @@ export class MusicController {
     return this.musicService.getAllMusic();
   }
 
-  @Get('/:id')
-  getMusicById(@Param('id', ParseIntPipe) id: number) {
-    return this.musicService.findMusicById(id);
+  @Get('/ids')
+  getMusicsByIds(@Query('ids') ids: string) {
+    const musicIds = ids.split(',').map((v) => Number(v));
+    return this.musicService.findMusicsByIds(musicIds);
   }
 
-  @Get('permalink/:userId/:permalink')
+  @Get('/permalink/:userId/:permalink')
   getMusicByPermalink(
     @Param('userId') userId: string,
     @Param('permalink') permalink: string,

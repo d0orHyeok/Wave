@@ -22,6 +22,12 @@ import { PlaylistService } from './playlist.service';
 export class PlaylistController {
   constructor(private playlistService: PlaylistService) {}
 
+  @Get('/ids')
+  getPlaylistsByIds(@Query('ids') ids: string) {
+    const playlistIds = ids.split(',').map((v) => Number(v));
+    return this.playlistService.findPlaylistsByIds(playlistIds);
+  }
+
   @Get('/:userId/:permalink')
   async getPlaylist(
     @Param('userId') userId: string,

@@ -12,6 +12,10 @@ export const findRelatedMusics = (musicId: number, skip = 0, take = 10) => {
   return Axios.get(`/api/music/related/${musicId}?skip=${skip}&take=${take}`)
 }
 
+export const getMusicsByIds = (musicIds: number[]) => {
+  return Axios.get(`/api/music/ids?ids=${musicIds.join(',')}`)
+}
+
 export const uploadMusic = (formData: FormData) => {
   return Axios.post('/api/music/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

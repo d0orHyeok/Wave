@@ -19,12 +19,12 @@ export const ImageBox = styled.div`
 `
 
 export const PlaylistImageBox = styled(ImageBox)`
-  width: 140px;
-  height: 140px;
+  width: 160px;
+  height: 160px;
 
   ${({ theme }) => theme.device.tablet} {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
   }
 `
 
@@ -36,6 +36,20 @@ export const MusicImageBox = styled(ImageBox)`
 export const PlaylistCardInfo = styled.div`
   width: 100%;
   min-width: 0;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  & > * {
+    width: 100%;
+    min-width: 0;
+  }
+
+  ${({ theme }) => theme.device.tablet} {
+    min-height: 120px;
+  }
 
   & .playlist-info {
     & .playlist-info-user {
@@ -46,18 +60,10 @@ export const PlaylistCardInfo = styled.div`
         color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
       }
 
-      & .playlistCard-createdAt {
-        float: right;
-        color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
-
-        &::after {
-          content: '';
-          display: inline-block;
-          clear: both;
-        }
-
-        @media screen and (max-width: 600px) {
-          display: none;
+      & .playlistCard-uploader-repost {
+        & .icon.repost {
+          margin: 0 4px;
+          transform: translateY(2px);
         }
       }
     }
@@ -78,6 +84,21 @@ export const PlaylistCardInfo = styled.div`
       content: '';
       display: block;
       clear: both;
+    }
+  }
+
+  & .playlistCard-createdAt {
+    float: right;
+    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+
+    &::after {
+      content: '';
+      display: inline-block;
+      clear: both;
+    }
+
+    @media screen and (max-width: 600px) {
+      display: none;
     }
   }
 `

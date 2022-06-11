@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import Dropzone from '@components/Dropzone/Dropzone'
 
 export const Wrapper = styled.div`
-  padding: 3rem 0;
+  padding: 3rem;
   min-height: 100%;
   margin: 0 auto;
   display: flex;

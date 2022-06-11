@@ -81,6 +81,13 @@ export const MusicInfo = styled.div`
       & a:hover {
         color: ${({ theme }) => theme.colors.bgText};
       }
+
+      & .musicCard-uploader-repost {
+        & .icon.repost {
+          margin: 0 4px;
+          transform: translateY(2px);
+        }
+      }
     }
 
     & .musicCard-title {
