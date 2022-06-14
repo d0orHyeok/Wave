@@ -3,16 +3,9 @@ import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'
-import LoadingBar from '@components/Loading/LoadingBar'
 import NoItem from './NoItem.style'
 import MusicCard from '@components/MusicCard/MusicCard'
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
-`
+import LoadingArea from '@components/Loading/LoadingArea'
 
 const StyledMusicCard = styled(MusicCard)`
   margin: 10px 0;
@@ -71,7 +64,7 @@ const TrackDetailRelatedTracks = ({
         {musics.map((music, index) => (
           <StyledMusicCard key={index} music={music} />
         ))}
-        <LoadingArea ref={ref}>{loading ? <LoadingBar /> : <></>}</LoadingArea>
+        <LoadingArea ref={ref} loading={loading} hide={done} />
       </div>
     </>
   ) : (

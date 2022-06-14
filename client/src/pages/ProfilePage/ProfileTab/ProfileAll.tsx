@@ -2,7 +2,7 @@ import { sortByCreatedAt } from '@api/functions'
 import { getMusicsByIds } from '@api/musicApi'
 import { getPlaylistsByIds } from '@api/playlistApi'
 import { PrimaryButton } from '@components/Common/Button'
-import LoadingBar from '@components/Loading/LoadingBar'
+import LoadingArea from '@components/Loading/LoadingArea'
 import MusicCard from '@components/MusicCard/MusicCard'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
@@ -12,13 +12,6 @@ import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import * as CommonStyle from './common.style'
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
-`
 
 const StyledDiv = styled.div`
   & .profileAll-item {
@@ -41,7 +34,8 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
     ...user.repostPlaylists,
   ])
 
-  const { ref, inView } = useInView()
+  const useInViewParam = useInView()
+  const { inView, ref } = useInViewParam
 
   const [displayItems, setDisplayItems] = useState<(IMusic | IPlaylist)[]>([])
   const [loading, setLoading] = useState(false)
@@ -124,9 +118,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
               )
             }
           })}
-          <LoadingArea ref={ref}>
-            {loading ? <LoadingBar /> : <></>}
-          </LoadingArea>
+          <LoadingArea ref={ref} loading={loading} />
         </StyledDiv>
       ) : (
         <CommonStyle.Empty>

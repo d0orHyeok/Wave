@@ -2,11 +2,11 @@ import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'
-import LoadingBar from '@components/Loading/LoadingBar'
 import * as CommonStyle from './common.style'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { AiOutlineMenu } from 'react-icons/ai'
 import { getUserPlaylists } from '@api/playlistApi'
+import LoadingArea from '@components/Loading/LoadingArea'
 
 const StyledPlaylistCard = styled(PlaylistCard)`
   &:not(:last-child) {
@@ -26,13 +26,6 @@ interface ProfilePlaylistsProps extends React.HTMLAttributes<HTMLDivElement> {
   userId: string
   editable?: boolean
 }
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
-`
 
 const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
   const { ref, inView } = useInView()
@@ -82,9 +75,7 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
           {playlists.map((playlist, index) => (
             <StyledPlaylistCard key={index} playlist={playlist} />
           ))}
-          <LoadingArea ref={ref}>
-            {loading ? <LoadingBar /> : <></>}
-          </LoadingArea>
+          <LoadingArea ref={ref} loading={loading} />
         </div>
       ) : (
         <CommonStyle.Empty>

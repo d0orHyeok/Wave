@@ -1,6 +1,5 @@
 import { numberFormat } from '@api/functions'
 import { FollowTextButton } from '@components/Common/Button'
-import LoadingBar from '@components/Loading/LoadingBar'
 import { IUserData } from '@redux/features/user/userSlice.interface'
 import { useAppSelector } from '@redux/hook'
 import { EmptyProfileImage } from '@styles/EmptyImage'
@@ -10,6 +9,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import NoItem from './NoItem.style'
 import { useInView } from 'react-intersection-observer'
+import LoadingArea from '@components/Loading/LoadingArea'
 
 const StyledUl = styled.ul`
   display: flex;
@@ -62,13 +62,6 @@ const StyledLi = styled.li`
 
 const StyledFollowButton = styled(FollowTextButton)`
   border-radius: 4px;
-`
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
 `
 
 interface TrackDetailUsersPorps extends React.HTMLAttributes<HTMLUListElement> {
@@ -167,7 +160,7 @@ const TrackDetailUsers = ({
           </div>
         </StyledLi>
       ))}
-      <LoadingArea ref={ref}>{loading ? <LoadingBar /> : <></>}</LoadingArea>
+      <LoadingArea ref={ref} loading={loading} hide={done} />
     </StyledUl>
   ) : (
     <NoItem>

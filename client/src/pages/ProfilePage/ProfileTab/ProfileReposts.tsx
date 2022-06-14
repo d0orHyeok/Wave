@@ -1,7 +1,6 @@
 import { sortByCreatedAt } from '@api/functions'
 import { getMusicsByIds } from '@api/musicApi'
 import { getPlaylistsByIds } from '@api/playlistApi'
-import LoadingBar from '@components/Loading/LoadingBar'
 import MusicCard from '@components/MusicCard/MusicCard'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
@@ -12,6 +11,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import * as CommonStyle from './common.style'
 import { BiRepost } from 'react-icons/bi'
+import LoadingArea from '@components/Loading/LoadingArea'
 
 const StyledRepostIcon = styled(BiRepost)`
   padding: 30px 80px;
@@ -19,13 +19,6 @@ const StyledRepostIcon = styled(BiRepost)`
   color: ${({ theme }) => theme.colors.bgTextRGBA(0.33)};
   border: 4px solid ${({ theme }) => theme.colors.bgTextRGBA(0.33)};
   border-radius: 8px;
-`
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
 `
 
 const StyledDiv = styled.div`
@@ -115,9 +108,7 @@ const ProfileReposts = ({ user, ...props }: ProfileRepostsProps) => {
               />
             )
           )}
-          <LoadingArea ref={ref}>
-            {loading ? <LoadingBar /> : <></>}
-          </LoadingArea>
+          <LoadingArea ref={ref} loading={loading} />
         </StyledDiv>
       ) : (
         <CommonStyle.Empty>

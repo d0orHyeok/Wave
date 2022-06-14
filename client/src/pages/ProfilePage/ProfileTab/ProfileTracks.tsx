@@ -1,25 +1,17 @@
 import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'
-import LoadingBar from '@components/Loading/LoadingBar'
 import { getUserMusics } from '@api/musicApi'
 import * as CommonStyle from './common.style'
 import { Link } from 'react-router-dom'
 import { PrimaryButton } from '@components/Common/Button'
 import MusicCard from '@components/MusicCard/MusicCard'
+import LoadingArea from '@components/Loading/LoadingArea'
 
 interface ProfileTracksProps extends React.HTMLAttributes<HTMLDivElement> {
   userId: string
   editable?: boolean
 }
-
-const LoadingArea = styled.div<{ hide?: boolean }>`
-  display: ${({ hide }) => (hide ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  margin: 30px 0;
-`
 
 const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
   const { ref, inView } = useInView()
@@ -69,9 +61,7 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
           {musics.map((music, index) => (
             <MusicCard key={index} music={music} />
           ))}
-          <LoadingArea ref={ref}>
-            {loading ? <LoadingBar /> : <></>}
-          </LoadingArea>
+          <LoadingArea ref={ref} loading={loading} />
         </div>
       ) : (
         <CommonStyle.Empty>
