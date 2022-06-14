@@ -14,6 +14,7 @@ import ProfileAll from './ProfileTab/ProfileAll'
 import ProfilePopularTracks from './ProfileTab/ProfilePopularTracks'
 import ProfileTracks from './ProfileTab/ProfileTracks'
 import ProfilePlaylists from './ProfileTab/ProfilePlaylists'
+import ProfileReposts from './ProfileTab/ProfileReposts'
 
 const ProfilePage = () => {
   const { userId, nav } = useParams()
@@ -97,6 +98,8 @@ const ProfilePage = () => {
                 <ProfileTracks userId={profileData.id} editable={editable} />
               ) : nav === 'playlists' ? (
                 <ProfilePlaylists userId={profileData.id} editable={editable} />
+              ) : nav === 'reposts' ? (
+                <ProfileReposts user={profileData} />
               ) : (
                 <></>
               )}
