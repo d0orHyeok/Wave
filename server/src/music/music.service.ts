@@ -106,15 +106,12 @@ export class MusicService {
       .getMany();
   }
 
+  async findMusicsByUserId(userId: string, pagingDto: PagingDto) {
+    return this.musicRepository.findMusicsByUserId(userId, pagingDto);
+  }
+
   async findPopularMusicsByUserId(userId: string) {
-    const minCount = 99;
-    return this.musicRepository
-      .musicDetailQuery()
-      .where('music.userId = :userId', { userId })
-      .andWhere((qb) => qb.where('music.count > :minCount', { minCount }))
-      .orderBy('music.count', 'DESC')
-      .take(10)
-      .getMany();
+    return this.musicRepository.findPopularMusicsByUserId(userId);
   }
 
   async deleteMusic(id: number, user: User): Promise<void> {

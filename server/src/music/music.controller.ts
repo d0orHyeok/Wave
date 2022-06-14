@@ -68,6 +68,16 @@ export class MusicController {
     return this.musicService.findPopularMusicsByUserId(userId);
   }
 
+  @Get('/user/:userId')
+  getUserMusics(
+    @Param('userId') userId: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.musicService.findMusicsByUserId(userId, pagingDto);
+  }
+
   @Post('/upload')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

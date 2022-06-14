@@ -192,4 +192,24 @@ export class MusicRepository extends Repository<Music> {
       );
     }
   }
+
+  async findMusicsByUserId(userId: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+    return this.musicDetailQuery()
+      .where('music.userId = :userId', { userId })
+      .orderBy('music.createdAt', 'DESC')
+      .skip(skip)
+      .take(take)
+      .getMany();
+  }
+
+  async findPopularMusicsByUserId(userId: string) {
+    const minCount = 99;
+    return this.musicDetailQuery()
+      .where('music.userId = :userId', { userId })
+      .andWhere((qb) => qb.where('music.count > :minCount', { minCount }))
+      .orderBy('music.count', 'DESC')
+      .take(10)
+      .getMany();
+  }
 }
