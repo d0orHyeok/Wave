@@ -16,6 +16,10 @@ export const getMusicsByIds = (musicIds: number[]) => {
   return Axios.get(`/api/music/ids?ids=${musicIds.join(',')}`)
 }
 
+export const getUserMusics = (userId: string, skip = 0, take = 10) => {
+  return Axios.get(`/api/music/user/${userId}?skip=${skip}&take=${take}`)
+}
+
 export const getPopularMusicsOfUser = (userId: string) => {
   return Axios.get(`/api/music/popular/${userId}`)
 }
