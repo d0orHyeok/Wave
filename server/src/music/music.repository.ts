@@ -64,11 +64,11 @@ export class MusicRepository extends Repository<Music> {
       .leftJoinAndSelect('music.reposts', 'reposts')
       .leftJoinAndSelect('music.comments', 'comments')
       .leftJoinAndSelect('comments.user', 'cu')
+      .loadRelationCountAndMap('music.likesCount', 'music.likes')
       .loadRelationCountAndMap('likes.followersCount', 'likes.followers')
       .loadRelationCountAndMap('reposts.followersCount', 'reposts.followers')
       .loadRelationCountAndMap('cu.followersCount', 'cu.followers')
       .loadRelationCountAndMap('music.commentsCount', 'music.comments')
-      .loadRelationCountAndMap('music.likesCount', 'music.likes')
       .loadRelationCountAndMap('music.playlistsCount', 'music.playlists')
       .loadRelationCountAndMap('music.repostsCount', 'music.reposts');
   }

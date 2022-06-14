@@ -63,6 +63,11 @@ export class MusicController {
     return this.musicService.findRelatedMusic(id, pagingDto);
   }
 
+  @Get('/popular/:userId')
+  getPopularMusics(@Param('userId') userId: string) {
+    return this.musicService.findPopularMusicsByUserId(userId);
+  }
+
   @Post('/upload')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

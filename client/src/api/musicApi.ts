@@ -16,6 +16,10 @@ export const getMusicsByIds = (musicIds: number[]) => {
   return Axios.get(`/api/music/ids?ids=${musicIds.join(',')}`)
 }
 
+export const getPopularMusicsOfUser = (userId: string) => {
+  return Axios.get(`/api/music/popular/${userId}`)
+}
+
 export const uploadMusic = (formData: FormData) => {
   return Axios.post('/api/music/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

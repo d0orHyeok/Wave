@@ -106,6 +106,17 @@ export class MusicService {
       .getMany();
   }
 
+  async findPopularMusicsByUserId(userId: string) {
+    const minCount = 99;
+    return this.musicRepository
+      .musicDetailQuery()
+      .where('music.userId = :userId', { userId })
+      .andWhere((qb) => qb.where('music.count > :minCount', { minCount }))
+      .orderBy('music.count', 'DESC')
+      .take(10)
+      .getMany();
+  }
+
   async deleteMusic(id: number, user: User): Promise<void> {
     const music = await this.musicRepository.findOne({ id, user });
     if (music) {
