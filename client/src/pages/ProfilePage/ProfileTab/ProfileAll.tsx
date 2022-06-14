@@ -49,6 +49,10 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
   const [done, setDone] = useState(false)
 
   const getItems = useCallback(async () => {
+    if (done) {
+      return
+    }
+
     const getNum = 15
     const skip = page * getNum
     const getItems = items.slice(skip, skip + getNum)
@@ -70,9 +74,10 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
     } catch (error: any) {
       setItems([])
       console.error(error.response || error)
+      setDone(true)
     }
     setLoading(false)
-  }, [items, page])
+  }, [done, items, page])
 
   useEffect(() => {
     getItems()

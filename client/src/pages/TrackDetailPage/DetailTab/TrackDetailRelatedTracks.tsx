@@ -50,6 +50,7 @@ const TrackDetailRelatedTracks = ({
       setMusics((prevState) => [...prevState, ...getItems])
     } catch (error: any) {
       console.error(error.response || error)
+      setDone(true)
     }
     setLoading(false)
   }, [done, musicId, page])

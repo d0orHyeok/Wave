@@ -9,6 +9,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  word-break: break-all;
+  padding: 0 50px;
 
   & .notfound-title {
     font-size: 1.2rem;
