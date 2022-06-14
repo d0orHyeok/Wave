@@ -1,5 +1,5 @@
+import InteractionBar from '@components/InteractionBar/InteractionBar'
 import { PrimaryButton } from '@components/Common/Button'
-import InteractionButtons from '@components/InteractionBar/InteractionButtons'
 import styled from 'styled-components'
 
 export const Container = styled.div`
@@ -198,6 +198,6 @@ export const PlaylistMusicUl = styled.ul`
   }
 `
 
-export const StyledInteractionButtons = styled(InteractionButtons)`
+export const StyledInteractionBar = styled(InteractionBar)`
   margin-top: 10px;
 `

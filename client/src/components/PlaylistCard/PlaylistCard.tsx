@@ -185,7 +185,7 @@ const PlaylistCard = ({
             )}
           </S.PlaylistMusicUl>
         )}
-        <S.StyledInteractionButtons
+        <S.StyledInteractionBar
           target={playlist}
           setTarget={setPlaylist}
           mediaSize={1000}

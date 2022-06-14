@@ -75,4 +75,8 @@ export class PlaylistService {
   async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
     return this.playlistRepository.findDetailPlaylistsById(id, pagingDto);
   }
+
+  async findPlaylistsByUserId(userId: string, pagingDto: PagingDto) {
+    return this.playlistRepository.findPlaylistsByUserId(userId, pagingDto);
+  }
 }

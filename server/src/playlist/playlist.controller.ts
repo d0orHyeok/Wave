@@ -28,7 +28,7 @@ export class PlaylistController {
     return this.playlistService.findPlaylistsByIds(playlistIds);
   }
 
-  @Get('/:userId/:permalink')
+  @Get('permalink/:userId/:permalink')
   async getPlaylist(
     @Param('userId') userId: string,
     @Param('permalink') permalink: string,
@@ -44,6 +44,16 @@ export class PlaylistController {
   ) {
     const pagingDto = { take: take || 15, skip: skip || 0 };
     return this.playlistService.findDetailPlaylistsById(id, pagingDto);
+  }
+
+  @Get('/user/:userId')
+  async getUserPlaylists(
+    @Param('userId') userId: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.playlistService.findPlaylistsByUserId(userId, pagingDto);
   }
 
   @Post('/create')

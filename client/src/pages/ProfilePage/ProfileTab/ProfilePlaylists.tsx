@@ -1,15 +1,28 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'
 import LoadingBar from '@components/Loading/LoadingBar'
-import { getUserMusics } from '@api/musicApi'
 import * as CommonStyle from './common.style'
-import { Link } from 'react-router-dom'
-import { PrimaryButton } from '@components/Common/Button'
-import MusicCard from '@components/MusicCard/MusicCard'
+import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
+import { AiOutlineMenu } from 'react-icons/ai'
+import { getUserPlaylists } from '@api/playlistApi'
 
-interface ProfileTracksProps extends React.HTMLAttributes<HTMLDivElement> {
+const StyledPlaylistCard = styled(PlaylistCard)`
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+`
+
+const StyledDivIcon = styled.div`
+  padding: 30px;
+  color: ${({ theme }) => theme.colors.bgTextRGBA(0.3)};
+  border: 4px solid ${({ theme }) => theme.colors.bgTextRGBA(0.3)};
+  border-radius: 8px;
+  font-size: 100px;
+`
+
+interface ProfilePlaylistsProps extends React.HTMLAttributes<HTMLDivElement> {
   userId: string
   editable?: boolean
 }
@@ -21,10 +34,10 @@ const LoadingArea = styled.div<{ hide?: boolean }>`
   margin: 30px 0;
 `
 
-const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
+const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
   const { ref, inView } = useInView()
 
-  const [musics, setMusics] = useState<IMusic[]>([])
+  const [playlists, setPlaylists] = useState<IPlaylist[]>([])
   const [page, setPage] = useState(0)
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -39,12 +52,12 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
     setLoading(true)
     try {
       const skip = page * getNum
-      const response = await getUserMusics(userId, skip, skip + getNum)
-      const getItems: IMusic[] = response.data
+      const response = await getUserPlaylists(userId, skip, skip + getNum)
+      const getItems: IPlaylist[] = response.data
       if (!getItems || getItems.length < getNum) {
         setDone(true)
       }
-      setMusics((prevState) => [...prevState, ...getItems])
+      setPlaylists((prevState) => [...prevState, ...getItems])
     } catch (error: any) {
       console.error(error.response || error)
       setDone(true)
@@ -64,10 +77,10 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
 
   return (
     <>
-      {musics.length ? (
+      {playlists.length ? (
         <div {...props}>
-          {musics.map((music, index) => (
-            <MusicCard key={index} music={music} />
+          {playlists.map((playlist, index) => (
+            <StyledPlaylistCard key={index} playlist={playlist} />
           ))}
           <LoadingArea ref={ref}>
             {loading ? <LoadingBar /> : <></>}
@@ -75,28 +88,17 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
         </div>
       ) : (
         <CommonStyle.Empty>
-          <CommonStyle.StyledEmptyTrackIcon />
-          {editable ? (
-            <>
-              <div className="empty-content">
-                Seems a little quiet over here
-              </div>
-              <div className="empty-link">
-                <Link to={`/upload`}>
-                  Upload a track to share it with your followers.
-                </Link>
-              </div>
-              <PrimaryButton className="empty-button">
-                <Link to={`/upload`}>Upload Now</Link>
-              </PrimaryButton>
-            </>
-          ) : (
-            <div className="empty-content">{`There's no tracks`}</div>
-          )}
+          <StyledDivIcon>
+            <AiOutlineMenu className="icon line" />
+            {` +`}
+          </StyledDivIcon>
+          <div className="empty-content">
+            You haven’t created any playlists.
+          </div>
         </CommonStyle.Empty>
       )}
     </>
   )
 }
 
-export default ProfileTracks
+export default ProfilePlaylists

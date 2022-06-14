@@ -163,4 +163,22 @@ export class PlaylistRepository extends Repository<Playlist> {
       );
     }
   }
+
+  async findPlaylistsByUserId(userId: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      return this.getDetailPlaylistQuery()
+        .where('playlist.userId = :userId', { userId })
+        .orderBy('playlist.createdAt', 'DESC')
+        .skip(skip)
+        .take(take)
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to get detail playlists',
+      );
+    }
+  }
 }

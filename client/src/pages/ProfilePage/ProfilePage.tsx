@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet'
 import ProfileAll from './ProfileTab/ProfileAll'
 import ProfilePopularTracks from './ProfileTab/ProfilePopularTracks'
 import ProfileTracks from './ProfileTab/ProfileTracks'
+import ProfilePlaylists from './ProfileTab/ProfilePlaylists'
 
 const ProfilePage = () => {
   const { userId, nav } = useParams()
@@ -94,6 +95,8 @@ const ProfilePage = () => {
                 <ProfilePopularTracks user={profileData} editable={editable} />
               ) : nav === 'tracks' ? (
                 <ProfileTracks userId={profileData.id} editable={editable} />
+              ) : nav === 'playlists' ? (
+                <ProfilePlaylists userId={profileData.id} editable={editable} />
               ) : (
                 <></>
               )}
