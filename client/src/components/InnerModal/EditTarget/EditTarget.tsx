@@ -5,6 +5,7 @@ import MusicBasicInfo, {
 } from '@components/ExtractMusic/MusicBasicInfo/MusicBasicInfo'
 import MusicMetadata, {
   IMusicMetadataHandler,
+  OnChangeMetadataKey,
 } from '@components/ExtractMusic/MusicMetadata/MusicMetadata'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import React, { useState, useCallback, useEffect, useRef } from 'react'
@@ -29,7 +30,7 @@ const EditTarget = ({ target, onClose }: EditTargetProps) => {
   const [navItems, setNavItems] = useState<string[]>([])
   const [metadata, setMetadata] = useState<IMusicMetadata | null>()
   const [changed, setChanged] = useState(false)
-  const [originData, setOriginData] = useState(target)
+  const [editData, setEditData] = useState(target)
 
   const handleChangeMusicData = useCallback(
     (key: TypeOnChnageDataKey, value: any) => {
@@ -38,21 +39,34 @@ const EditTarget = ({ target, onClose }: EditTargetProps) => {
       }
 
       const changedValue = key === 'cover' && !value ? target.cover : value
-      setOriginData((prevState) => {
+      setEditData((prevState) => {
         return { ...prevState, [key]: changedValue }
       })
     },
     [target]
   )
 
+  const handleChangeMusicMetadata = useCallback(
+    (key: OnChangeMetadataKey, value: any) => {
+      if (!('title' in editData)) {
+        return
+      }
+      setEditData({
+        ...editData,
+        metadata: { ...editData.metadata, [key]: value },
+      })
+    },
+    [editData]
+  )
+
   const checkChanged = useCallback(() => {
     if ('title' in target) {
-      const isChanged = !lodash.isEqual(originData, target)
+      const isChanged = !lodash.isEqual(target, editData)
       setChanged(isChanged)
     }
-  }, [originData, target])
+  }, [editData, target])
 
-  const setNavItem = useCallback(async () => {
+  const handleOnMount = useCallback(async () => {
     setNavIndex(0)
     setLoading(true)
 
@@ -81,8 +95,8 @@ const EditTarget = ({ target, onClose }: EditTargetProps) => {
   }, [target])
 
   useEffect(() => {
-    setNavItem()
-  }, [setNavItem])
+    handleOnMount()
+  }, [handleOnMount])
 
   useEffect(() => {
     checkChanged()
@@ -110,7 +124,11 @@ const EditTarget = ({ target, onClose }: EditTargetProps) => {
                 onChangeData={handleChangeMusicData}
               />
             ) : (
-              <MusicMetadata ref={musiMetadataRef} metadata={metadata} />
+              <MusicMetadata
+                ref={musiMetadataRef}
+                metadata={metadata}
+                onChangeData={handleChangeMusicMetadata}
+              />
             )}
           </>
         ) : (

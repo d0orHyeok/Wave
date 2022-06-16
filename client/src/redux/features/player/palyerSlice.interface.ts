@@ -71,7 +71,7 @@ export interface IMusic {
   tags?: string[]
   cover?: string
   status: TypeStatus
-  metaData: IMusicMetadata
+  metadata: IMusicMetadata
   userId: string
   user: IUserData
   comments: ICommnet[]

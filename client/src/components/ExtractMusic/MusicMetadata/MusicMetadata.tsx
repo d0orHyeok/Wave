@@ -21,8 +21,18 @@ export interface IMusicMetadataValue {
   lyrics?: string
 }
 
+export type OnChangeMetadataKey =
+  | 'album'
+  | 'artist'
+  | 'albumartist'
+  | 'composer'
+  | 'year'
+  | 'lyrics'
+  | string
+
 interface IMusicMetadataProps {
   metadata?: IMusicMetadata | null
+  onChangeData?: (key: OnChangeMetadataKey, value: any) => void
 }
 
 interface Props
@@ -30,22 +40,13 @@ interface Props
     React.HTMLAttributes<HTMLDivElement> {}
 
 const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
-  ({ metadata, ...props }, ref) => {
+  ({ metadata, onChangeData, ...props }, ref) => {
     const artistRef = useRef<HTMLInputElement>(null)
     const albumTitleRef = useRef<HTMLInputElement>(null)
     const albumArtistRef = useRef<HTMLInputElement>(null)
     const composerRef = useRef<HTMLInputElement>(null)
     const yearRef = useRef<HTMLInputElement>(null)
     const lyricsRef = useRef<HTMLTextAreaElement>(null)
-
-    const handleChangeYear = useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.currentTarget
-
-        event.currentTarget.value = value.replaceAll(/[^\d]/g, '')
-      },
-      []
-    )
 
     useImperativeHandle(
       ref,
@@ -71,6 +72,24 @@ const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
         },
       }),
       []
+    )
+
+    const handleChangeInput = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { id, value } = event.currentTarget
+        onChangeData && onChangeData(id, value)
+      },
+      [onChangeData]
+    )
+
+    const handleChangeYear = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleChangeInput(event)
+        const { value } = event.currentTarget
+
+        event.currentTarget.value = value.replaceAll(/[^\d]/g, '')
+      },
+      [handleChangeInput]
     )
 
     useEffect(() => {
@@ -105,17 +124,24 @@ const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
             <label className="label" htmlFor="artist">
               Artist
             </label>
-            <input id="artist" type="text" ref={artistRef} maxLength={30} />
+            <input
+              id="artist"
+              type="text"
+              ref={artistRef}
+              maxLength={30}
+              onChange={handleChangeInput}
+            />
           </S.EditInputBox>
           <S.EditInputBox>
-            <label className="label" htmlFor="albumtitle">
+            <label className="label" htmlFor="album">
               Album Title
             </label>
             <input
-              id="albumtitle"
+              id="album"
               type="text"
               ref={albumTitleRef}
               maxLength={30}
+              onChange={handleChangeInput}
             />
           </S.EditInputBox>
           <S.EditInputBox>
@@ -127,13 +153,20 @@ const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
               type="text"
               ref={albumArtistRef}
               maxLength={30}
+              onChange={handleChangeInput}
             />
           </S.EditInputBox>
           <S.EditInputBox>
             <label className="label" htmlFor="composer">
               Composer
             </label>
-            <input id="composer" type="text" ref={composerRef} maxLength={30} />
+            <input
+              id="composer"
+              type="text"
+              ref={composerRef}
+              maxLength={30}
+              onChange={handleChangeInput}
+            />
           </S.EditInputBox>
           <S.EditInputBox>
             <label className="label" htmlFor="year">
@@ -155,6 +188,7 @@ const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
               id="lyrics"
               rows={6}
               ref={lyricsRef}
+              onChange={handleChangeInput}
             ></textarea>
           </S.EditInputBox>
         </S.Container>
