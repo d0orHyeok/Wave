@@ -42,7 +42,7 @@ const ProfilePopularTracks = ({
       {musics.length ? (
         <div {...props}>
           {musics.map((music, index) => (
-            <MusicCard key={index} music={music} />
+            <MusicCard key={index} music={music} editable={editable} />
           ))}
         </div>
       ) : (

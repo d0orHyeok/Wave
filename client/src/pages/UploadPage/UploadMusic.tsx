@@ -1,33 +1,32 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
-import * as S from './EditMusic.style'
+import * as S from './UploadMusic.style'
 import * as mmb from 'music-metadata-browser'
-import { ICommonTagsResult } from 'music-metadata/lib/type'
-import EditHead from './EditHead/EditHead'
-import EditBasicInfo, {
-  IEditBasicInfoHandler,
-} from './EditBasicInfo/EditBasicInfo'
-import EditMetadata, { IEditMetadataHandler } from './EditMetadata/EditMetadata'
+import UploadHead from '@pages/UploadPage/UploadHead'
+import MusicBasicInfo, {
+  IMusicBasicInfoHandler,
+} from '@components/ExtractMusic/MusicBasicInfo/MusicBasicInfo'
+import MusicMetadata, {
+  IMusicMetadataHandler,
+} from '@components/ExtractMusic/MusicMetadata/MusicMetadata'
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate } from 'react-router-dom'
 import { uploadMusic } from '@api/musicApi'
+import { IMusicMetadata } from '@components/ExtractMusic/extractMetadata.types'
+import ExtractMusicNav from '@components/ExtractMusic/ExtractMusicNav/ExtractMusicNav'
 
-interface EditMusicProps {
+interface UploadMusicProps {
   files?: FileList
-  resetFiles: () => void
+  resetFiles?: () => void
 }
 
-export interface IMusicMetadata extends ICommonTagsResult {
-  duration?: number
-}
-
-const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
+const UploadMusic = ({ files, resetFiles }: UploadMusicProps) => {
   const openAlert = useAlert()
   const navigate = useNavigate()
 
   const editNavItems = ['Basic Info', 'Metadata']
 
-  const editBasicInfoRef = useRef<IEditBasicInfoHandler>(null)
-  const editMetadataRef = useRef<IEditMetadataHandler>(null)
+  const editBasicInfoRef = useRef<IMusicBasicInfoHandler>(null)
+  const editMetadataRef = useRef<IMusicMetadataHandler>(null)
 
   const [editNavIndex, setEditNavIndex] = useState(0)
   const [musicMetadata, setMusicMetadata] = useState<IMusicMetadata>()
@@ -35,7 +34,8 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
   const uploadFile = () => {
     if (!files || !musicMetadata) {
       // 파일과 메타데이터가 없다면 재업로드 요청
-      return resetFiles()
+      resetFiles && resetFiles()
+      return
     }
 
     const basicInfoData = editBasicInfoRef.current?.getData()
@@ -72,7 +72,7 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
       .then(() => {
         openAlert('업로드에 성공하였습니다.')
         if (window.confirm('계속해서 업로드 하시겠습니까?')) {
-          resetFiles()
+          resetFiles && resetFiles()
         } else {
           navigate('/')
         }
@@ -88,9 +88,27 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
     ) {
       setEditNavIndex(0)
       setMusicMetadata(undefined)
-      resetFiles()
+      resetFiles && resetFiles()
     }
   }, [resetFiles])
+
+  const extractMetadata = useCallback(async () => {
+    if (!files?.length) {
+      return
+    }
+    try {
+      const md = await mmb.parseBlob(files[0], {
+        duration: true,
+      })
+      const newMetadata = {
+        ...md.common,
+        duration: md.format.duration,
+      }
+      setMusicMetadata(newMetadata)
+    } catch (error) {
+      console.error('Error to get metadata', error)
+    }
+  }, [files])
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -106,45 +124,25 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
   }, [])
 
   useEffect(() => {
-    if (files?.length) {
-      mmb
-        .parseBlob(files[0], {
-          duration: true,
-        })
-        .then((metadata) => {
-          const newMetadata = {
-            ...metadata.common,
-            duration: metadata.format.duration,
-          }
-          setMusicMetadata(newMetadata)
-        })
-        .catch((err) => console.log(err))
-    }
-  }, [files])
+    extractMetadata()
+  }, [extractMetadata])
 
   return (
     <>
       <S.Container style={{ display: files ? 'block' : 'none' }}>
-        <EditHead files={files} />
+        <UploadHead files={files} />
         <S.EditMain className="editMain">
-          <S.EditNav className="editNav">
-            {editNavItems.map((item, index) => (
-              <S.EditNavItem
-                key={item}
-                className="editNav-item"
-                onClick={() => setEditNavIndex(index)}
-                select={editNavIndex === index}
-              >
-                {item}
-              </S.EditNavItem>
-            ))}
-          </S.EditNav>
-          <EditBasicInfo
+          <ExtractMusicNav
+            navItems={editNavItems}
+            navIndex={editNavIndex}
+            handleClickNav={setEditNavIndex}
+          />
+          <MusicBasicInfo
             metadata={musicMetadata}
             ref={editBasicInfoRef}
-            style={{ display: editNavIndex === 0 ? 'flex' : 'none' }}
+            style={{ display: editNavIndex === 0 ? 'block' : 'none' }}
           />
-          <EditMetadata
+          <MusicMetadata
             metadata={musicMetadata}
             ref={editMetadataRef}
             style={{ display: editNavIndex === 1 ? 'block' : 'none' }}
@@ -159,4 +157,4 @@ const EditMusic = ({ files, resetFiles }: EditMusicProps) => {
   )
 }
 
-export default EditMusic
+export default UploadMusic

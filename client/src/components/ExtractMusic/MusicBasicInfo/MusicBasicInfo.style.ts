@@ -15,17 +15,18 @@ export const EditBasicInfo = styled.div`
     height: 256px;
     margin-right: 1rem;
 
-    & label {
+    & label,
+    & .btn.resetBtn {
       display: inline-flex;
       align-items: center;
       position: absolute;
-      bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
       cursor: pointer;
       background-color: rgba(255, 255, 255, 0.66);
       color: black;
-      padding: 3px 6px;
+      padding: 0 6px;
+      height: 28px;
       font-size: 12px;
       border-radius: 4px;
       border: 1px solid lightgray;
@@ -33,7 +34,16 @@ export const EditBasicInfo = styled.div`
       & svg {
         width: 16px;
         height: 16px;
+        margin-right: 4px;
       }
+    }
+
+    & label {
+      bottom: 40px;
+    }
+
+    & .btn.resetBtn.resetBtn {
+      bottom: 5px;
     }
 
     & .img {

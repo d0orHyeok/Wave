@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
-import InteractionButtons from './InteractionButtons'
-import InteractionCount, { VisibleOption } from './InteractionCount'
+import InteractionButtons, {
+  InteractionButtonsProps,
+} from './InteractionButtons'
+import InteractionCount, { InteractionCountProps } from './InteractionCount'
 
 const Container = styled.div`
   display: flex;
@@ -14,18 +15,17 @@ const Container = styled.div`
   }
 `
 
-interface InteractionBarProps extends React.HTMLAttributes<HTMLDivElement> {
-  target: IMusic | IPlaylist
-  setTarget?: React.Dispatch<React.SetStateAction<any>>
-  visibleOption?: VisibleOption[]
-  mediaSize?: string | number
-}
+interface InteractionBarProps
+  extends InteractionButtonsProps,
+    InteractionCountProps,
+    React.HTMLAttributes<HTMLDivElement> {}
 
 const InteractionBar = ({
   target,
   setTarget,
   visibleOption,
   mediaSize,
+  editable,
   ...props
 }: InteractionBarProps) => {
   return (
@@ -35,6 +35,7 @@ const InteractionBar = ({
         target={target}
         setTarget={setTarget}
         mediaSize={mediaSize}
+        editable={editable}
       />
       <InteractionCount
         className="interactionCount"

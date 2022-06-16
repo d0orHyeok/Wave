@@ -5,14 +5,14 @@ import React, {
   useImperativeHandle,
   useRef,
 } from 'react'
-import { IMusicMetadata } from '../EditMusic'
-import * as S from './EditMetadata.style'
+import { IMusicMetadata } from '../extractMetadata.types'
+import * as S from './MusicMetadata.style'
 
-export interface IEditMetadataHandler {
-  getData: () => IEditMetadataValue | void
+export interface IMusicMetadataHandler {
+  getData: () => IMusicMetadataValue | void
 }
 
-export interface IEditMetadataValue {
+export interface IMusicMetadataValue {
   artist?: string
   album?: string
   albumartist?: string
@@ -21,13 +21,16 @@ export interface IEditMetadataValue {
   lyrics?: string
 }
 
-interface IEditMetadataProps {
-  style?: React.CSSProperties
-  metadata?: IMusicMetadata
+interface IMusicMetadataProps {
+  metadata?: IMusicMetadata | null
 }
 
-const EditMetadata = forwardRef<IEditMetadataHandler, IEditMetadataProps>(
-  ({ style, metadata }, ref) => {
+interface Props
+  extends IMusicMetadataProps,
+    React.HTMLAttributes<HTMLDivElement> {}
+
+const MusicMetadata = forwardRef<IMusicMetadataHandler, Props>(
+  ({ metadata, ...props }, ref) => {
     const artistRef = useRef<HTMLInputElement>(null)
     const albumTitleRef = useRef<HTMLInputElement>(null)
     const albumArtistRef = useRef<HTMLInputElement>(null)
@@ -96,7 +99,7 @@ const EditMetadata = forwardRef<IEditMetadataHandler, IEditMetadataProps>(
     }, [metadata])
 
     return (
-      <div style={style}>
+      <div {...props}>
         <S.Container onSubmit={(e) => e.preventDefault()}>
           <S.EditInputBox>
             <label className="label" htmlFor="artist">
@@ -160,6 +163,6 @@ const EditMetadata = forwardRef<IEditMetadataHandler, IEditMetadataProps>(
   }
 )
 
-EditMetadata.displayName = 'EditMetadata'
+MusicMetadata.displayName = 'MusicMetadata'
 
-export default EditMetadata
+export default MusicMetadata

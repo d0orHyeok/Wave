@@ -100,6 +100,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
                   key={index}
                   music={item}
                   repostUser={repostUser}
+                  editable={repostUser ? false : editable}
                 />
               )
             } else {
@@ -114,6 +115,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
                   key={index}
                   playlist={item}
                   repostUser={repostUser}
+                  editable={repostUser ? false : editable}
                 />
               )
             }

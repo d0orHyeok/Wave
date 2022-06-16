@@ -20,12 +20,14 @@ interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
   setPlaylist?: any
   repostUser?: IUserData
+  editable?: boolean
 }
 
 const PlaylistCard = ({
   playlist,
   setPlaylist,
   repostUser,
+  editable,
   ...props
 }: PlaylistCardProps) => {
   const dispatch = useAppDispatch()
@@ -189,6 +191,7 @@ const PlaylistCard = ({
           target={playlist}
           setTarget={setPlaylist}
           mediaSize={1000}
+          editable={editable}
         />
       </S.PlaylistCardInfo>
     </S.Container>

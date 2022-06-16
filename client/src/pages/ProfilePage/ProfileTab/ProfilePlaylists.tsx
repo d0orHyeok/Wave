@@ -27,7 +27,11 @@ interface ProfilePlaylistsProps extends React.HTMLAttributes<HTMLDivElement> {
   editable?: boolean
 }
 
-const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
+const ProfilePlaylists = ({
+  userId,
+  editable,
+  ...props
+}: ProfilePlaylistsProps) => {
   const { ref, inView } = useInView()
 
   const [playlists, setPlaylists] = useState<IPlaylist[]>([])
@@ -73,7 +77,11 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
       {playlists.length ? (
         <div {...props}>
           {playlists.map((playlist, index) => (
-            <StyledPlaylistCard key={index} playlist={playlist} />
+            <StyledPlaylistCard
+              key={index}
+              playlist={playlist}
+              editable={editable}
+            />
           ))}
           <LoadingArea ref={ref} loading={loading} />
         </div>

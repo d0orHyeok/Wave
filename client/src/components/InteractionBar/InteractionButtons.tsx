@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { IoMdLink } from 'react-icons/io'
 import { GoHeart } from 'react-icons/go'
-import { MdPlaylistPlay, MdPlaylistAdd } from 'react-icons/md'
+import { MdPlaylistPlay, MdPlaylistAdd, MdOutlineEdit } from 'react-icons/md'
 import { BiRepost } from 'react-icons/bi'
 import { Button, Modal } from '@components/Common'
 import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
@@ -12,6 +12,7 @@ import { useCopyLink } from '@api/Hooks'
 import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
 import { userToggleLike, userToggleRepost } from '@redux/thunks/userThunks'
+import EditTarget from '@components/InnerModal/EditTarget/EditTarget'
 
 interface StyledButtonProps {
   active?: boolean
@@ -50,39 +51,59 @@ const StyledButton = styled(Button)<StyledButtonProps>`
     height: 25px;
     margin-right: 5px;
 
-    @media screen and (max-width: ${({ mediaSize }) =>
+    ${({ mediaSize }) => {
+      const size =
         mediaSize === undefined
           ? '1200px'
           : typeof mediaSize === 'string'
           ? mediaSize
-          : `${mediaSize}px`}) {
-      display: none;
-    }
+          : `${mediaSize}px`
+      return css`
+        @media screen and (max-width: ${size}) {
+          display: none;
+        }
+      `
+    }}
   }
 `
 
 type TargetType = IMusic | IPlaylist
 
-interface InteractionButtonsProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface InteractionButtonsProps {
   target: TargetType
   setTarget?: React.Dispatch<React.SetStateAction<any>>
   mediaSize?: number | string
+  editable?: boolean
 }
+
+interface Props
+  extends React.HTMLAttributes<HTMLDivElement>,
+    InteractionButtonsProps {}
 
 const InteractionButtons = ({
   target,
   setTarget,
   mediaSize,
+  editable,
   ...props
-}: InteractionButtonsProps) => {
+}: Props) => {
   const dispatch = useAppDispatch()
   const openLogin = useLoginOpen()
   const copyLink = useCopyLink()
 
   const userData = useAppSelector((state) => state.user.userData)
+  const [openEditTarget, setOpenEditTarget] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [isLike, setIsLike] = useState(false)
   const [isReposts, setIsReposts] = useState(false)
+
+  const handleClickEditTarget = useCallback(() => {
+    setOpenEditTarget(true)
+  }, [])
+
+  const closeEditTarget = useCallback(() => {
+    setOpenEditTarget(false)
+  }, [])
 
   const handleClickRepost = useCallback(() => {
     if (!userData) {
@@ -92,7 +113,7 @@ const InteractionButtons = ({
 
     const targetType = 'title' in target ? 'music' : 'playlist'
     dispatch(userToggleRepost({ targetId: target.id, targetType })).then(
-      (value) => {
+      (value: any) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
           const existReposts = target.reposts || []
           const newReposts =
@@ -117,7 +138,7 @@ const InteractionButtons = ({
 
     const targetType = 'title' in target ? 'music' : 'playlist'
     dispatch(userToggleLike({ targetId: target.id, targetType })).then(
-      (value) => {
+      (value: any) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
           const existLikes = target.likes || []
           const newLikes =
@@ -225,9 +246,7 @@ const InteractionButtons = ({
         <GoHeart className="icon" />
         <span className="text">Like</span>
       </StyledButton>
-      {userData && target.userId === userData.id ? (
-        <></>
-      ) : (
+      {userData && target.userId !== userData.id && (
         <StyledButton
           title="Repost"
           active={isReposts}
@@ -254,7 +273,7 @@ const InteractionButtons = ({
         <MdPlaylistPlay className="icon" />
         <span className="text">Add to Next up</span>
       </StyledButton>
-      {'title' in target ? (
+      {'title' in target && (
         <>
           <StyledButton
             title="Add to Playlist"
@@ -274,8 +293,21 @@ const InteractionButtons = ({
             />
           </Modal>
         </>
-      ) : (
-        <></>
+      )}
+      {editable && (
+        <>
+          <StyledButton
+            title="Edit"
+            mediaSize={mediaSize}
+            onClick={handleClickEditTarget}
+          >
+            <MdOutlineEdit className="icon" />
+            <span className="text">Edit</span>
+          </StyledButton>
+          <Modal open={openEditTarget} onClose={closeEditTarget}>
+            <EditTarget target={target} onClose={closeEditTarget} />
+          </Modal>
+        </>
       )}
     </div>
   )

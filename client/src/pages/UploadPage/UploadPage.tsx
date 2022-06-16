@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
-import EditMusic from '@components/EditMusic/EditMusic'
 import * as S from './UploadPage.style'
 import { Helmet } from 'react-helmet'
+import UploadMusic from './UploadMusic'
 
 const UploadPage = () => {
   const [musicFiles, setMusicFiles] = useState<FileList>()
@@ -28,7 +28,7 @@ const UploadPage = () => {
           hidden={musicFiles?.length ? true : false}
           onChangeFiles={handleChangeFiles}
         />
-        <EditMusic files={musicFiles} resetFiles={handleResetFiles} />
+        <UploadMusic files={musicFiles} resetFiles={handleResetFiles} />
       </S.Wrapper>
     </>
   )

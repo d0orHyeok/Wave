@@ -13,9 +13,15 @@ import { BiRepost } from 'react-icons/bi'
 interface MusicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   music: IMusic
   repostUser?: IUserData
+  editable?: boolean
 }
 
-const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {
+const MusicCard = ({
+  music,
+  repostUser,
+  editable,
+  ...props
+}: MusicCardProps) => {
   const dispatch = useAppDispatch()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
@@ -93,6 +99,7 @@ const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {
           className="musicCard-infoBox-interaction"
           target={music}
           mediaSize={1000}
+          editable={editable}
         />
       </div>
     </S.Container>

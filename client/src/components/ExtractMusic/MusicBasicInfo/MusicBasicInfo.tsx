@@ -6,19 +6,19 @@ import React, {
   useState,
   useImperativeHandle,
 } from 'react'
-import * as S from './EditBasicInfo.style'
-import { IMusicMetadata } from '../EditMusic'
+import * as S from './MusicBasicInfo.style'
 import { useAppSelector } from '@redux/hook'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import { MdOutlineEdit } from 'react-icons/md'
 import { AiFillCamera } from 'react-icons/ai'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
+import { IMusicMetadata } from '../extractMetadata.types'
 
-export interface IEditBasicInfoHandler {
-  getData: () => IEditBasicInfoValue | void
+export interface IMusicBasicInfoHandler {
+  getData: () => IMusicBasicInfoValue | void
 }
 
-export interface IEditBasicInfoValue {
+export interface IMusicBasicInfoValue {
   title: string
   permalink: string
   genre?: string
@@ -28,13 +28,26 @@ export interface IEditBasicInfoValue {
   status: 'PRIVATE' | 'PUBLIC' | string
 }
 
-interface EditBaiscInfoProps {
-  metadata?: IMusicMetadata
-  style?: React.CSSProperties
+export type TypeOnChnageDataKey =
+  | 'title'
+  | 'permalink'
+  | 'genre'
+  | 'description'
+  | 'tags'
+  | 'cover'
+  | 'status'
+
+interface MusicBaiscInfoProps {
+  metadata?: IMusicMetadata | null
+  onChangeData?: (key: TypeOnChnageDataKey, value: any) => void
 }
 
-const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
-  ({ metadata, style }, ref) => {
+interface Props
+  extends MusicBaiscInfoProps,
+    React.HTMLAttributes<HTMLDivElement> {}
+
+const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
+  ({ metadata, onChangeData, ...props }, ref) => {
     const titleRef = useRef<HTMLInputElement>(null)
     const permalinkRef = useRef<HTMLInputElement>(null)
     const genreRef = useRef<HTMLInputElement>(null)
@@ -45,8 +58,11 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
     const userId = useAppSelector((state) => state.user.userData?.id)
 
     const [status, setStatus] = useState(true)
-    const [cover, setCover] = useState<string>('')
-    const [originalCover, setOriginalCover] = useState<File | undefined>()
+    const [cover, setCover] = useState<string | null | undefined>(null)
+    const [originalCover, setOriginalCover] = useState<{
+      file?: File
+      url?: string
+    }>({})
 
     useImperativeHandle(
       ref,
@@ -76,7 +92,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
             tags: tags?.length ? tags : undefined,
             genre,
             description,
-            cover: newCover || originalCover,
+            cover: newCover || originalCover.file,
             status: status ? 'PUBLIC' : 'PRIVATE',
           }
           return data
@@ -94,30 +110,41 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
           const url = getCoverUrlFromMetadata(data, files[0].type)
           setCover(url)
         } else {
-          setCover('')
+          setCover(originalCover.url)
         }
+        onChangeData && onChangeData('cover', files?.item(0))
       },
-      []
+      [onChangeData, originalCover.url]
     )
+
+    const handleResetCover = useCallback(() => {
+      setCover(originalCover.url)
+      if (coverInputRef.current) {
+        coverInputRef.current.files = null
+      }
+      onChangeData && onChangeData('cover', null)
+    }, [onChangeData, originalCover.url])
 
     const handleChangePermalink = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget
-
-        event.currentTarget.value = value
+        const newValue = value
           .trimStart()
           .replaceAll(/[\s]/g, '-')
           .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
+        event.currentTarget.value = newValue
+        onChangeData && onChangeData('permalink', newValue)
       },
-      []
+      [onChangeData]
     )
 
     const handleChangePrivacy = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget
         setStatus(value === 'public' ? true : false)
+        onChangeData && onChangeData('status', value.toUpperCase())
       },
-      []
+      [onChangeData]
     )
 
     const handleClickEditPermal = useCallback(() => {
@@ -130,62 +157,101 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
         const specialRegex = /[!?@#$%^*():;+=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩\s]/g
 
         const { value } = event.currentTarget
-        event.currentTarget.value = value
-          .trim()
-          .replaceAll(specialRegex, '#')
-          .replaceAll(/#+#/g, '#')
-        if (value.length && value[0] !== '#') {
-          event.currentTarget.value = '#' + event.currentTarget.value
-        }
+        const newValue =
+          value.length && value[0] !== '#'
+            ? `#${value}`
+            : value.trim().replaceAll(specialRegex, '#').replaceAll(/#+#/g, '#')
+        event.currentTarget.value = newValue
+        onChangeData && onChangeData('tags', newValue.split('#').splice(1))
       },
-      []
+      [onChangeData]
     )
 
-    useEffect(() => {
-      if (metadata) {
-        // 음악파일을 분석하고 앨범커버가 있으면 등록
-        const { picture, title, genre, comment } = metadata
-        if (picture?.length) {
-          const { data, format } = picture[0]
-          const url = getCoverUrlFromMetadata(data, format)
-          setCover(url)
-
-          const origin = new File(
-            [data],
-            `cover.${format.split('/')[1] || 'jpg'}`,
-            {
-              type: format,
-            }
-          )
-          setOriginalCover(origin)
+    const handleChangeInput = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { id, value } = event.currentTarget
+        if (value && onChangeData) {
+          if (id === 'title' || id === 'genre' || id === 'description') {
+            onChangeData(id, value)
+          }
         }
+      },
+      [onChangeData]
+    )
 
-        if (title && titleRef.current) {
-          titleRef.current.value = title
-          if (permalinkRef.current) {
-            permalinkRef.current.value = title
+    const setValue = useCallback(() => {
+      if (!metadata) {
+        return
+      }
+      // 음악파일을 분석하고 앨범커버가 있으면 등록
+      const {
+        picture,
+        title,
+        genre,
+        comment,
+        tags,
+        status: musicStatus,
+        permalink,
+      } = metadata
+      if (picture?.length) {
+        const { data, format } = picture[0]
+        const url = getCoverUrlFromMetadata(data, format)
+        setCover(url)
+
+        const origin = new File(
+          [data],
+          `cover.${format.split('/')[1] || 'jpg'}`,
+          {
+            type: format,
+          }
+        )
+        setOriginalCover({ file: origin, url })
+      } else {
+        setOriginalCover({})
+      }
+
+      if (title && titleRef.current) {
+        titleRef.current.value = title
+        if (permalinkRef.current) {
+          permalinkRef.current.value =
+            permalink ||
+            title
               .trim()
               .replaceAll(/[\s]/g, '-')
               .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
-          }
         }
-        if (genre?.length && genreRef.current) {
-          genreRef.current.value = genre.join(' ')
-        }
-        if (comment?.length && descriptionRef.current) {
-          descriptionRef.current.value = comment.join()
-        }
+      }
+      if (genre?.length && genreRef.current) {
+        genreRef.current.value = genre.join(' ')
+      }
+      if (comment?.length && descriptionRef.current) {
+        descriptionRef.current.value = comment.join()
+      }
+      if (tags && tagRef.current) {
+        tagRef.current.value = `#${tags.join('#')}`
+      }
+      if (musicStatus) {
+        setStatus(musicStatus === 'PUBLIC' ? true : false)
       }
     }, [metadata])
 
+    useEffect(() => {
+      setValue()
+    }, [setValue])
+
     return (
-      <>
-        <S.EditBasicInfo style={style}>
+      <div {...props}>
+        <S.EditBasicInfo>
           <div className="imageBox">
             <label htmlFor="coverInput">
               <AiFillCamera />
               {'Upload Image'}
             </label>
+            {cover !== originalCover.url && (
+              <button className="btn resetBtn" onClick={handleResetCover}>
+                Reset Cover
+              </button>
+            )}
             <input
               id="coverInput"
               type="file"
@@ -194,7 +260,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
               ref={coverInputRef}
               onChange={handleChangeCover}
             />
-            {cover.length ? (
+            {cover ? (
               <img className="img" src={cover} alt="cover" />
             ) : (
               <EmptyMusicCover className="img" />
@@ -211,6 +277,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 type="text"
                 required
                 placeholder="Title of music"
+                onChange={handleChangeInput}
               />
             </S.EditInputBox>
             <S.EditInputPermalink>
@@ -244,6 +311,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 id="genre"
                 type="text"
                 placeholder="Genre of music"
+                onChange={handleChangeInput}
               />
             </S.EditInputBox>
             <S.EditInputBox>
@@ -267,6 +335,7 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
                 id="description"
                 rows={5}
                 placeholder="Describe your music"
+                onChange={handleChangeInput}
               />
             </S.EditInputBox>
             <S.EditInputPrivacy>
@@ -293,11 +362,11 @@ const EditBasicInfo = forwardRef<IEditBasicInfoHandler, EditBaiscInfoProps>(
             </S.EditInputPrivacy>
           </S.EditBasicInfoForm>
         </S.EditBasicInfo>
-      </>
+      </div>
     )
   }
 )
 
-EditBasicInfo.displayName = 'EditBasicInfo'
+MusicBasicInfo.displayName = 'MusicBasicInfo'
 
-export default EditBasicInfo
+export default MusicBasicInfo

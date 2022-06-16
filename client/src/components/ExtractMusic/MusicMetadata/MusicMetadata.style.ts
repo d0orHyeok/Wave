@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { EditInputBox as InputBox } from '../EditBasicInfo/EditBasicInfo.style'
+import { EditInputBox as InputBox } from '../MusicBasicInfo/MusicBasicInfo.style'
 
 export const Container = styled.form`
   padding: 1rem 0;
@@ -9,6 +9,7 @@ export const Container = styled.form`
 `
 
 export const EditInputBox = styled(InputBox)`
-  width: 250px;
+  width: 50%;
+  min-width: 200px;
   padding: 0 10px;
 `

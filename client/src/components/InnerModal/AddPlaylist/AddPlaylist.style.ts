@@ -4,10 +4,6 @@ import Button, { PrimaryButton } from '@components/Common/Button'
 
 export const Wrapper = styled(InnerModalWrapper)`
   max-width: 500px;
-
-  @media only screen and (max-width: 600px) {
-    width: 80%;
-  }
 `
 
 export const Container = styled(InnerModalContainer)`

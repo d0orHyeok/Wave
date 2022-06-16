@@ -13,9 +13,13 @@ export const InnerModalWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.bgColor};
   box-shadow: 3px 3px 10px 0 ${({ theme }) => theme.colors.bgTextRGBA(0.16)};
 
-  border-radius: 4px;
+  border-radius: 6px;
   max-width: 850px;
   width: 100%;
+
+  @media screen and (max-width: 1000px) {
+    width: 85%;
+  }
 `
 
 export const InnerModalContainer = styled.div`

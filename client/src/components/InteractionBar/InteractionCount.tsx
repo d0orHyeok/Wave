@@ -34,12 +34,16 @@ const StyledUl = styled.ul`
   }
 `
 
-export type VisibleOption = 'plays' | 'likes' | 'reposts' | 'comments'
+type VisibleOption = 'plays' | 'likes' | 'reposts' | 'comments'
 
-interface InteractionCountProps extends React.HTMLAttributes<HTMLUListElement> {
+export interface InteractionCountProps {
   target: IPlaylist | IMusic
   visibleOption?: VisibleOption[]
 }
+
+interface Props
+  extends InteractionCountProps,
+    React.HTMLAttributes<HTMLUListElement> {}
 
 interface OptionState {
   plays: boolean
@@ -48,11 +52,7 @@ interface OptionState {
   comments: boolean
 }
 
-const InteractionCount = ({
-  target,
-  visibleOption,
-  ...props
-}: InteractionCountProps) => {
+const InteractionCount = ({ target, visibleOption, ...props }: Props) => {
   const [option, setOption] = useState<OptionState>({
     plays: true,
     likes: true,
