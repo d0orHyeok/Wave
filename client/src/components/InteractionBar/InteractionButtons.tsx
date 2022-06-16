@@ -73,7 +73,6 @@ export interface InteractionButtonsProps {
   target: TargetType
   setTarget?: React.Dispatch<React.SetStateAction<any>>
   mediaSize?: number | string
-  editable?: boolean
 }
 
 interface Props
@@ -84,7 +83,6 @@ const InteractionButtons = ({
   target,
   setTarget,
   mediaSize,
-  editable,
   ...props
 }: Props) => {
   const dispatch = useAppDispatch()
@@ -294,7 +292,7 @@ const InteractionButtons = ({
           </Modal>
         </>
       )}
-      {editable && (
+      {userData && target.userId === userData.id && (
         <>
           <StyledButton
             title="Edit"
