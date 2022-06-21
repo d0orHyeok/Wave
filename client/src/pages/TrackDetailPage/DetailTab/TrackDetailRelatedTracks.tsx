@@ -44,8 +44,9 @@ const TrackDetailRelatedTracks = ({
     } catch (error: any) {
       console.error(error.response || error)
       setDone(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [done, musicId, page])
 
   useEffect(() => {

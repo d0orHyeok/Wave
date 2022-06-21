@@ -73,8 +73,9 @@ const ProfileReposts = ({ user, ...props }: ProfileRepostsProps) => {
       setItems([])
       console.error(error.response || error)
       setDone(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [done, items, page])
 
   useEffect(() => {

@@ -24,7 +24,6 @@ const StyledDivIcon = styled.div`
 
 interface ProfilePlaylistsProps extends React.HTMLAttributes<HTMLDivElement> {
   userId: string
-  editable?: boolean
 }
 
 const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
@@ -54,8 +53,9 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
     } catch (error: any) {
       console.error(error.response || error)
       setDone(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [userId, done, page])
 
   useEffect(() => {

@@ -97,7 +97,7 @@ const ProfilePage = () => {
               ) : nav === 'tracks' ? (
                 <ProfileTracks userId={profileData.id} editable={editable} />
               ) : nav === 'playlists' ? (
-                <ProfilePlaylists userId={profileData.id} editable={editable} />
+                <ProfilePlaylists userId={profileData.id} />
               ) : nav === 'reposts' ? (
                 <ProfileReposts user={profileData} />
               ) : (

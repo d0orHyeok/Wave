@@ -15,8 +15,12 @@ interface LodaingAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   hide?: boolean
 }
 
-const LoadingArea = ({ loading, ...props }: LodaingAreaProps) => {
-  return <StyledDiv {...props}>{loading ? <LoadingBar /> : <></>}</StyledDiv>
+const LoadingArea = ({ loading, ref, ...props }: LodaingAreaProps) => {
+  return (
+    <div ref={ref}>
+      <StyledDiv {...props}>{loading ? <LoadingBar /> : <></>}</StyledDiv>
+    </div>
+  )
 }
 
 export default LoadingArea
