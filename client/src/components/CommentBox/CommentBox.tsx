@@ -2,7 +2,7 @@ import { useAppSelector } from '@redux/hook'
 import React, { useCallback, useRef } from 'react'
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import styled from 'styled-components'
-import { ICommnet, IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic, IComment } from '@appTypes/types.type.'
 import { createComment } from '@api/commentApi'
 
 const Box = styled.div`
@@ -80,7 +80,7 @@ const CommentBox = ({ music, setMusic, ...props }: CommentBoxProps) => {
       }
       createComment(body)
         .then((res) => {
-          const createdComment: ICommnet = res.data
+          const createdComment: IComment = res.data
           const existComments = music.comments || []
           const newComments = [createdComment, ...existComments]
           setMusic({

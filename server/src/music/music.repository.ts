@@ -158,7 +158,7 @@ export class MusicRepository extends Repository<Music> {
   async findRelatedMusic(id: number, musicPagingDto: PagingDto) {
     const music = await this.findMusicById(id);
 
-    const { title, album, artist } = music.metadata;
+    const { title, album, artist } = music;
     const { skip, take } = musicPagingDto;
 
     try {
@@ -175,7 +175,7 @@ export class MusicRepository extends Repository<Music> {
               });
             }
             if (artist && artist.length) {
-              query = query.orWhere(`music.metadata->>'artist' LIKE :artist`, {
+              query = query.orWhere(`music.artist LIKE :artist`, {
                 artist: `%${artist}%`,
               });
             }

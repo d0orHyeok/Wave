@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import styled from 'styled-components'
 import React, { useCallback } from 'react'
 import { Divider } from '@mui/material'

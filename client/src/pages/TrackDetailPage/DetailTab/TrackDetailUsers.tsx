@@ -1,6 +1,6 @@
 import { numberFormat } from '@api/functions'
 import { FollowTextButton } from '@components/Common/Button'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser } from '@appTypes/types.type.'
 import { useAppSelector } from '@redux/hook'
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -65,7 +65,7 @@ const StyledFollowButton = styled(FollowTextButton)`
 `
 
 interface TrackDetailUsersPorps extends React.HTMLAttributes<HTMLUListElement> {
-  users: IUserData[]
+  users: IUser[]
   isLikes?: boolean
   isReposts?: boolean
 }
@@ -84,7 +84,7 @@ const TrackDetailUsers = ({
   const following =
     useAppSelector((state) => state.user.userData?.following) || []
 
-  const [displayUsers, setDisplayUsers] = useState<IUserData[]>([])
+  const [displayUsers, setDisplayUsers] = useState<IUser[]>([])
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)

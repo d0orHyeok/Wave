@@ -1,15 +1,12 @@
-import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
-  IsNotEmptyObject,
   IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
-  ValidateNested,
 } from 'class-validator';
 import { EntityStatus } from 'src/entities/common.types';
-import { MusicMetadataDto } from './music-metadata.dto';
 
 export class UploadMusicDataDto {
   @IsNotEmpty()
@@ -28,14 +25,9 @@ export class UploadMusicDataDto {
   @IsOptional()
   status: EntityStatus;
 
-  @IsNotEmptyObject()
-  @Type(() => MusicMetadataDto)
-  @ValidateNested()
-  metadata: MusicMetadataDto;
-
   @IsOptional()
-  @IsString()
-  genre?: string;
+  @IsArray()
+  genre?: string[];
 
   @IsOptional()
   @IsString({ each: true })
@@ -44,4 +36,29 @@ export class UploadMusicDataDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  // Music Metadata
+  @IsOptional()
+  @IsString()
+  album?: string;
+
+  @IsOptional()
+  @IsString()
+  artist?: string;
+
+  @IsOptional()
+  @IsString()
+  albumartist?: string;
+
+  @IsOptional()
+  @IsArray()
+  composer?: string[];
+
+  @IsOptional()
+  @IsString()
+  year?: number;
+
+  @IsOptional()
+  @IsArray()
+  lyrics?: string[];
 }

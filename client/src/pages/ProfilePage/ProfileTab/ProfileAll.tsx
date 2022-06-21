@@ -5,8 +5,8 @@ import { PrimaryButton } from '@components/Common/Button'
 import LoadingArea from '@components/Loading/LoadingArea'
 import MusicCard from '@components/MusicCard/MusicCard'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
-import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser, IPlaylist, IMusic } from '@appTypes/types.type.'
+
 import React, { useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { Link } from 'react-router-dom'
@@ -22,7 +22,7 @@ const StyledDiv = styled.div`
 `
 
 interface ProfileAllProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: IUserData
+  user: IUser
   editable?: boolean
 }
 

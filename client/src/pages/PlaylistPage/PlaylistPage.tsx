@@ -5,7 +5,7 @@ import RelatedTarget, {
   RelatedTargetHandler,
 } from '@components/RelatedTarget/RelatedTarget'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
-import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IPlaylist } from '@appTypes/types.type.'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import PlaylistHead from './PlaylistHead/PlaylistHead'

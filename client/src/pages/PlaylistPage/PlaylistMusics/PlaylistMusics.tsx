@@ -1,5 +1,5 @@
 import { numberFormat } from '@api/functions'
-import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IPlaylist } from '@appTypes/types.type.'
 import { EmptyMusicCover } from '@styles/EmptyImage'
 import React from 'react'
 import { FaPlay } from 'react-icons/fa'

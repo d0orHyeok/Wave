@@ -97,9 +97,9 @@ export class MusicController {
 
     const fileBase = `${Date.now()}_${user.id}_`;
 
-    const uploadMusicFile = this.musicService.changeMusicMetadata(
+    const uploadMusicFile = this.musicService.changeMusicFileData(
       music,
-      data.metadata,
+      data,
       cover,
     );
 

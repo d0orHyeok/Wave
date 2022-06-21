@@ -15,7 +15,7 @@ module.exports = {
       '@redux': path.resolve(__dirname, '..', './src/redux'),
       '@routes': path.resolve(__dirname, '..', './src/routes'),
       '@styles': path.resolve(__dirname, '..', './src/styles'),
-      '@types': path.resolve(__dirname, '..', './src/types'),
+      '@appTypes': path.resolve(__dirname, '..', './src/types'),
     },
     extensions: ['.tsx', '.ts', '.js'],
   },

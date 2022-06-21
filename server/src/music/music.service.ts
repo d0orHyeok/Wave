@@ -1,6 +1,6 @@
+import { UploadMusicDataDto } from './dto/upload-music-data.dto';
 import { PagingDto } from '../common/dto/paging.dto';
 import { AuthService } from './../auth/auth.service';
-import { MusicMetadataDto } from './dto/music-metadata.dto';
 import { MusicDataDto } from './dto/music-data.dto';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/entities/user.entity';
@@ -30,21 +30,21 @@ export class MusicService {
     return this.musicRepository.createMusic(createMusicData, user);
   }
 
-  changeMusicMetadata(
+  changeMusicFileData(
     file: Express.Multer.File,
-    metadata: MusicMetadataDto,
+    data: UploadMusicDataDto,
     image?: Express.Multer.File,
   ) {
-    const { description, lyrics } = metadata;
+    const { description, lyrics } = data;
 
     let tags: any = {
-      title: metadata.title,
-      genre: metadata.genre,
-      artist: metadata.artist,
-      album: metadata.album,
-      performerInfo: metadata.albumartist,
-      composer: metadata.composer,
-      year: metadata.year,
+      title: data.title,
+      genre: data.genre,
+      artist: data.artist,
+      album: data.album,
+      performerInfo: data.albumartist,
+      composer: data.composer,
+      year: data.year,
     };
 
     if (image) {

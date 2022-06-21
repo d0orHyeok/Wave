@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React, { useState, useCallback, useEffect } from 'react'
-import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IPlaylist } from '@appTypes/types.type.'
 import {
   EmptyPlaylistImage,
   EmptyPlaylistImageBackground,

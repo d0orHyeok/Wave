@@ -1,6 +1,5 @@
 import { Comment } from 'src/entities/comment.entity';
 import { Playlist } from 'src/entities/playlist.entity';
-import { MusicMetadataDto } from './../music/dto/music-metadata.dto';
 import { User } from 'src/entities/user.entity';
 import {
   BaseEntity,
@@ -21,57 +20,53 @@ export class Music extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // Music Info
   @Column()
   title: string;
-
   @Column()
   permalink: string;
-
   @Column()
   filename: string;
-
   @Column()
   link: string;
-
   @Column('float')
   duration: number;
 
+  // Optional Info
   @Column({ nullable: true })
   cover: string;
-
-  @Column({ nullable: true })
-  album: string;
-
   @Column({ nullable: true })
   description: string;
-
-  @Column({ nullable: true })
-  genre: string;
-
-  @Column('text', { array: true, nullable: true })
+  @Column('text', { nullable: true, array: true })
+  genre: string[];
+  @Column('text', { nullable: true, array: true })
   tags: string[];
 
-  @Column('json')
-  metadata: MusicMetadataDto;
+  // Optional Metadata
+  @Column({ nullable: true })
+  album: string;
+  @Column({ nullable: true })
+  artist: string;
+  @Column({ nullable: true })
+  albumartist: string;
+  @Column({ nullable: true })
+  year: number;
+  @Column('text', { nullable: true, array: true })
+  composer: string[];
+  @Column('text', { nullable: true, array: true })
+  lyrics: string[];
 
+  // Privacy
   @Column({ default: EntityStatus.PUBLIC })
   status: EntityStatus;
 
+  // Play Count
   @Column({ default: 0 })
   count: number;
 
+  // Create User
   @Column({ nullable: true, name: 'userId' })
   userId: string;
-
-  @ManyToMany(() => User, (user) => user.repostMusics)
-  reposts: User[];
-
-  @ManyToMany(() => User, (user) => user.likeMusics)
-  likes: User[];
-
-  @ManyToMany(() => Playlist, (playlist) => playlist.musics)
-  playlists: Playlist[];
-
   @ManyToOne(() => User, (user) => user.musics, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -79,12 +74,18 @@ export class Music extends BaseEntity {
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
+  @ManyToMany(() => User, (user) => user.repostMusics)
+  reposts: User[];
+  @ManyToMany(() => User, (user) => user.likeMusics)
+  likes: User[];
+  @ManyToMany(() => Playlist, (playlist) => playlist.musics)
+  playlists: Playlist[];
   @OneToMany(() => Comment, (comment) => comment.music)
   comments: Comment[];
 
+  // Date
   @CreateDateColumn()
   createdAt: Date;
-
   @UpdateDateColumn()
   updatedAt: Date;
 }

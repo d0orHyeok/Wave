@@ -1,7 +1,5 @@
 import calculateDateAgo from '@api/functions/calculateDateAgo'
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
 import { setCurrentMusic, togglePlay } from '@redux/features/player/playerSlice'
-import { IUserData } from '@redux/features/user/userSlice.interface'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { EmptyMusicCover } from '@styles/EmptyImage'
 import React, { useCallback } from 'react'
@@ -9,10 +7,11 @@ import { FaPause, FaPlay } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import * as S from './MusicCard.style'
 import { BiRepost } from 'react-icons/bi'
+import { IMusic, IUser } from '@appTypes/types.type.'
 
 interface MusicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   music: IMusic
-  repostUser?: IUserData
+  repostUser?: IUser
 }
 
 const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {

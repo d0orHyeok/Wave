@@ -1,4 +1,4 @@
-import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IMusic, IPlaylist } from '@appTypes/types.type.'
 import React, { useState, useCallback, useEffect } from 'react'
 import { StyledDivider } from '../common.style'
 import * as S from './AddPlaylist.style'

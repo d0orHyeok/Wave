@@ -16,18 +16,15 @@ export class Comment extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // Comment Data
   @Column()
   text: string;
-
   @Column({ nullable: true })
   commentedAt: number;
 
+  // Create User
   @Column({ nullable: true, name: 'userId' })
   userId: string;
-
-  @Column({ nullable: true, name: 'musicId' })
-  musicId: number;
-
   @ManyToOne(() => User, (user) => user.comments, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -35,6 +32,9 @@ export class Comment extends BaseEntity {
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
+  // Commented Music
+  @Column({ nullable: true, name: 'musicId' })
+  musicId: number;
   @ManyToOne(() => Music, (music) => music.comments, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -42,9 +42,9 @@ export class Comment extends BaseEntity {
   @JoinColumn({ name: 'musicId', referencedColumnName: 'id' })
   music: Music;
 
+  // Date
   @CreateDateColumn()
   createdAt: Date;
-
   @UpdateDateColumn()
   updatedAt: Date;
 }

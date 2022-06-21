@@ -1,5 +1,6 @@
 import { selectUser } from '@redux/features/user/userSlice'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser } from '@appTypes/types.type.'
+
 import { useAppSelector } from '@redux/hook'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -24,7 +25,7 @@ const ProfilePage = () => {
   const user = useAppSelector(selectUser)
   const [isLoading, setIsLoading] = useState(true)
   const [editable, setEditable] = useState(false)
-  const [profileData, setProfileData] = useState<IUserData>()
+  const [profileData, setProfileData] = useState<IUser>()
 
   const getProfileData = useCallback(async () => {
     if (!userId) {

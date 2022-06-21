@@ -1,6 +1,6 @@
 import { caculateDateAgo, getGradientFromImageUrl } from '@api/functions'
 import { EmptyMusicCover, EmptyMusicCoverBackgorund } from '@styles/EmptyImage'
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FaPlay, FaPause } from 'react-icons/fa'

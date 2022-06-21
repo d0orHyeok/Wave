@@ -1,6 +1,7 @@
 import { RootState } from '@redux/store'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { IMusic, IPlayerState, IProgressPayload } from './palyerSlice.interface'
+import { IPlayerState, IProgressPayload } from './palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 
 // 랜덤 셔플 알고리즘
 const shuffle = (array: number[]) => {

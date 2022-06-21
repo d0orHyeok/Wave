@@ -8,6 +8,7 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { EntityStatus } from './common.types';
@@ -19,31 +20,22 @@ export class Playlist {
 
   @Column()
   name: string;
-
   @Column()
   permalink: string;
-
-  @Column({ nullable: true })
-  image: string;
-
-  @Column({ nullable: true })
-  description: string;
-
-  @Column('text', { array: true, nullable: true })
-  tags: string[];
-
   @Column({ default: EntityStatus.PUBLIC })
   status: EntityStatus;
 
+  // Optional Info
+  @Column({ nullable: true })
+  image: string;
+  @Column({ nullable: true })
+  description: string;
+  @Column('text', { array: true, nullable: true })
+  tags: string[];
+
+  // Create User
   @Column({ nullable: true, name: 'userId' })
   userId: string;
-
-  @ManyToMany(() => User, (user) => user.repostPlaylists)
-  reposts: User[];
-
-  @ManyToMany(() => User, (user) => user.likePlaylists)
-  likes: User[];
-
   @ManyToOne(() => User, (user) => user.playlists, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -51,6 +43,12 @@ export class Playlist {
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User;
 
+  @ManyToMany(() => User, (user) => user.repostPlaylists)
+  reposts: User[];
+  @ManyToMany(() => User, (user) => user.likePlaylists)
+  likes: User[];
+
+  // Music in Playlist
   @ManyToMany(() => Music, (music) => music.playlists, {
     eager: true,
     cascade: true,
@@ -61,4 +59,6 @@ export class Playlist {
 
   @CreateDateColumn()
   createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

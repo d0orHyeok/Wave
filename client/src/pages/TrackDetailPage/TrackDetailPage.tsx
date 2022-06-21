@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'

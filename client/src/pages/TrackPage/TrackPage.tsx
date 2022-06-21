@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'

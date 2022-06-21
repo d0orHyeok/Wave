@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser } from '@appTypes/types.type.'
+
 import PopoverContent from './PopoverContent'
 
 interface PopoverDivProps {
@@ -54,7 +55,7 @@ const PopoverDiv = styled.div<PopoverDivProps>`
 `
 
 interface PopoverUserProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: IUserData
+  user: IUser
 }
 
 const PopoverUser = ({ user, ...props }: PopoverUserProps) => {

@@ -1,5 +1,5 @@
 import { Divider } from '@mui/material'
-import { IMusic, IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IMusic, IPlaylist } from '@appTypes/types.type.'
 import {
   EmptyMusicCover,
   EmptyPlaylistImage,

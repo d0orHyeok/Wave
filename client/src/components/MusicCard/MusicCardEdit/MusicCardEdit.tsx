@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import React from 'react'
 
 interface MusicCardEditProps {

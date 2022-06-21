@@ -1,4 +1,4 @@
-import { IPlaylist } from './../player/palyerSlice.interface'
+import { IPlaylist } from '@appTypes/types.type.'
 import { RootState } from '@redux/store'
 import { createSlice } from '@reduxjs/toolkit'
 import { interceptWithAccessToken } from '@api/Axios'

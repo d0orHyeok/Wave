@@ -1,6 +1,6 @@
 import { findPlaylistsContainsMusic } from '@api/playlistApi'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
-import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
+import { IPlaylist } from '@appTypes/types.type.'
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useInView } from 'react-intersection-observer'

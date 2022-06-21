@@ -1,5 +1,6 @@
 import { numberFormat } from '@api/functions'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser } from '@appTypes/types.type.'
+
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import React, { useCallback } from 'react'
 import { Link } from 'react-router-dom'
@@ -70,7 +71,7 @@ const StyledFollowButton = styled(FollowTextButton)`
 `
 
 interface UserSmallCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  user: IUserData
+  user: IUser
 }
 
 const UserSmallCard = ({ user, ...props }: UserSmallCardProps) => {

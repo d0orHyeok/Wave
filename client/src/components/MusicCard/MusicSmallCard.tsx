@@ -1,4 +1,4 @@
-import { IMusic } from '@redux/features/player/palyerSlice.interface'
+import { IMusic } from '@appTypes/types.type.'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as S from './MusicSmallCard.style'

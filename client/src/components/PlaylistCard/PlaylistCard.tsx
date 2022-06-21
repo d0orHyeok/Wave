@@ -1,5 +1,4 @@
 import * as S from './PlaylistCard.style'
-import { IPlaylist } from '@redux/features/player/palyerSlice.interface'
 import { EmptyPlaylistImage, EmptyMusicCover } from '@styles/EmptyImage'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -13,13 +12,13 @@ import {
   togglePlay,
 } from '@redux/features/player/playerSlice'
 import calculateDateAgo from '@api/functions/calculateDateAgo'
-import { IUserData } from '@redux/features/user/userSlice.interface'
 import { BiRepost } from 'react-icons/bi'
+import { IUser, IPlaylist } from '@appTypes/types.type.'
 
 interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
   setPlaylist?: any
-  repostUser?: IUserData
+  repostUser?: IUser
 }
 
 const PlaylistCard = ({

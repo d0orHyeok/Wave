@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import React, { useCallback } from 'react'
-import { IUserData } from '@redux/features/user/userSlice.interface'
 import { Link } from 'react-router-dom'
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import { IoMdPeople } from 'react-icons/io'
@@ -9,6 +8,7 @@ import { numberFormat } from '@api/functions'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { useLoginOpen } from '@redux/context/loginProvider'
 import { userToggleFollow } from '@redux/thunks/userThunks'
+import { IUser } from '@appTypes/types.type.'
 
 const StyledDiv = styled.div`
   width: 160px;
@@ -59,7 +59,7 @@ const StyledFollowBtn = styled(FollowTextButton)`
 `
 
 interface PopoverContentProps {
-  user: IUserData
+  user: IUser
 }
 
 const PopoverContent = ({ user }: PopoverContentProps) => {

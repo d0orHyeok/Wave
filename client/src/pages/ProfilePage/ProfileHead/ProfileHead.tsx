@@ -2,14 +2,15 @@ import {
   EmptyProfileImage,
   EmptyProfileImageBackground,
 } from '@styles/EmptyImage'
-import { IUserData } from '@redux/features/user/userSlice.interface'
+import { IUser } from '@appTypes/types.type.'
+
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getGradientFromImageUrl } from '@api/functions'
 import * as AnyHeadStyle from '@styles/AnyHead.style'
 
 interface IProfileHeadProps {
-  data: IUserData
+  data: IUser
 }
 
 const Container = styled(AnyHeadStyle.AnyHeadWrapper)<{ background: string }>`
