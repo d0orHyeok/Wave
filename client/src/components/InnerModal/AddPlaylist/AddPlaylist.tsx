@@ -12,6 +12,7 @@ import {
   userCreatePlaylist,
   userDeleteMusicsFromPlaylist,
 } from '@redux/thunks/playlistThunks'
+import { useAlert } from '@redux/context/alertProvider'
 
 interface AddPlaylistProps {
   onClose: (any?: any) => any
@@ -35,9 +36,12 @@ const AddPlaylist = ({
   onRemoveFail,
 }: AddPlaylistProps) => {
   const dispatch = useAppDispatch()
+  const openAlert = useAlert()
 
-  const playlists =
-    useAppSelector((state) => state.user.userData?.playlists) || []
+  const playlists = useAppSelector((state) => {
+    return state.user.userData?.playlists || []
+  })
+
   const [navIndex, setNavIndex] = useState(0)
   //  플레이 리스트 생성 정보
   const [newPlaylist, setNewPlaylist] = useState({
@@ -46,6 +50,10 @@ const AddPlaylist = ({
   })
   const [filter, setFilter] = useState('') // 플레이리스트 검색 필터
   const [musics, setMusics] = useState<IMusic[]>([]) // 플레이리스트에 추가할 음악
+  const [navItems, setNavItems] = useState([
+    'Add to playlist',
+    'Create playlist',
+  ])
 
   const handleClickPrivacy = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,11 +88,15 @@ const AddPlaylist = ({
 
     dispatch(userCreatePlaylist(body)).then((value) => {
       if (value.type.indexOf('fulfilled') !== -1) {
-        if (onCreateSuccess) {
-          const createPlaylist: IPlaylist = value.payload
-          onCreateSuccess(createPlaylist)
-        }
+        const createPlaylist: IPlaylist = value.payload
+        openAlert(`Create playlist: ${createPlaylist.name}`, {
+          severity: 'success',
+        })
+        onCreateSuccess && onCreateSuccess(createPlaylist)
       } else {
+        openAlert(`Fail to Create playlist`, {
+          severity: 'error',
+        })
         onCreateFail && onCreateFail()
       }
     })
@@ -92,6 +104,7 @@ const AddPlaylist = ({
     setNewPlaylist({ title: '', privacy: 'PUBLIC' })
     onClose()
   }, [
+    openAlert,
     dispatch,
     musics,
     newPlaylist.privacy,
@@ -118,14 +131,27 @@ const AddPlaylist = ({
         dispatch(userAddMusicsToPlaylist(params)).then((value) => {
           if (value.type.indexOf('fulfilled') !== -1) {
             const updatePlaylist: IPlaylist = value.payload
+            openAlert(
+              `${
+                musics.length > 1
+                  ? `Add ${musics.length} tracks`
+                  : `Add track: ${musics[0].title}`
+              }`,
+              {
+                severity: 'success',
+              }
+            )
             onAddSuccess && onAddSuccess(updatePlaylist)
           } else {
+            openAlert(`Fail to add track`, {
+              severity: 'error',
+            })
             onAddFail && onAddFail()
           }
         })
       }
     },
-    [dispatch, onAddFail, onAddSuccess]
+    [openAlert, dispatch, onAddFail, onAddSuccess]
   )
 
   const deleteMusicsFromPlaylist = useCallback(
@@ -135,15 +161,39 @@ const AddPlaylist = ({
         const params = { playlistId, musicIds: musics.map((music) => music.id) }
         dispatch(userDeleteMusicsFromPlaylist(params)).then((value) => {
           if (value.type.indexOf('fulfilled') !== -1) {
+            openAlert(
+              `${
+                musics.length > 1
+                  ? `Remove ${musics.length} tracks`
+                  : `Remove track: ${musics[0].title}`
+              }`,
+              {
+                severity: 'success',
+              }
+            )
             onRemoveSuccess && onRemoveSuccess(Number(playlistId))
           } else {
+            openAlert(`Fail to remove track in playlist`, {
+              severity: 'error',
+            })
             onRemoveFail && onRemoveFail()
           }
         })
       }
     },
-    [dispatch, musics, onRemoveFail, onRemoveSuccess]
+    [openAlert, dispatch, musics, onRemoveFail, onRemoveSuccess]
   )
+
+  const handleSetNav = useCallback(() => {
+    !playlists.length
+      ? setNavItems(['Create playlist'])
+      : setNavItems(['Add to playlist', 'Create playlist'])
+    setNavIndex(0)
+  }, [playlists])
+
+  useEffect(() => {
+    handleSetNav()
+  }, [handleSetNav])
 
   useEffect(() => {
     setMusics(addMusics || [])
@@ -153,15 +203,18 @@ const AddPlaylist = ({
     <S.Wrapper>
       <S.Container>
         <S.TitleUllist className="title">
-          <S.TitleItem select={navIndex === 0} onClick={() => setNavIndex(0)}>
-            Add to playlist
-          </S.TitleItem>
-          <S.TitleItem select={navIndex === 1} onClick={() => setNavIndex(1)}>
-            Create playlist
-          </S.TitleItem>
+          {navItems.map((nav, index) => (
+            <S.TitleItem
+              key={index}
+              select={navIndex === index}
+              onClick={() => setNavIndex(index)}
+            >
+              {nav}
+            </S.TitleItem>
+          ))}
         </S.TitleUllist>
         <StyledDivider />
-        {navIndex === 0 ? (
+        {navItems[navIndex] === 'Add to playlist' ? (
           // Add Music to Playlist
           <S.AddContent>
             <S.TextInput
