@@ -1,7 +1,7 @@
 import Button, { PrimaryButton } from '@components/Common/Button'
 import EmptyProfileImage from '@styles/EmptyImage/EmptyProfileImage.style'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { BsFillCameraFill } from 'react-icons/bs'
 import {
@@ -232,7 +232,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!userData) {
       onClose && onClose()
     } else {
@@ -241,7 +241,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
     }
   }, [onClose, userData])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const defaultDesc = userData?.description || ''
     if (
       nickname.trim() === userData?.nickname &&

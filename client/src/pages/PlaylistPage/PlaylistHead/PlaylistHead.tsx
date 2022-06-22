@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { IPlaylist } from '@appTypes/types.type.'
 import {
   EmptyPlaylistImage,
@@ -147,7 +147,7 @@ const PlaylistHead = ({ playlist }: PlaylistHeadProps) => {
     }
   }, [playlist.image])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     changeBackground()
   }, [changeBackground])
 

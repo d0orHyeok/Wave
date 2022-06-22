@@ -1,7 +1,7 @@
 import { caculateDateAgo, getGradientFromImageUrl } from '@api/functions'
 import { EmptyMusicCover, EmptyMusicCoverBackgorund } from '@styles/EmptyImage'
 import { IMusic } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FaPlay, FaPause } from 'react-icons/fa'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
@@ -128,7 +128,7 @@ const TrackHead = ({ music }: TrackHeadProps) => {
     [currentMusic, dispatch, music]
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     changeBackground()
   }, [changeBackground])
 

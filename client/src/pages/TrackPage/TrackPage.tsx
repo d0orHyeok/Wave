@@ -1,5 +1,11 @@
 import { IMusic } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import TrackHead from './TrackHead/TrackHead'
 import * as PageStyle from '@styles/TargetPageStyle/TargetPage.style'
@@ -13,7 +19,7 @@ import RelatedTarget, {
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import TrackComments from './TrackComments/TrackComments'
 import useInterval from '@api/Hooks/userInterval'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const TrackPage = () => {
   const { userId, permalink } = useParams()
@@ -62,15 +68,15 @@ const TrackPage = () => {
   // 10분에 한번씩 음악정보를 다시 가져온다
   useInterval(reloadMusicData, 1000 * 60 * 10)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getMusicData()
   }, [getMusicData])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getRelatedMusicsData()
   }, [getRelatedMusicsData])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       relatedMusics.length ||
       music?.playlistsCount ||

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import * as S from './SearchPage.style'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const SearchPage = () => {
   const location = useLocation()

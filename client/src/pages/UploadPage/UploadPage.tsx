@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import * as S from './UploadPage.style'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import UploadMusic from './UploadMusic'
 
 const UploadPage = () => {

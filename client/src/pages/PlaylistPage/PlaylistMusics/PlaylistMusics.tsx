@@ -90,7 +90,7 @@ const PlaylistMusics = ({ playlist }: PlaylistMusicsProps) => {
                 </Link>
               </div>
               <div className="musicItem-info">
-                <div className="index">{index}</div>
+                <div className="index">{index + 1}</div>
                 <div className="uploader">
                   <Link to={`/profile/${music.userId}`}>
                     {music.user.nickname || music.userId}

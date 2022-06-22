@@ -6,9 +6,7 @@ import LoadingArea from '@components/Loading/LoadingArea'
 import MusicCard from '@components/MusicCard/MusicCard'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { IUser, IPlaylist, IMusic } from '@appTypes/types.type.'
-
-import React, { useCallback, useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import * as CommonStyle from './common.style'
@@ -33,10 +31,6 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
     ...user.repostMusics,
     ...user.repostPlaylists,
   ])
-
-  const useInViewParam = useInView()
-  const { inView, ref } = useInViewParam
-
   const [displayItems, setDisplayItems] = useState<(IMusic | IPlaylist)[]>([])
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(0)
@@ -67,22 +61,25 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
       setDisplayItems((prevState) => [...prevState, ...array])
     } catch (error: any) {
       setItems([])
-      console.error(error.response || error)
       setDone(true)
+      console.error(error.response || error)
     } finally {
       setLoading(false)
     }
   }, [done, items, page])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getItems()
   }, [getItems])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return (
     <>
@@ -119,7 +116,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
               )
             }
           })}
-          <LoadingArea ref={ref} loading={loading} />
+          <LoadingArea loading={loading} onInView={handleOnView} />
         </StyledDiv>
       ) : (
         <CommonStyle.Empty>

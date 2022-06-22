@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import LoadingBar from './LoadingBar'
+import { InView } from 'react-intersection-observer'
 
 const StyledDiv = styled.div<{ hide?: boolean }>`
   display: ${({ hide }) => (hide ? 'none' : 'flex')};
@@ -11,15 +12,15 @@ const StyledDiv = styled.div<{ hide?: boolean }>`
 
 interface LodaingAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   loading: boolean
-  ref: (node?: Element | null) => void
   hide?: boolean
+  onInView?: (inView: boolean) => void
 }
 
-const LoadingArea = ({ loading, ref, ...props }: LodaingAreaProps) => {
+const LoadingArea = ({ loading, onInView, ...props }: LodaingAreaProps) => {
   return (
-    <div ref={ref}>
+    <InView as="div" onChange={onInView}>
       <StyledDiv {...props}>{loading ? <LoadingBar /> : <></>}</StyledDiv>
-    </div>
+    </InView>
   )
 }
 

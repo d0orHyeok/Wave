@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAppTheme } from '@redux/context/appThemeProvider'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const SettingsPage = () => {
   const [ThemeMode, toggleTheme] = useAppTheme()

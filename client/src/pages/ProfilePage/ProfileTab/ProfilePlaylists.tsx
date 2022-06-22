@@ -1,7 +1,6 @@
 import { IPlaylist } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useInView } from 'react-intersection-observer'
 import * as CommonStyle from './common.style'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { AiOutlineMenu } from 'react-icons/ai'
@@ -27,8 +26,6 @@ interface ProfilePlaylistsProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
-  const { ref, inView } = useInView()
-
   const [playlists, setPlaylists] = useState<IPlaylist[]>([])
   const [page, setPage] = useState(0)
   const [done, setDone] = useState(false)
@@ -58,15 +55,18 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
     }
   }, [userId, done, page])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getRelatedMusics()
   }, [getRelatedMusics])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return (
     <>
@@ -75,7 +75,7 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
           {playlists.map((playlist, index) => (
             <StyledPlaylistCard key={index} playlist={playlist} />
           ))}
-          <LoadingArea ref={ref} loading={loading} />
+          <LoadingArea loading={loading} onInView={handleOnView} />
         </div>
       ) : (
         <CommonStyle.Empty>

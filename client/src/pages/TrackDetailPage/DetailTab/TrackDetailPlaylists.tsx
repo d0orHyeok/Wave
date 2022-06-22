@@ -1,9 +1,8 @@
 import { findPlaylistsContainsMusic } from '@api/playlistApi'
 import PlaylistCard from '@components/PlaylistCard/PlaylistCard'
 import { IPlaylist } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useInView } from 'react-intersection-observer'
 import NoItem from './NoItem.style'
 import LoadingArea from '@components/Loading/LoadingArea'
 
@@ -20,8 +19,6 @@ const TrackDetailPlaylists = ({
   musicId,
   ...props
 }: TrackDetailPlaylistsProps) => {
-  const { ref, inView } = useInView()
-
   const [playlists, setPlaylists] = useState<IPlaylist[]>([])
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -53,15 +50,18 @@ const TrackDetailPlaylists = ({
     }
   }, [done, musicId, page])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getInPlaylsitItems()
   }, [getInPlaylsitItems])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return (
     <>
@@ -72,7 +72,11 @@ const TrackDetailPlaylists = ({
               <StyledPlaylistCard key={index} playlist={playlist} />
             ))}
 
-            <LoadingArea ref={ref} loading={loading} hide={done} />
+            <LoadingArea
+              loading={loading}
+              hide={done}
+              onInView={handleOnView}
+            />
           </>
         ) : (
           <NoItem>

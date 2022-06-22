@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useLayoutEffect } from 'react'
+import { useAppDispatch } from '@redux/hook'
+import { userAuth } from '@redux/thunks/userThunks'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '@redux/hook'
-import { selectUser } from '@redux/features/user/userSlice'
 
 const withUser = <P extends object>(
   SpecificComponent: React.ComponentType<P>,
   option: boolean | null
 ) => {
   function AuthenticationCheck(props: P) {
-    const user = useAppSelector(selectUser)
+    const dispatch = useAppDispatch()
     const navigate = useNavigate()
 
-    useEffect(() => {
-      if (user.isLogin && user.userData) {
+    const authCheck = useCallback(async () => {
+      if (!dispatch || !navigate) {
+        return
+      }
+      const { type } = await dispatch(userAuth())
+      const isLogin = type.indexOf('fulfilled') !== -1
+
+      if (isLogin) {
         if (option === false) {
           navigate('/')
         }
@@ -21,8 +27,11 @@ const withUser = <P extends object>(
           navigate('/')
         }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [dispatch, navigate])
+
+    useLayoutEffect(() => {
+      authCheck()
+    }, [authCheck])
 
     return <SpecificComponent {...props} />
   }

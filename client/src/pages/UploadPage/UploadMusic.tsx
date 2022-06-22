@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react'
+import React, { useCallback, useState, useRef, useLayoutEffect } from 'react'
 import * as S from './UploadMusic.style'
 import * as mmb from 'music-metadata-browser'
 import UploadHead from '@pages/UploadPage/UploadHead'
@@ -11,7 +11,7 @@ import MusicMetadata, {
 import { useAlert } from '@redux/context/alertProvider'
 import { useNavigate } from 'react-router-dom'
 import { uploadMusic } from '@api/musicApi'
-import { IMusicMetadata } from '@components/ExtractMusic/extractMetadata.types'
+import { IExtractMetadata } from '@components/ExtractMusic/extractMetadata.types'
 import ExtractMusicNav from '@components/ExtractMusic/ExtractMusicNav/ExtractMusicNav'
 
 interface UploadMusicProps {
@@ -29,7 +29,7 @@ const UploadMusic = ({ files, resetFiles }: UploadMusicProps) => {
   const editMetadataRef = useRef<IMusicMetadataHandler>(null)
 
   const [editNavIndex, setEditNavIndex] = useState(0)
-  const [musicMetadata, setMusicMetadata] = useState<IMusicMetadata>()
+  const [musicMetadata, setMusicMetadata] = useState<IExtractMetadata>()
 
   const uploadFile = () => {
     if (!files || !musicMetadata) {
@@ -104,26 +104,18 @@ const UploadMusic = ({ files, resetFiles }: UploadMusicProps) => {
         ...md.common,
         duration: md.format.duration,
       }
-      setMusicMetadata(newMetadata)
+
+      setMusicMetadata(
+        !newMetadata.title
+          ? { ...newMetadata, title: files[0].name }
+          : newMetadata
+      )
     } catch (error) {
       console.error('Error to get metadata', error)
     }
   }, [files])
 
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      // 표준에 따라 기본 동작 방지
-      event.preventDefault()
-      // Chrome에서는 returnValue 설정이 필요함
-      event.returnValue = ''
-    }
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-    }
-  }, [])
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     extractMetadata()
   }, [extractMetadata])
 

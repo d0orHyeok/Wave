@@ -1,6 +1,6 @@
 import { numberFormat } from '@api/functions'
 import { IMusic, IPlaylist } from '@appTypes/types.type.'
-import React, { useEffect, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { FaPlay, FaComment } from 'react-icons/fa'
 import { GoHeart } from 'react-icons/go'
 import { BiRepost } from 'react-icons/bi'
@@ -60,7 +60,7 @@ const InteractionCount = ({ target, visibleOption, ...props }: Props) => {
     comments: true,
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (visibleOption) {
       const initalOption = {
         plays: false,

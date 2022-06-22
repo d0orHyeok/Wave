@@ -1,5 +1,5 @@
 import { IMusic, IPlaylist } from '@appTypes/types.type.'
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useLayoutEffect } from 'react'
 import { StyledDivider } from '../common.style'
 import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
@@ -191,11 +191,11 @@ const AddPlaylist = ({
     setNavIndex(0)
   }, [playlists])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     handleSetNav()
   }, [handleSetNav])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setMusics(addMusics || [])
   }, [addMusics])
 

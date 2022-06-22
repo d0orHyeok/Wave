@@ -1,8 +1,7 @@
 import { findRelatedMusics } from '@api/musicApi'
 import { IMusic } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useInView } from 'react-intersection-observer'
 import NoItem from './NoItem.style'
 import MusicCard from '@components/MusicCard/MusicCard'
 import LoadingArea from '@components/Loading/LoadingArea'
@@ -20,8 +19,6 @@ const TrackDetailRelatedTracks = ({
   musicId,
   ...props
 }: TrackDetailRelatedTracksProps) => {
-  const { ref, inView } = useInView()
-
   const [musics, setMusics] = useState<IMusic[]>([])
   const [page, setPage] = useState(0)
   const [done, setDone] = useState(false)
@@ -49,15 +46,18 @@ const TrackDetailRelatedTracks = ({
     }
   }, [done, musicId, page])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getRelatedMusics()
   }, [getRelatedMusics])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return musics.length ? (
     <>
@@ -65,7 +65,7 @@ const TrackDetailRelatedTracks = ({
         {musics.map((music, index) => (
           <StyledMusicCard key={index} music={music} />
         ))}
-        <LoadingArea ref={ref} loading={loading} hide={done} />
+        <LoadingArea loading={loading} hide={done} onInView={handleOnView} />
       </div>
     </>
   ) : (

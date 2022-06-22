@@ -3,8 +3,7 @@ import {
   EmptyProfileImageBackground,
 } from '@styles/EmptyImage'
 import { IUser } from '@appTypes/types.type.'
-
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getGradientFromImageUrl } from '@api/functions'
 import * as AnyHeadStyle from '@styles/AnyHead.style'
@@ -47,7 +46,7 @@ const ProfileHead = ({ data }: IProfileHeadProps) => {
     }
   }, [data.profileImage])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     changeBackground()
   }, [changeBackground])
 

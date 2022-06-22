@@ -1,7 +1,7 @@
 import { IMusic } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import NotFoundPage from '@pages/NotFoundPage'
 import styled from 'styled-components'
 import { EmptyMusicCover } from '@styles/EmptyImage'
@@ -103,7 +103,7 @@ const TrackDetailPage = () => {
     }
   }, [permalink, title, userId])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (detail === 'likes' || detail === 'reposts') {
       setTitle(`See all ${detail} of `)
       detail === 'likes' ? setNavIndex(0) : setNavIndex(1)
@@ -118,7 +118,7 @@ const TrackDetailPage = () => {
     }
   }, [detail])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getMusicData()
   }, [getMusicData])
 

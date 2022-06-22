@@ -3,7 +3,7 @@ import * as S from './HomePage.style'
 import React, { useEffect, useState } from 'react'
 import MusicSmallCard from '@components/MusicCard/MusicSmallCard'
 import { getAllMusic } from '@api/musicApi'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 // trending, recent_play, new, hot_playlist
 

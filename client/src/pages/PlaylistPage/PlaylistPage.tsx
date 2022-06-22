@@ -6,12 +6,18 @@ import RelatedTarget, {
 } from '@components/RelatedTarget/RelatedTarget'
 import UserSmallCard from '@components/UserCard/UserSmallCard'
 import { IPlaylist } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import PlaylistHead from './PlaylistHead/PlaylistHead'
 import * as PageStyle from '@styles/TargetPageStyle/TargetPage.style'
 import PlaylistMusics from './PlaylistMusics/PlaylistMusics'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const PlaylistPage = () => {
   const { userId, permalink } = useParams()
@@ -38,11 +44,11 @@ const PlaylistPage = () => {
     }
   }, [navigate, permalink, userId])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getPlaylistDataFromServer()
   }, [getPlaylistDataFromServer])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       playlist?.likesCount ||
       playlist?.repostsCount ||

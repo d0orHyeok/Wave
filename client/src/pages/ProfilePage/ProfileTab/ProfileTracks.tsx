@@ -1,6 +1,5 @@
 import { IMusic } from '@appTypes/types.type.'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useInView } from 'react-intersection-observer'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { getUserMusics } from '@api/musicApi'
 import * as CommonStyle from './common.style'
 import { Link } from 'react-router-dom'
@@ -14,8 +13,6 @@ interface ProfileTracksProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
-  const { ref, inView } = useInView()
-
   const [musics, setMusics] = useState<IMusic[]>([])
   const [page, setPage] = useState(0)
   const [done, setDone] = useState(false)
@@ -45,15 +42,18 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
     }
   }, [userId, done, page])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getRelatedMusics()
   }, [getRelatedMusics])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return (
     <>
@@ -62,7 +62,7 @@ const ProfileTracks = ({ userId, editable, ...props }: ProfileTracksProps) => {
           {musics.map((music, index) => (
             <MusicCard key={index} music={music} />
           ))}
-          <LoadingArea ref={ref} loading={loading} />
+          <LoadingArea loading={loading} onInView={handleOnView} />
         </div>
       ) : (
         <CommonStyle.Empty>

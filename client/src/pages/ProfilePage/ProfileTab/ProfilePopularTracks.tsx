@@ -2,8 +2,7 @@ import { getPopularMusicsOfUser } from '@api/musicApi'
 import { PrimaryButton } from '@components/Common/Button'
 import MusicCard from '@components/MusicCard/MusicCard'
 import { IUser, IMusic } from '@appTypes/types.type.'
-
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import * as CommonStyle from './common.style'
 
@@ -33,7 +32,7 @@ const ProfilePopularTracks = ({
     }
   }, [user?.id])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getPopularMusics()
   }, [getPopularMusics])
 

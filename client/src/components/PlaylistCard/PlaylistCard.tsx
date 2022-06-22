@@ -150,7 +150,9 @@ const PlaylistCard = ({
                     )}
                   </Link>
                 </S.MusicImageBox>
-                <div className="musicItem-info musicItem-index">{index}</div>
+                <div className="musicItem-info musicItem-index">
+                  {index + 1}
+                </div>
                 <div className="musicItem-info musicItem-uploader">
                   <Link to={`/profile/${music.userId}`}>
                     {music.user.nickname || music.user.username}

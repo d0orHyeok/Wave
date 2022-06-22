@@ -1,16 +1,14 @@
-import { selectUser } from '@redux/features/user/userSlice'
 import { IUser } from '@appTypes/types.type.'
-
 import { useAppSelector } from '@redux/hook'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import * as S from './ProfilePage.style'
 import CanNotFind from '../../components/CanNotFind/CanNotFind'
 import Loading from '@components/Loading/Loading'
 import ProfileHead from './ProfileHead/ProfileHead'
 import ProfileNav from './ProfileNav/ProfileNav'
 import { getUserById } from '@api/userApi'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import ProfileAll from './ProfileTab/ProfileAll'
 import ProfilePopularTracks from './ProfileTab/ProfilePopularTracks'
 import ProfileTracks from './ProfileTab/ProfileTracks'
@@ -19,54 +17,34 @@ import ProfileReposts from './ProfileTab/ProfileReposts'
 
 const ProfilePage = () => {
   const { userId, nav } = useParams()
-  const location = useLocation()
-  const navigate = useNavigate()
 
-  const user = useAppSelector(selectUser)
+  const myId = useAppSelector((state) => state.user.userData?.id)
   const [isLoading, setIsLoading] = useState(true)
   const [editable, setEditable] = useState(false)
   const [profileData, setProfileData] = useState<IUser>()
 
   const getProfileData = useCallback(async () => {
-    if (!userId) {
-      setIsLoading(false)
-      setProfileData(undefined)
-      return
-    }
-
     setIsLoading(true)
-    if (userId === user.userData?.id) {
-      setEditable(true)
-      setProfileData(user.userData)
-    } else {
-      try {
-        const response = await getUserById(userId)
-        setProfileData(response.data)
-      } catch (error: any) {
-        console.error(error.response || error)
-        setProfileData(undefined)
-      }
-      setEditable(false)
+    try {
+      const response = await getUserById(
+        userId === 'you' && myId ? myId : userId || 'fail'
+      )
+      setProfileData(response.data)
+    } catch (error: any) {
+      console.error(error.response || error)
+      setProfileData(undefined)
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
-  }, [user.userData, userId])
+  }, [userId, myId])
+
+  useLayoutEffect(() => {
+    getProfileData()
+  }, [getProfileData])
 
   useEffect(() => {
-    if (!userId) {
-      setIsLoading(false)
-      return
-    }
-
-    if (location.pathname === '/profile') {
-      navigate('/profile/you')
-    } else if (userId === 'you') {
-      !user.userData?.id
-        ? navigate('/')
-        : navigate(`/profile/${user.userData.id}`)
-    } else {
-      getProfileData()
-    }
-  }, [location.pathname, navigate, userId, getProfileData, user.userData?.id])
+    setEditable(myId === userId)
+  }, [myId, userId])
 
   useEffect(() => {
     if (profileData) {

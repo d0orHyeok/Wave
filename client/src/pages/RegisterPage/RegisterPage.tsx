@@ -5,7 +5,7 @@ import TextField from '@components/Common/TextField'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '@redux/context/alertProvider'
 import { userSignUp } from '@api/userApi'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 const RegisterPage = () => {
   const navigate = useNavigate()

@@ -4,8 +4,6 @@ import HomePage from '@pages/HomePage/HomePage'
 import RegisterPage from '@pages/RegisterPage/RegisterPage'
 import withUser from './authHOC'
 import NotFoundPage from '@pages/NotFoundPage'
-import { useAppDispatch } from '@redux/hook'
-import { userAuth } from '@redux/thunks/userThunks'
 import UploadPage from '@pages/UploadPage/UploadPage'
 import SettingsPage from '@pages/SettingsPage/SettingsPage'
 import TrackPage from '@pages/TrackPage/TrackPage'
@@ -16,7 +14,6 @@ import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
 import PlaylistDetailPage from '@pages/PlaylistDetailPage/playlistDetailPage'
 
 const Router = () => {
-  const dispatch = useAppDispatch()
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -24,37 +21,42 @@ const Router = () => {
     if (location.pathname === '/') {
       navigate('/home')
     }
-    dispatch(userAuth())
-  }, [navigate, dispatch, location.pathname])
+  }, [navigate, location.pathname])
 
   return (
     <Routes>
-      <Route path="*" element={<NotFoundPage />} />
-      <Route path="/" element={<HomePage />} />
-      <Route path="/home" element={<HomePage />} />
+      <Route path="*" element={withUser(NotFoundPage, null)} />
+      <Route path="/" element={withUser(HomePage, null)} />
+      <Route path="/home" element={withUser(HomePage, null)} />
       <Route path="/register" element={withUser(RegisterPage, false)} />
       <Route path="/upload" element={withUser(UploadPage, true)} />
       <Route path="/settings" element={withUser(SettingsPage, true)}></Route>
       {/* Track Page */}
-      <Route path="/track/:userId/:permalink" element={<TrackPage />} />
+      <Route
+        path="/track/:userId/:permalink"
+        element={withUser(TrackPage, null)}
+      />
       <Route
         path="/track/:userId/:permalink/:detail"
-        element={<TrackDetailPage />}
+        element={withUser(TrackDetailPage, null)}
       />
-      <Route path="/track/notfound" element={<NotFoundPage />} />
+      <Route path="/track/notfound" element={withUser(NotFoundPage, null)} />
       {/* Profile Page */}
-      <Route path="/profile/:userId" element={<ProfilePage />}>
-        <Route path=":nav" element={<ProfilePage />} />
+      <Route path="/profile/:userId" element={withUser(ProfilePage, null)}>
+        <Route path=":nav" element={withUser(ProfilePage, null)} />
       </Route>
       {/* Playlsit Page */}
-      <Route path="/playlist/notfound" element={<NotFoundPage />} />
-      <Route path="/playlist/:userId/:permalink" element={<PlaylistPage />} />
+      <Route path="/playlist/notfound" element={withUser(NotFoundPage, null)} />
+      <Route
+        path="/playlist/:userId/:permalink"
+        element={withUser(PlaylistPage, null)}
+      />
       <Route
         path="/playlist/:userId/:permalink/:detail"
-        element={<PlaylistDetailPage />}
+        element={withUser(PlaylistDetailPage, null)}
       />
       {/* Search Page */}
-      <Route path="/search" element={<SearchPage />}></Route>
+      <Route path="/search" element={withUser(SearchPage, null)}></Route>
     </Routes>
   )
 }

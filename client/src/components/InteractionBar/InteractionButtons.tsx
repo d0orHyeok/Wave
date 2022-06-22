@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { IoMdLink } from 'react-icons/io'
 import { GoHeart } from 'react-icons/go'
@@ -209,7 +209,7 @@ const InteractionButtons = ({
     dispatch(addMusic(additem))
   }, [dispatch, target])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!userData) {
       setIsLike(false)
       setIsReposts(false)

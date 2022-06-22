@@ -9,22 +9,25 @@ import { AlertProvider } from '@redux/context/alertProvider'
 import { BrowserRouter } from 'react-router-dom'
 import AppView from '@components/AppView/AppView'
 import { LoginProvider } from '@redux/context/loginProvider'
+import { HelmetProvider } from 'react-helmet-async'
 
 function App() {
   return (
     <Provider store={store}>
-      <AppThemeProvider>
-        <AlertProvider>
-          <GlobalStyle />
-          <BrowserRouter>
-            <LoginProvider>
-              <AppView>
-                <Router />
-              </AppView>
-            </LoginProvider>
-          </BrowserRouter>
-        </AlertProvider>
-      </AppThemeProvider>
+      <HelmetProvider>
+        <AppThemeProvider>
+          <AlertProvider>
+            <GlobalStyle />
+            <BrowserRouter>
+              <LoginProvider>
+                <AppView>
+                  <Router />
+                </AppView>
+              </LoginProvider>
+            </BrowserRouter>
+          </AlertProvider>
+        </AppThemeProvider>
+      </HelmetProvider>
     </Provider>
   )
 }

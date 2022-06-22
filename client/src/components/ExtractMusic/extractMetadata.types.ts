@@ -1,7 +1,7 @@
-import { TypeStatus } from '@redux/features/player/palyerSlice.interface'
+import { TypeStatus } from '@appTypes/types.type.'
 import { ICommonTagsResult } from 'music-metadata/lib/type'
 
-export interface IMusicMetadata extends ICommonTagsResult {
+export interface IExtractMetadata extends ICommonTagsResult {
   duration?: number
   tags?: string[]
   status?: TypeStatus

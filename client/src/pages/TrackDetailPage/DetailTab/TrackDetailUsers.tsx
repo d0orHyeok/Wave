@@ -3,12 +3,11 @@ import { FollowTextButton } from '@components/Common/Button'
 import { IUser } from '@appTypes/types.type.'
 import { useAppSelector } from '@redux/hook'
 import { EmptyProfileImage } from '@styles/EmptyImage'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { IoMdPeople } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import NoItem from './NoItem.style'
-import { useInView } from 'react-intersection-observer'
 import LoadingArea from '@components/Loading/LoadingArea'
 
 const StyledUl = styled.ul`
@@ -78,8 +77,6 @@ const TrackDetailUsers = ({
 }: TrackDetailUsersPorps) => {
   const displayNum = 20
 
-  const { ref, inView } = useInView()
-
   const userId = useAppSelector((state) => state.user.userData?.id)
   const following =
     useAppSelector((state) => state.user.userData?.following) || []
@@ -106,15 +103,18 @@ const TrackDetailUsers = ({
     setLoading(false)
   }, [done, page, users])
 
-  useEffect(() => {
+  const handleOnView = useCallback(
+    (inView: boolean) => {
+      if (inView && !loading && !done) {
+        setPage((prevState) => prevState + 1)
+      }
+    },
+    [loading, done]
+  )
+
+  useLayoutEffect(() => {
     getUserItems()
   }, [getUserItems])
-
-  useEffect(() => {
-    if (inView && !loading && !done) {
-      setPage((prevState) => prevState + 1)
-    }
-  }, [inView, loading, done])
 
   return users?.length ? (
     <StyledUl {...props}>
@@ -160,7 +160,7 @@ const TrackDetailUsers = ({
           </div>
         </StyledLi>
       ))}
-      <LoadingArea ref={ref} loading={loading} hide={done} />
+      <LoadingArea loading={loading} hide={done} onInView={handleOnView} />
     </StyledUl>
   ) : (
     <NoItem>
