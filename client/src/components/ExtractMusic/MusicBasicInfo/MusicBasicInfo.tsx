@@ -1,10 +1,10 @@
 import React, {
   forwardRef,
   useCallback,
-  useEffect,
   useRef,
   useState,
   useImperativeHandle,
+  useLayoutEffect,
 } from 'react'
 import * as S from './MusicBasicInfo.style'
 import { useAppSelector } from '@redux/hook'
@@ -12,7 +12,8 @@ import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
 import { MdOutlineEdit } from 'react-icons/md'
 import { AiFillCamera } from 'react-icons/ai'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
-import { IMusicMetadata } from '../extractMetadata.types'
+import { IExtractMetadata } from '../extractMetadata.types'
+import { IMusic } from '@appTypes/music.type'
 
 export interface IMusicBasicInfoHandler {
   getData: () => IMusicBasicInfoValue | void
@@ -21,7 +22,7 @@ export interface IMusicBasicInfoHandler {
 export interface IMusicBasicInfoValue {
   title: string
   permalink: string
-  genre?: string
+  genre?: string[]
   description?: string
   tags?: string[]
   cover?: File
@@ -38,8 +39,9 @@ export type TypeOnChnageDataKey =
   | 'status'
 
 interface MusicBaiscInfoProps {
-  metadata?: IMusicMetadata | null
-  onChangeData?: (key: TypeOnChnageDataKey, value: any) => void
+  music?: IMusic
+  metadata?: IExtractMetadata | null
+  onChangeData?: (key: any, value: any) => void
 }
 
 interface Props
@@ -47,12 +49,7 @@ interface Props
     React.HTMLAttributes<HTMLDivElement> {}
 
 const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
-  ({ metadata, onChangeData, ...props }, ref) => {
-    const titleRef = useRef<HTMLInputElement>(null)
-    const permalinkRef = useRef<HTMLInputElement>(null)
-    const genreRef = useRef<HTMLInputElement>(null)
-    const tagRef = useRef<HTMLInputElement>(null)
-    const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  ({ music, metadata, onChangeData, ...props }, ref) => {
     const coverInputRef = useRef<HTMLInputElement>(null)
 
     const userId = useAppSelector((state) => state.user.userData?.id)
@@ -64,33 +61,37 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
       url?: string
     }>({})
 
+    const [inputValue, setInputValue] = useState({
+      title: '',
+      permalink: '',
+      genre: '',
+      description: '',
+      tags: '',
+    })
+
     useImperativeHandle(
       ref,
       () => ({
         getData: () => {
-          const title = titleRef.current?.value
-          const permalink = permalinkRef.current?.value
-          const tags = tagRef.current?.value.split('#').splice(1)
-          const genre = genreRef.current?.value
-          const description = descriptionRef.current?.value
+          const { title, permalink, genre, description, tags } = inputValue
           const newCover = !coverInputRef.current?.files
             ? undefined
             : coverInputRef.current.files[0]
 
           if (!title) {
-            titleRef.current?.focus()
+            document.getElementById('title')?.focus()
             return alert('[Basic Info]\nPlease enter a title')
           }
           if (!permalink) {
-            permalinkRef.current?.focus()
+            document.getElementById('permalink')?.focus()
             return alert('[Basic Info]\nPlease enter a permalink')
           }
 
           const data = {
             title,
-            permalink: `${permalink}`,
-            tags: tags?.length ? tags : undefined,
-            genre,
+            permalink,
+            tags: !tags ? undefined : tags.split('#').splice(1),
+            genre: !genre ? undefined : genre.split(';').slice(0, -1),
             description,
             cover: newCover || originalCover.file,
             status: status ? 'PUBLIC' : 'PRIVATE',
@@ -98,7 +99,7 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
           return data
         },
       }),
-      [originalCover, status]
+      [inputValue, originalCover.file, status]
     )
 
     const handleChangeCover = useCallback(
@@ -125,19 +126,6 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
       onChangeData && onChangeData('cover', null)
     }, [onChangeData, originalCover.url])
 
-    const handleChangePermalink = useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.currentTarget
-        const newValue = value
-          .trimStart()
-          .replaceAll(/[\s]/g, '-')
-          .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
-        event.currentTarget.value = newValue
-        onChangeData && onChangeData('permalink', newValue)
-      },
-      [onChangeData]
-    )
-
     const handleChangePrivacy = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget
@@ -148,8 +136,47 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
     )
 
     const handleClickEditPermal = useCallback(() => {
-      permalinkRef.current?.focus()
+      document.getElementById('permalink')?.focus()
     }, [])
+
+    const whenSetInputValue = useCallback(
+      (key: string, value: any) => {
+        setInputValue((prevState) => {
+          return { ...prevState, [key]: value }
+        })
+        if (!onChangeData) {
+          return
+        }
+
+        if (!value) {
+          return onChangeData(key, null)
+        }
+
+        switch (key) {
+          case 'tags':
+            onChangeData(key, value.split('#').splice(1))
+            break
+          case 'genre':
+            onChangeData(key, value.split(';').slice(0, -1))
+            break
+          default:
+            onChangeData(key, value)
+        }
+      },
+      [onChangeData]
+    )
+
+    const handleChangePermalink = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget
+        const newValue = value
+          .trimStart()
+          .replaceAll(/[\s]/g, '-')
+          .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
+        whenSetInputValue('permalink', newValue)
+      },
+      [whenSetInputValue]
+    )
 
     const handleChangeTag = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,22 +188,28 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
           value.length && value[0] !== '#'
             ? `#${value}`
             : value.trim().replaceAll(specialRegex, '#').replaceAll(/#+#/g, '#')
-        event.currentTarget.value = newValue
-        onChangeData && onChangeData('tags', newValue.split('#').splice(1))
+        whenSetInputValue('tags', newValue)
       },
-      [onChangeData]
+      [whenSetInputValue]
+    )
+
+    const handleLeaveGenre = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget
+        const l = value.length
+        if (l > 0 && value[l - 1] !== ';') {
+          whenSetInputValue('genre', `${value};`)
+        }
+      },
+      [whenSetInputValue]
     )
 
     const handleChangeInput = useCallback(
       (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value } = event.currentTarget
-        if (value && onChangeData) {
-          if (id === 'title' || id === 'genre' || id === 'description') {
-            onChangeData(id, value)
-          }
-        }
+        whenSetInputValue(id, value)
       },
-      [onChangeData]
+      [whenSetInputValue]
     )
 
     const setValue = useCallback(() => {
@@ -193,6 +226,7 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
         status: musicStatus,
         permalink,
       } = metadata
+
       if (picture?.length) {
         const { data, format } = picture[0]
         const url = getCoverUrlFromMetadata(data, format)
@@ -210,32 +244,28 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
         setOriginalCover({})
       }
 
-      if (title && titleRef.current) {
-        titleRef.current.value = title
-        if (permalinkRef.current) {
-          permalinkRef.current.value =
-            permalink ||
-            title
-              .trim()
-              .replaceAll(/[\s]/g, '-')
-              .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, '')
-        }
-      }
-      if (genre?.length && genreRef.current) {
-        genreRef.current.value = genre.join(' ')
-      }
-      if (comment?.length && descriptionRef.current) {
-        descriptionRef.current.value = comment.join()
-      }
-      if (tags && tagRef.current) {
-        tagRef.current.value = `#${tags.join('#')}`
-      }
       if (musicStatus) {
         setStatus(musicStatus === 'PUBLIC' ? true : false)
       }
+
+      setInputValue((prevState) => {
+        return {
+          ...prevState,
+          title: title || '',
+          permalink:
+            permalink ||
+            (title || '')
+              .trim()
+              .replaceAll(/[\s]/g, '-')
+              .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, ''),
+          genre: genre?.length ? `${genre.join(';')};` : '',
+          description: comment?.length ? comment.join('\n') : '',
+          tags: tags ? `#${tags.join('#')}` : '',
+        }
+      })
     }, [metadata])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       setValue()
     }, [setValue])
 
@@ -272,11 +302,11 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 Title<span className="require">{' *'}</span>
               </label>
               <input
-                ref={titleRef}
                 id="title"
                 type="text"
                 required
                 placeholder="Title of music"
+                value={inputValue.title}
                 onChange={handleChangeInput}
               />
             </S.EditInputBox>
@@ -285,13 +315,15 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 Permalink<span className="require">{' *'}</span>
               </h2>
               <div className="inputwrap">
-                <label htmlFor="permalink">{`${window.location.hostname}/${userId}/`}</label>
+                <label htmlFor="permalink">{`${window.location.hostname}/${
+                  music ? music.userId : userId
+                }/`}</label>
                 <input
-                  ref={permalinkRef}
                   id="permalink"
                   type="text"
                   placeholder="Your link"
                   required
+                  value={inputValue.permalink}
                   onChange={handleChangePermalink}
                 />
                 <button
@@ -307,11 +339,12 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 Genre
               </label>
               <input
-                ref={genreRef}
                 id="genre"
                 type="text"
                 placeholder="Genre of music"
+                value={inputValue.genre}
                 onChange={handleChangeInput}
+                onBlur={handleLeaveGenre}
               />
             </S.EditInputBox>
             <S.EditInputBox>
@@ -319,9 +352,10 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 Additional tags
               </label>
               <input
-                ref={tagRef}
-                id="tag"
+                id="tags"
                 type="text"
+                value={inputValue.tags}
+                onChange={handleChangeInput}
                 onBlur={handleChangeTag}
                 placeholder="Add tags to describe the genre and mood of your music"
               />
@@ -331,10 +365,10 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 Description
               </label>
               <textarea
-                ref={descriptionRef}
                 id="description"
                 rows={5}
                 placeholder="Describe your music"
+                value={inputValue.description}
                 onChange={handleChangeInput}
               />
             </S.EditInputBox>

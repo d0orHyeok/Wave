@@ -1,6 +1,6 @@
+import { UpdateMusicDataDto } from './dto/update-music-data.dto';
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from 'src/entities/user.entity';
-import { EntityStatusValidationPipe } from '../common/pipes/entity-status-validation.pipe';
 import { MusicService } from './music.service';
 import {
   Body,
@@ -16,11 +16,11 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
-import { EntityStatus } from 'src/entities/common.types';
 import { UploadedFilesPipe } from './pipes/uploaded-files.pipe';
 import { UploadMusicDto } from './dto/upload-music.dto';
 import { uploadFileDisk } from 'src/upload';
@@ -139,17 +139,17 @@ export class MusicController {
     return this.musicService.deleteMusic(id, user);
   }
 
-  @Patch('/:id/status')
-  @UseGuards(JwtAuthGuard)
-  updateMusicStatus(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('status', EntityStatusValidationPipe) status: EntityStatus,
-  ) {
-    return this.musicService.updateMusicStatus(id, status);
-  }
-
   @Patch('/:id/count')
   updateMusicCount(@Param('id', ParseIntPipe) id: number) {
     return this.musicService.updateMusicCount(id);
+  }
+
+  @Patch('/:id/update')
+  @UseGuards(JwtAuthGuard)
+  updateMusicData(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(ValidationPipe) updateMusicDataDto: UpdateMusicDataDto,
+  ) {
+    return this.musicService.updateMusicData(id, updateMusicDataDto);
   }
 }

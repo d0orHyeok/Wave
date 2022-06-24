@@ -43,7 +43,7 @@ const ProfilePage = () => {
   }, [getProfileData])
 
   useEffect(() => {
-    setEditable(myId === userId)
+    setEditable(userId === 'you' || myId === userId)
   }, [myId, userId])
 
   useEffect(() => {

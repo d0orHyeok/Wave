@@ -21,3 +21,7 @@ export const getPlaylistsByIds = (playlistIds: number[]) => {
 export const getUserPlaylists = (userId: string, skip = 0, take = 10) => {
   return Axios.get(`/api/playlist/user/${userId}?skip=${skip}&take=${take}`)
 }
+
+export const updatePlaylistData = (playlistId: number, body: any) => {
+  return Axios.patch(`/api/playlist/update/${playlistId}`, body)
+}

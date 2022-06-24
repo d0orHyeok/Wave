@@ -53,10 +53,12 @@ export class PlaylistService {
     playlistId: number,
     updatePlaylistDto: UpdatePlaylistDto,
   ) {
-    return this.playlistRepository.updatePlaylistInfo(
+    const updatedPlaylist = await this.playlistRepository.updatePlaylistInfo(
       playlistId,
       updatePlaylistDto,
     );
+    const user = await this.userRepository.findUserById(updatedPlaylist.userId);
+    return { ...updatedPlaylist, user };
   }
 
   async addMusicToPlaylist(playlistId: number, musicIds: number[]) {

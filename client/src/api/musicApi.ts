@@ -33,3 +33,7 @@ export const uploadMusic = (formData: FormData) => {
 export const countMusic = (musicId: number) => {
   return Axios.patch(`/api/music/${musicId}/count`)
 }
+
+export const updateMusicData = (musicId: number, body: any) => {
+  return Axios.patch(`/api/music/${musicId}/update`, body)
+}

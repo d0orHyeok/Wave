@@ -1,12 +1,12 @@
 import { EntityStatus } from './../../entities/common.types';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdatePlaylistDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   permalink: string;
 

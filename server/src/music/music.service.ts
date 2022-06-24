@@ -1,3 +1,4 @@
+import { UpdateMusicDataDto } from './dto/update-music-data.dto';
 import { UploadMusicDataDto } from './dto/upload-music-data.dto';
 import { PagingDto } from '../common/dto/paging.dto';
 import { AuthService } from './../auth/auth.service';
@@ -11,7 +12,6 @@ import { Music } from 'src/entities/music.entity';
 import { getStorage } from 'firebase-admin/storage';
 import * as NodeID3 from 'node-id3';
 import * as uuid from 'uuid';
-import { EntityStatus } from 'src/entities/common.types';
 
 @Injectable()
 export class MusicService {
@@ -157,10 +157,6 @@ export class MusicService {
     }
   }
 
-  async updateMusicStatus(id: number, status: EntityStatus): Promise<Music> {
-    return this.musicRepository.updateMusicStatus(id, status);
-  }
-
   async updateMusicCount(id: number) {
     return this.musicRepository.updateMusicCount(id);
   }
@@ -173,5 +169,9 @@ export class MusicService {
   async findRelatedMusic(id: number, pagingDto: PagingDto) {
     // 선택된 음악의 제목, 앨범, 아티스트와 관련있는 음악들을 가져온다
     return this.musicRepository.findRelatedMusic(id, pagingDto);
+  }
+
+  async updateMusicData(id: number, updateMusicDataDto: UpdateMusicDataDto) {
+    return this.musicRepository.updateMusicData(id, updateMusicDataDto);
   }
 }

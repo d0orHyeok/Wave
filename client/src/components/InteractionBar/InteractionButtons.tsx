@@ -303,7 +303,11 @@ const InteractionButtons = ({
             <span className="text">Edit</span>
           </StyledButton>
           <Modal open={openEditTarget} onClose={closeEditTarget}>
-            <EditTarget target={target} onClose={closeEditTarget} />
+            <EditTarget
+              target={target}
+              onClose={closeEditTarget}
+              setTarget={setTarget}
+            />
           </Modal>
         </>
       )}

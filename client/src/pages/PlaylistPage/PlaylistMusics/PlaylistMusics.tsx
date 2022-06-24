@@ -21,6 +21,7 @@ const MusicItem = styled.li`
   & .musicItem-imgBox {
     width: 30px;
     height: 30px;
+    flex-shrink: 0;
 
     & .link,
     & .img {
@@ -31,9 +32,15 @@ const MusicItem = styled.li`
   }
 
   & .musicItem-info {
-    width: 100%;
+    min-width: 0;
     display: flex;
     align-items: center;
+
+    & .index,
+    & .uploader,
+    & .count {
+      flex-shrink: 0;
+    }
 
     & .index {
       margin: 0 10px;
@@ -51,7 +58,11 @@ const MusicItem = styled.li`
     }
 
     & .title {
+      min-width: 0;
       color: ${({ theme }) => theme.colors.bgText};
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     & .count {

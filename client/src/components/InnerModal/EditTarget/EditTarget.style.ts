@@ -1,18 +1,7 @@
 import styled from 'styled-components'
-import * as ModalStyle from '../common.style'
-
-export const Wrapper = styled(ModalStyle.InnerModalWrapper)``
-
-export const Container = styled(ModalStyle.InnerModalContainer)``
 
 export const LoadingBox = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  background-color: ${({ theme }) => theme.colors.bgColor};
-  z-index: 10;
+  height: 300px;
 `
 
 export const Buttons = styled.div`
