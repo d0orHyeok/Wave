@@ -23,6 +23,7 @@ export const GlobalStyle = createGlobalStyle`
         color: ${({ theme }) => theme.colors.bgText};
         background-color: ${({ theme }) => theme.colors.bgColor};
         line-height: 1.2rem;
+        word-break: break-all;
 
         &::-webkit-scrollbar {
         width: 8px;

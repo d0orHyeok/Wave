@@ -1,17 +1,17 @@
-import { InnerModalContainer, InnerModalWrapper } from './../common.style'
+import * as ModalStyle from './../common.style'
 import styled from 'styled-components'
 import Button, { PrimaryButton } from '@components/Common/Button'
 
-export const Wrapper = styled(InnerModalWrapper)`
+export const Wrapper = styled(ModalStyle.InnerModalWrapper)`
   max-width: 500px;
 `
 
-export const Container = styled(InnerModalContainer)`
+export const Container = styled(ModalStyle.InnerModalContainer)`
   font-size: 14px;
+`
 
-  & .title {
-    font-size: 16px;
-  }
+export const Title = styled(ModalStyle.ModalTitle)`
+  font-size: 16px;
 `
 
 export const TitleUllist = styled.ul`
@@ -60,25 +60,26 @@ export const TextInput = styled.input`
 `
 
 export const Content = styled.div`
-  padding: 2rem 0;
+  padding: 20px 0;
+  min-height: 0;
 `
 
 // AddPlaylist
 export const AddContent = styled(Content)`
   padding-bottom: 0;
+
+  & .ul-playlists {
+    margin-top: 20px;
+  }
 `
 
 export const PlaylistItem = styled.li`
   display: flex;
   align-items: center;
-  padding: 12px 0;
-  height: 74px;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
+  padding: 10px 0;
 
-  &:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-    height: 62px;
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
   }
 
   & .image {

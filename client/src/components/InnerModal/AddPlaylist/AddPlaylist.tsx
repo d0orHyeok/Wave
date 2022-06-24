@@ -1,6 +1,6 @@
 import { IMusic, IPlaylist } from '@appTypes/types.type.'
 import React, { useState, useCallback, useLayoutEffect } from 'react'
-import { StyledDivider } from '../common.style'
+import * as ModalStyle from '../common.style'
 import * as S from './AddPlaylist.style'
 import { MdClose } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
@@ -202,151 +202,162 @@ const AddPlaylist = ({
   return (
     <S.Wrapper>
       <S.Container>
-        <S.TitleUllist className="title">
-          {navItems.map((nav, index) => (
-            <S.TitleItem
-              key={index}
-              select={navIndex === index}
-              onClick={() => setNavIndex(index)}
-            >
-              {nav}
-            </S.TitleItem>
-          ))}
-        </S.TitleUllist>
-        <StyledDivider />
-        {navItems[navIndex] === 'Add to playlist' ? (
-          // Add Music to Playlist
-          <S.AddContent>
-            <S.TextInput
-              id="filter"
-              type="text"
-              value={filter}
-              onChange={handleChangeInput}
-              placeholder="Filter playlists"
-              style={{ width: '100%' }}
-            />
-            <ul>
-              {playlists.map((playlist, index) => {
-                if (playlist.name.indexOf(filter) === -1) {
-                  return
-                }
+        <S.Title>
+          <S.TitleUllist className="title">
+            {navItems.map((nav, index) => (
+              <S.TitleItem
+                key={index}
+                select={navIndex === index}
+                onClick={() => setNavIndex(index)}
+              >
+                {nav}
+              </S.TitleItem>
+            ))}
+          </S.TitleUllist>
+          <ModalStyle.StyledDivider />
+        </S.Title>
+        <ModalStyle.ModalContent>
+          {navItems[navIndex] === 'Add to playlist' ? (
+            // Add Music to Playlist
+            <S.AddContent>
+              <S.TextInput
+                id="filter"
+                type="text"
+                value={filter}
+                onChange={handleChangeInput}
+                placeholder="Filter playlists"
+                style={{ width: '100%' }}
+              />
+              <ul className="ul-playlists">
+                {playlists.map((playlist, index) => {
+                  if (playlist.name.indexOf(filter) === -1) {
+                    return
+                  }
 
-                let added = false
-                let filteredMusics = musics
-                if (filteredMusics.length === 1) {
-                  added =
-                    playlist.musics.findIndex(
-                      (pm) => pm.id === musics[0].id
-                    ) !== -1
-                } else {
-                  filteredMusics = musics.filter(
-                    (music) =>
-                      playlist.musics.findIndex((pm) => pm.id === music.id) ===
-                      -1
-                  )
-                  added = filteredMusics.length ? false : true
-                }
-                return (
-                  <S.PlaylistItem key={index}>
-                    <div className="image">
-                      {playlist.image ? (
-                        <img src={playlist.image} alt="" />
-                      ) : (
-                        <EmptyPlaylistImage size={50} />
-                      )}
-                    </div>
-                    <div className="info">
-                      <div className="info-name">{playlist.name}</div>
-                      <div
-                        className="info-num"
-                        title={`${playlist.musics.length} musics`}
-                      >
-                        <BsSoundwave size={14} style={{ marginRight: '4px' }} />
-                        {playlist.musics.length}
+                  let added = false
+                  let filteredMusics = musics
+                  if (filteredMusics.length === 1) {
+                    added =
+                      playlist.musics.findIndex(
+                        (pm) => pm.id === musics[0].id
+                      ) !== -1
+                  } else {
+                    filteredMusics = musics.filter(
+                      (music) =>
+                        playlist.musics.findIndex(
+                          (pm) => pm.id === music.id
+                        ) === -1
+                    )
+                    added = filteredMusics.length ? false : true
+                  }
+                  return (
+                    <S.PlaylistItem key={index}>
+                      <div className="image">
+                        {playlist.image ? (
+                          <img src={playlist.image} alt="" />
+                        ) : (
+                          <EmptyPlaylistImage size={50} />
+                        )}
                       </div>
-                    </div>
-                    <S.AddButton
-                      added={added}
-                      data-playlistid={playlist.id}
-                      onClick={
-                        !added
-                          ? addMusicsToPlaylist(filteredMusics)
-                          : deleteMusicsFromPlaylist
-                      }
-                    >
-                      {added ? 'Added' : 'Add to playlist'}
-                    </S.AddButton>
-                  </S.PlaylistItem>
-                )
-              })}
-            </ul>
-          </S.AddContent>
-        ) : (
-          // Create Playlist
-          <>
-            <S.CreatePlaylist>
-              <div className="inputBox">
-                <S.Label>
-                  Playlist title<span>{' *'}</span>
-                </S.Label>
-                <S.TextInput
-                  id="title"
-                  type="text"
-                  value={newPlaylist.title}
-                  onChange={handleChangeInput}
-                />
-              </div>
-              <div className="inputBox flex">
-                <S.Label>{`Privacy: `}</S.Label>
-                <input
-                  type="radio"
-                  id="public"
-                  name="privacy"
-                  onChange={handleClickPrivacy}
-                  checked={newPlaylist.privacy.toLowerCase() === 'public'}
-                />
-                <label htmlFor="public">Public</label>
-                <input
-                  type="radio"
-                  id="private"
-                  name="privacy"
-                  onChange={handleClickPrivacy}
-                  checked={newPlaylist.privacy.toLowerCase() === 'private'}
-                />
-                <label htmlFor="private">Private</label>
-              </div>
-              <S.SaveButton onClick={createPlaylist}>Save</S.SaveButton>
-            </S.CreatePlaylist>
-            <S.AddMusicsWrapper>
-              {musics.map((music, index) => {
-                return (
-                  <S.AddItem key={index}>
-                    <div className="music-cover">
-                      {music.cover ? (
-                        <img className="img" src={music.cover} alt="" />
-                      ) : (
-                        <EmptyMusicCover className="img" />
-                      )}
-                    </div>
-                    <div className="music-name">
-                      <span>{`${
-                        music.user?.nickname || music.userId
-                      } - `}</span>
-                      {music.title}
-                    </div>
-                    <button className="music-close" onClick={pullMusic(index)}>
-                      <MdClose />
-                    </button>
-                  </S.AddItem>
-                )
-              })}
-              {musics.length < 4 &&
-                Array.from({ length: 4 - musics.length }, (_, i) => i).map(
-                  (_, index) => <S.AddItem key={index}></S.AddItem>
-                )}
-            </S.AddMusicsWrapper>
-          </>
-        )}
+                      <div className="info">
+                        <div className="info-name">{playlist.name}</div>
+                        <div
+                          className="info-num"
+                          title={`${playlist.musics.length} musics`}
+                        >
+                          <BsSoundwave
+                            size={14}
+                            style={{ marginRight: '4px' }}
+                          />
+                          {playlist.musics.length}
+                        </div>
+                      </div>
+                      <S.AddButton
+                        added={added}
+                        data-playlistid={playlist.id}
+                        onClick={
+                          !added
+                            ? addMusicsToPlaylist(filteredMusics)
+                            : deleteMusicsFromPlaylist
+                        }
+                      >
+                        {added ? 'Added' : 'Add to playlist'}
+                      </S.AddButton>
+                    </S.PlaylistItem>
+                  )
+                })}
+              </ul>
+            </S.AddContent>
+          ) : (
+            // Create Playlist
+            <>
+              <S.CreatePlaylist>
+                <div className="inputBox">
+                  <S.Label>
+                    Playlist title<span>{' *'}</span>
+                  </S.Label>
+                  <S.TextInput
+                    id="title"
+                    type="text"
+                    value={newPlaylist.title}
+                    onChange={handleChangeInput}
+                  />
+                </div>
+                <div className="inputBox flex">
+                  <S.Label>{`Privacy: `}</S.Label>
+                  <input
+                    type="radio"
+                    id="public"
+                    name="privacy"
+                    onChange={handleClickPrivacy}
+                    checked={newPlaylist.privacy.toLowerCase() === 'public'}
+                  />
+                  <label htmlFor="public">Public</label>
+                  <input
+                    type="radio"
+                    id="private"
+                    name="privacy"
+                    onChange={handleClickPrivacy}
+                    checked={newPlaylist.privacy.toLowerCase() === 'private'}
+                  />
+                  <label htmlFor="private">Private</label>
+                </div>
+                <S.SaveButton onClick={createPlaylist}>Save</S.SaveButton>
+              </S.CreatePlaylist>
+              <S.AddMusicsWrapper>
+                {musics.map((music, index) => {
+                  return (
+                    <S.AddItem key={index}>
+                      <div className="music-cover">
+                        {music.cover ? (
+                          <img className="img" src={music.cover} alt="" />
+                        ) : (
+                          <EmptyMusicCover className="img" />
+                        )}
+                      </div>
+                      <div className="music-name">
+                        <span>{`${
+                          music.user?.nickname || music.userId
+                        } - `}</span>
+                        {music.title}
+                      </div>
+                      <button
+                        className="music-close"
+                        onClick={pullMusic(index)}
+                      >
+                        <MdClose />
+                      </button>
+                    </S.AddItem>
+                  )
+                })}
+                {musics.length < 4 &&
+                  Array.from({ length: 4 - musics.length }, (_, i) => i).map(
+                    (_, index) => <S.AddItem key={index}></S.AddItem>
+                  )}
+              </S.AddMusicsWrapper>
+            </>
+          )}
+        </ModalStyle.ModalContent>
       </S.Container>
     </S.Wrapper>
   )

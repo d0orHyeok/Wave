@@ -80,58 +80,64 @@ const Login = ({ onClose }: LoginProps) => {
 
   return (
     <S.Wrapper>
-      <S.StyledContainer onSubmit={(e) => e.preventDefault()}>
-        <h1 className="modal-title">Sign In</h1>
-        <S.Box>
-          <TextField
-            type="text"
-            placeholder="ID"
-            autoComplete="off"
-            id="username"
-            style={textFieldStyle}
-            value={username}
-            onChange={handleChangeInput}
-            error={isError.username}
-            errorText="해당하는 아이디를 찾을 수 없습니다."
-          />
-          <TextField
-            type="password"
-            autoComplete="off"
-            placeholder="Password"
-            id="password"
-            style={textFieldStyle}
-            value={password}
-            onChange={handleChangeInput}
-            error={isError.password}
-            errorText="잘못된 비밀번호 입니다."
-          />
-        </S.Box>
-        <S.Box className="signin-loginbox">
-          <input
-            type="checkbox"
-            id="saveID"
-            checked={saveID}
-            onChange={handleChangeSaveID}
-          />
-          <label htmlFor="saveID">아이디 저장</label>
-          <S.LoginButton onClick={handleClickLogin}>로그인</S.LoginButton>
-        </S.Box>
-        <S.Box className="signin-more">
-          <ul className="signin-find">
-            <li>
-              <Link to="#">아이디 찾기</Link>
-            </li>
-            <li>
-              <Link to="#">비밀번호 찾기</Link>
-            </li>
-          </ul>
-          <span className="siginin-register">
-            <Link to="register" onClick={handleClickRegister}>
-              회원가입
-            </Link>
-          </span>
-        </S.Box>
-      </S.StyledContainer>
+      <S.Container>
+        <S.Title>
+          <h1 className="modal-title">Sign In</h1>
+        </S.Title>
+        <S.Content>
+          <S.Box>
+            <form onSubmit={(e) => e.preventDefault()}>
+              <TextField
+                type="text"
+                placeholder="ID"
+                autoComplete="off"
+                id="username"
+                style={textFieldStyle}
+                value={username}
+                onChange={handleChangeInput}
+                error={isError.username}
+                errorText="해당하는 아이디를 찾을 수 없습니다."
+              />
+              <TextField
+                type="password"
+                autoComplete="off"
+                placeholder="Password"
+                id="password"
+                style={textFieldStyle}
+                value={password}
+                onChange={handleChangeInput}
+                error={isError.password}
+                errorText="잘못된 비밀번호 입니다."
+              />
+            </form>
+          </S.Box>
+          <S.Box className="signin-loginbox">
+            <input
+              type="checkbox"
+              id="saveID"
+              checked={saveID}
+              onChange={handleChangeSaveID}
+            />
+            <label htmlFor="saveID">아이디 저장</label>
+            <S.LoginButton onClick={handleClickLogin}>로그인</S.LoginButton>
+          </S.Box>
+          <S.Box className="signin-more">
+            <ul className="signin-find">
+              <li>
+                <Link to="#">아이디 찾기</Link>
+              </li>
+              <li>
+                <Link to="#">비밀번호 찾기</Link>
+              </li>
+            </ul>
+            <span className="siginin-register">
+              <Link to="register" onClick={handleClickRegister}>
+                회원가입
+              </Link>
+            </span>
+          </S.Box>
+        </S.Content>
+      </S.Container>
     </S.Wrapper>
   )
 }

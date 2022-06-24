@@ -12,7 +12,6 @@ export const InnerModalWrapper = styled.div`
   transform: translateX(-50%);
   background-color: ${({ theme }) => theme.colors.bgColor};
   box-shadow: 3px 3px 10px 0 ${({ theme }) => theme.colors.bgTextRGBA(0.16)};
-
   border-radius: 6px;
   max-width: 850px;
   width: 100%;
@@ -23,5 +22,37 @@ export const InnerModalWrapper = styled.div`
 `
 
 export const InnerModalContainer = styled.div`
-  padding: 25px;
+  padding: 25px 0;
+  max-height: 80vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+`
+
+const ModalItemStyle = styled.div`
+  padding-right: 25px;
+  padding-left: 25px;
+`
+
+export const ModalTitle = styled(ModalItemStyle)`
+  flex-shrink: 0;
+`
+
+export const ModalContent = styled(ModalItemStyle)`
+  overflow-y: auto;
+  min-height: 0;
+  min-width: 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: inherit;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: ${({ theme }) => theme.colors.bgTextRGBA(0.3)};
+  }
+`
+
+export const ModalActions = styled(ModalItemStyle)`
+  flex-shrink: 0;
 `

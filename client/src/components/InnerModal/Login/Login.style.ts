@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { InnerModalWrapper } from '../common.style'
+import * as ModalStyle from '../common.style'
 import { PrimaryButton } from '@components/Common/Button'
 
-export const Wrapper = styled(InnerModalWrapper)`
+export const Wrapper = styled(ModalStyle.InnerModalWrapper)`
   width: 420px;
   height: 400px;
 
@@ -11,18 +11,21 @@ export const Wrapper = styled(InnerModalWrapper)`
   }
 `
 
-export const StyledContainer = styled.form`
+export const Container = styled(ModalStyle.InnerModalContainer)``
+
+export const Title = styled(ModalStyle.ModalTitle)`
+  font-size: 20px;
+  margin: 25px 0;
+  text-align: center;
+  font-weight: bold;
+`
+
+export const Content = styled(ModalStyle.ModalContent)`
   border-radius: inherit;
   padding: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  & .modal-title {
-    font-size: 1.2rem;
-    margin: 2rem 0;
-    font-weight: bold;
-  }
 
   & .signin-loginbox {
     font-size: 0.9rem;

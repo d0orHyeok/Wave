@@ -1,7 +1,13 @@
 import Button, { PrimaryButton } from '@components/Common/Button'
 import EmptyProfileImage from '@styles/EmptyImage/EmptyProfileImage.style'
 import { useAppDispatch, useAppSelector } from '@redux/hook'
-import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useEffect,
+} from 'react'
 import styled from 'styled-components'
 import { BsFillCameraFill } from 'react-icons/bs'
 import {
@@ -10,21 +16,15 @@ import {
   userUpdateProfile,
 } from '@redux/thunks/userThunks'
 import { fileToUint8Array, getCoverUrlFromMetadata } from '@api/functions'
-import {
-  InnerModalWrapper,
-  InnerModalContainer,
-  StyledDivider,
-} from './common.style'
+import * as ModalStyle from './common.style'
 
-const Container = styled(InnerModalContainer)`
-  & .title {
-    font-size: 1.25rem;
-    line-height: 1.25rem;
-  }
+const Title = styled(ModalStyle.ModalTitle)`
+  font-size: 20px;
+  line-height: 20px;
 `
 
-const EditContainer = styled.div`
-  padding: 1rem 0;
+const EditContainer = styled(ModalStyle.ModalContent)`
+  padding: 1rem 25px;
   display: flex;
 
   & .area-image {
@@ -34,12 +34,17 @@ const EditContainer = styled.div`
     & .profileImage {
       width: 250px;
       height: 250px;
-      border-radius: 125px;
+      border-radius: 50%;
+
+      ${({ theme }) => theme.device.tablet} {
+        width: 160px;
+        height: 160px;
+      }
 
       & img {
         width: 100%;
         height: 100%;
-        border-radius: inherit;
+        border-radius: 50%;
         object-fit: cover;
       }
     }
@@ -138,7 +143,7 @@ const UpdateImage = styled.div`
   }
 `
 
-const ButtonArea = styled.div`
+const ButtonArea = styled(ModalStyle.ModalActions)`
   display: flex;
   justify-content: right;
 
@@ -185,12 +190,12 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
   const handleChangeFile = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.currentTarget
+      setImageDelete(false)
       if (files?.length) {
         const file = files[0]
         const data = await fileToUint8Array(file)
         const link = getCoverUrlFromMetadata(data, file.type)
         setImage({ file, link })
-        setChanged(true)
       } else {
         setImage({})
       }
@@ -199,13 +204,20 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
   )
 
   const handleUpload = useCallback(() => {
-    imageRef.current?.click()
-  }, [imageRef])
+    if (!imageRef.current) {
+      return
+    }
+    imageRef.current.click()
+  }, [])
 
   const handleDeleteImage = useCallback(() => {
     setImage({})
     setImageDelete(true)
-    setChanged(true)
+  }, [])
+
+  const handleResetImage = useCallback(() => {
+    setImage({})
+    setImageDelete(false)
   }, [])
 
   const handleClickUploadButton = useCallback(() => {
@@ -232,6 +244,24 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
     }
   }
 
+  const checkChanged = useCallback(() => {
+    const defaultDesc = userData?.description || ''
+    if (
+      nickname.trim() === userData?.nickname &&
+      description === defaultDesc &&
+      !image.file &&
+      !imageDelete
+    ) {
+      setChanged(false)
+    } else {
+      setChanged(true)
+    }
+  }, [description, image.file, imageDelete, nickname, userData])
+
+  useEffect(() => {
+    checkChanged()
+  }, [checkChanged])
+
   useLayoutEffect(() => {
     if (!userData) {
       onClose && onClose()
@@ -241,23 +271,13 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
     }
   }, [onClose, userData])
 
-  useLayoutEffect(() => {
-    const defaultDesc = userData?.description || ''
-    if (
-      nickname.trim() === userData?.nickname &&
-      description === defaultDesc &&
-      !image.file &&
-      !imageDelete
-    ) {
-      setChanged(false)
-    }
-  }, [description, image, imageDelete, nickname, userData])
-
   return (
-    <InnerModalWrapper>
-      <Container>
-        <h1 className="title">Edit your Profile</h1>
-        <StyledDivider sx={{ margin: '0.5rem 0' }} />
+    <ModalStyle.InnerModalWrapper>
+      <ModalStyle.InnerModalContainer>
+        <Title>
+          Edit your Profile
+          <ModalStyle.StyledDivider sx={{ margin: '0.5rem 0' }} />
+        </Title>
         <EditContainer>
           {/* 프로필 이미지 */}
           <div className="area-image">
@@ -283,12 +303,16 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
             <div className="upload">
               <UploadButton onClick={handleClickUploadButton}>
                 <BsFillCameraFill style={{ marginRight: '6px' }} />
-                {userData?.profileImage ? 'Update Image' : 'Upload Image'}
+                {'Upload Image'}
               </UploadButton>
-              {userData?.profileImage ? (
+              {userData?.profileImage || image.link ? (
                 <UpdateImage className="select">
                   <button onClick={handleUpload}>Replace Image</button>
-                  <button onClick={handleDeleteImage}>Delete Image</button>
+                  {image.link ? (
+                    <button onClick={handleResetImage}>Reset Image</button>
+                  ) : (
+                    <button onClick={handleDeleteImage}>Delete Image</button>
+                  )}
                 </UpdateImage>
               ) : (
                 <></>
@@ -322,8 +346,8 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
               ></textarea>
             </div>
           </div>
+          <ModalStyle.StyledDivider sx={{ margin: '0.5rem 0' }} />
         </EditContainer>
-        <StyledDivider sx={{ margin: '0.5rem 0' }} />
         {/* 버튼 */}
         <ButtonArea>
           <Button onClick={onClose}>Cancel</Button>
@@ -334,8 +358,8 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
             Save Changes
           </PrimaryButton>
         </ButtonArea>
-      </Container>
-    </InnerModalWrapper>
+      </ModalStyle.InnerModalContainer>
+    </ModalStyle.InnerModalWrapper>
   )
 }
 
