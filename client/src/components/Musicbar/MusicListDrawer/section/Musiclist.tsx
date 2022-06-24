@@ -167,11 +167,13 @@ const Musiclist = () => {
           <h2>재생목록</h2>
           <div className="button-wrap">
             <ShuffleButton
+              title="Shuffle"
               shuffle={isShuffle}
               className="btn"
               onClick={handleClickShuffle}
             />
             <RepeatButton
+              title="Repaet"
               repeat={repeat}
               className="btn"
               onClick={handleClickRepeat}
@@ -196,7 +198,10 @@ const Musiclist = () => {
                       ) : (
                         <EmptyMusicCover className="image" />
                       )}
-                      <span className="hoverIcon">
+                      <span
+                        className="hoverIcon"
+                        title={isPlay ? 'Pause' : 'Play'}
+                      >
                         {!isPlay || index !== currentIndex ? (
                           <FaPlay />
                         ) : (

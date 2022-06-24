@@ -14,7 +14,6 @@ import {
   RepeatButton,
   LikeButton,
   FollowButton,
-  MoreButton,
 } from '@components/Common/Button'
 import convertTimeToString from '@api/functions/convertTimeToString'
 import Progressbar, { DurationArea } from './section/Progressbar'
@@ -239,16 +238,17 @@ const Musicbar = () => {
                   {/* Buttons */}
                   <div className="music-btns">
                     <LikeButton
+                      title="Like"
                       className="svgBtn"
                       isLike={isLike}
                       onClick={handleClickLike}
                     />
                     <FollowButton
+                      title="Follow"
                       className="svgBtn"
                       isFollow={isFollow}
                       onClick={handleClickFollow}
                     />
-                    <MoreButton className="svgBtn" />
                   </div>
                 </>
               ) : (
@@ -262,29 +262,34 @@ const Musicbar = () => {
             {/* Play Controll */}
             <S.ControllArea>
               <ShuffleButton
+                title="Shuffle"
                 className="btn specialBtn"
                 shuffle={isShuffle}
                 onClick={() => dispatch(toggleShuffle())}
               />
               <button
+                title={'Prev'}
                 className="btn backwardBtn"
                 onClick={() => dispatch(prevMusic())}
               >
                 <FaStepBackward />
               </button>
               <button
+                title={isPlay ? 'Pause' : 'Play'}
                 className="btn playBtn"
                 onClick={() => dispatch(togglePlay())}
               >
                 {!isPlay ? <FaPlay /> : <FaPause />}
               </button>
               <button
+                title="Next"
                 className="btn fowardBtn"
                 onClick={() => dispatch(nextMusic())}
               >
                 <FaStepForward />
               </button>
               <RepeatButton
+                title="Repeat"
                 className="btn specialBtn"
                 repeat={repeat}
                 onClick={() => dispatch(toggleRepeat())}
@@ -320,6 +325,7 @@ const Musicbar = () => {
             </S.VolumeArea>
             <S.PlaylistArea>
               <button
+                title="Next up"
                 className={`svgBtn drawerBtn ${
                   indexArray.length ? '' : 'block'
                 }`}
