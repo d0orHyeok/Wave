@@ -10,22 +10,26 @@ import { BrowserRouter } from 'react-router-dom'
 import AppView from '@components/AppView/AppView'
 import { LoginProvider } from '@redux/context/loginProvider'
 import { HelmetProvider } from 'react-helmet-async'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 function App() {
   return (
     <Provider store={store}>
       <HelmetProvider>
         <AppThemeProvider>
-          <AlertProvider>
-            <GlobalStyle />
-            <BrowserRouter>
-              <LoginProvider>
-                <AppView>
-                  <Router />
-                </AppView>
-              </LoginProvider>
-            </BrowserRouter>
-          </AlertProvider>
+          <DndProvider backend={HTML5Backend}>
+            <AlertProvider>
+              <GlobalStyle />
+              <BrowserRouter>
+                <LoginProvider>
+                  <AppView>
+                    <Router />
+                  </AppView>
+                </LoginProvider>
+              </BrowserRouter>
+            </AlertProvider>
+          </DndProvider>
         </AppThemeProvider>
       </HelmetProvider>
     </Provider>

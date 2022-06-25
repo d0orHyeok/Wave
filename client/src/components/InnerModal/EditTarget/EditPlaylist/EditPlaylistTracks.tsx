@@ -1,45 +1,107 @@
-import { convertTimeToString } from '@api/functions'
 import { IPlaylist } from '@appTypes/playlist.type'
-import { EmptyMusicCover } from '@styles/EmptyImage'
-import React from 'react'
-import * as S from './EditPlaylistTracks.style'
-import { RiCloseCircleFill } from 'react-icons/ri'
+import React, { useState, useCallback, useEffect } from 'react'
+import DndTrackCard from './DndTrackCard'
+import styled from 'styled-components'
+import { useDrop } from 'react-dnd'
+
+const Container = styled.div`
+  padding: 20px 0;
+  font-size: 14px;
+`
 
 interface EditPlaylistTracksProps {
   playlist: IPlaylist
+  onChangeOrder?: (changedIndexes: number[] | null) => void
 }
 
 interface Prosp
   extends EditPlaylistTracksProps,
     React.HTMLAttributes<HTMLDivElement> {}
 
-const EditPlaylistTracks = ({ playlist, ...props }: Prosp) => {
+const EditPlaylistTracks = ({ playlist, onChangeOrder, ...props }: Prosp) => {
+  const [, drop] = useDrop(() => ({ accept: 'card' }))
+
+  const [cards, setCards] = useState(
+    playlist.musics.map((music, index) => {
+      return { id: index, card: music }
+    })
+  )
+
+  const findCard = useCallback(
+    (id: number) => {
+      let findIndex = 0
+      const card = cards.filter((c, index) => {
+        if (c.id === id) {
+          findIndex = index
+          return true
+        }
+        return false
+      })[0]
+      return {
+        card,
+        index: findIndex,
+      }
+    },
+    [cards]
+  )
+
+  const moveCard = useCallback(
+    (id: number, atIndex: number) => {
+      const find = findCard(id)
+
+      const { card, index } = find
+
+      setCards((prevCards) => {
+        const newCards = [...prevCards]
+        newCards.splice(index, 1)
+        newCards.splice(atIndex, 0, card)
+        return newCards
+      })
+    },
+    [findCard]
+  )
+
+  const handleDelete = useCallback(
+    (index: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      setCards((prevCards) => {
+        const newCards = [...prevCards]
+        newCards.splice(index, 1)
+        return newCards
+      })
+    },
+    []
+  )
+
+  const whenChanged = useCallback(() => {
+    if (!onChangeOrder) return
+    const indexes = cards.map((card) => card.id)
+    const isChanged =
+      indexes.findIndex((id, index) => id !== index) !== -1 ||
+      cards.length !== playlist.musics.length
+    onChangeOrder(isChanged ? indexes : null)
+  }, [cards, onChangeOrder, playlist.musics])
+
+  useEffect(() => {
+    whenChanged()
+  }, [whenChanged])
+
   return (
     <div {...props}>
-      <S.Container>
-        <ul>
-          {playlist.musics.map((music, index) => (
-            <S.TrackItem key={index} draggable>
-              <div className="item-imageBox item-shrink">
-                {music.cover ? (
-                  <img className="img" src={music.cover} alt="" />
-                ) : (
-                  <EmptyMusicCover className="img" />
-                )}
-              </div>
-              <div className="item-title">{`${
-                music.user.nickname || music.user.username
-              } - ${music.title}`}</div>
-              <div className="item-duration item-shrink">
-                {convertTimeToString(music.duration)}
-              </div>
-              <button className="item-button item-shrink">
-                {<RiCloseCircleFill className="icon close" />}
-              </button>
-            </S.TrackItem>
+      <Container>
+        <ul ref={drop}>
+          {cards.map((item, index) => (
+            <DndTrackCard
+              key={item.id}
+              id={item.id}
+              music={item.card}
+              moveCard={moveCard}
+              findCard={findCard}
+              onDelete={handleDelete(index)}
+            />
           ))}
         </ul>
-      </S.Container>
+      </Container>
     </div>
   )
 }

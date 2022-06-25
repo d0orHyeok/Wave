@@ -83,13 +83,13 @@ export class PlaylistController {
     return this.playlistService.addMusicToPlaylist(id, musicIds || []);
   }
 
-  @Patch('/musics/delete/:id')
+  @Patch('/musics/change/:id')
   @UseGuards(JwtAuthGuard)
-  async deletePlaylistMusic(
+  async changePlaylistMusics(
     @Param('id', ParseIntPipe) id: number,
     @Body('musicIds') musicIds: number[],
   ) {
-    return this.playlistService.deleteMusic(id, musicIds || []);
+    return this.playlistService.changePlaylistMusics(id, musicIds);
   }
 
   @Delete('/:id')

@@ -49,6 +49,14 @@ export class PlaylistService {
     return { ...playlist, user };
   }
 
+  async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
+    return this.playlistRepository.findDetailPlaylistsById(id, pagingDto);
+  }
+
+  async findPlaylistsByUserId(userId: string, pagingDto: PagingDto) {
+    return this.playlistRepository.findPlaylistsByUserId(userId, pagingDto);
+  }
+
   async updatePlaylistInfo(
     playlistId: number,
     updatePlaylistDto: UpdatePlaylistDto,
@@ -61,24 +69,24 @@ export class PlaylistService {
     return { ...updatedPlaylist, user };
   }
 
+  async changePlaylistMusics(id: number, musicIds: number[]) {
+    const musics = await this.musicRepository.findMusicByIds(musicIds);
+    const orderedMusics = musicIds.map((id) =>
+      musics.find((music) => music.id === id),
+    );
+    const playlist = await this.playlistRepository.changePlaylistMusics(
+      id,
+      orderedMusics,
+    );
+    return playlist.musics;
+  }
+
   async addMusicToPlaylist(playlistId: number, musicIds: number[]) {
     const musics = await this.musicRepository.findMusicByIds(musicIds);
     return this.playlistRepository.addMusicToPlaylist(playlistId, musics);
   }
 
-  async deleteMusic(playlistId: number, musicIds: number[]) {
-    return this.playlistRepository.deleteMusic(playlistId, musicIds);
-  }
-
   async deletePlaylist(playlistId: number, user: User) {
     return this.playlistRepository.deletePlaylist(playlistId, user);
-  }
-
-  async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
-    return this.playlistRepository.findDetailPlaylistsById(id, pagingDto);
-  }
-
-  async findPlaylistsByUserId(userId: string, pagingDto: PagingDto) {
-    return this.playlistRepository.findPlaylistsByUserId(userId, pagingDto);
   }
 }

@@ -27,7 +27,7 @@ import EditPlaylistData, {
 } from './EditPlaylist/EditPlaylistData'
 import EditPlaylistTracks from './EditPlaylist/EditPlaylistTracks'
 import * as ModalStyle from '../common.style'
-import { updatePlaylistData } from '@api/playlistApi'
+import { changePlaylistMusics, updatePlaylistData } from '@api/playlistApi'
 
 interface IMusicEditData {
   title?: string
@@ -75,8 +75,10 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   const [playlistEditData, setPlaylistEditData] = useState<IPlaylistEditData>(
     {}
   )
+  const [trackIndexes, setTrackIndexes] = useState<number[] | null>(null)
 
   const updateTrack = useCallback(async () => {
+    // 음악정보를 변경한다.
     try {
       const response = await updateMusicData(target.id, musicEditData)
       const updatedMusic = response.data
@@ -91,18 +93,30 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   }, [musicEditData, onClose, openAlert, setTarget, target.id])
 
   const updatePlaylist = useCallback(async () => {
-    try {
-      const response = await updatePlaylistData(target.id, playlistEditData)
-      const updatedPlaylist = response.data
-      setTarget && setTarget(updatedPlaylist)
-      openAlert('Playlist data has been changed', { severity: 'success' })
-    } catch (error: any) {
-      console.error(error.response || error)
-      openAlert('Fail to update playlist', { severity: 'error' })
-    } finally {
-      onClose()
+    // 플레이리스트 정보를 변경한다.
+    if ('name' in target) {
+      try {
+        const response = await updatePlaylistData(target.id, playlistEditData)
+        const updatedPlaylist = response.data
+        setTarget && setTarget(updatedPlaylist)
+        if (trackIndexes) {
+          const musicIds = trackIndexes.map((index) => target.musics[index].id)
+          const res = await changePlaylistMusics(target.id, musicIds)
+          const musics = res.data
+          setTarget((prevState: any) => {
+            return { ...prevState, musics }
+          })
+        }
+
+        openAlert('Playlist data has been changed', { severity: 'success' })
+      } catch (error: any) {
+        console.error(error.response || error)
+        openAlert('Fail to update playlist', { severity: 'error' })
+      } finally {
+        onClose()
+      }
     }
-  }, [onClose, openAlert, playlistEditData, setTarget, target.id])
+  }, [onClose, openAlert, playlistEditData, setTarget, target, trackIndexes])
 
   const handleClickSave = useCallback(async () => {
     if (!changed) {
@@ -116,6 +130,7 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   }, [changed, target, updateTrack, updatePlaylist])
 
   const handleChangeMusicData = useCallback(
+    // 음악정보가 변경되었음을 확인하면 변경된 정보를 저장하고 같다면 해당 항목을 삭제한다.
     (key: TypeOnChnageDataKey | TypeOnChangeMetadataKey, value: any) => {
       if ('title' in target) {
         setMusicEditData((data) => {
@@ -135,6 +150,7 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   )
 
   const handleChangePlaylistData = useCallback(
+    // 플레이리스트 정보가 변경되었음을 확인하면 변경된 정보를 저장하고 같다면 해당 항목을 삭제한다.
     (key: PlaylistKey, value: any) => {
       if ('name' in target) {
         setPlaylistEditData((data) => {
@@ -151,16 +167,24 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
     [target]
   )
 
+  const handleChangeOrder = useCallback((indexes: number[] | null) => {
+    setTrackIndexes(indexes)
+  }, [])
+
   const checkChanged = useCallback(() => {
+    // 변경된 정보가 있는지를 확인
     const isChanged =
       Boolean(Object.keys(musicEditData).length) ||
-      Boolean(Object.keys(playlistEditData).length)
+      Boolean(Object.keys(playlistEditData).length) ||
+      Boolean(trackIndexes)
     setChanged(isChanged)
-  }, [musicEditData, playlistEditData])
+  }, [musicEditData, playlistEditData, trackIndexes])
 
   const handleOnMount = useCallback(async () => {
+    // 페이지 접속시 초기화
     setNavIndex(0)
     setLoading(true)
+    setTrackIndexes(null)
 
     if ('title' in target) {
       setNavItems(['Basic Info', 'Metadata'])
@@ -231,14 +255,16 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
                 </>
               ) : (
                 <>
-                  {navIndex === 0 ? (
-                    <EditPlaylistData
-                      playlist={target}
-                      onChangeData={handleChangePlaylistData}
-                    />
-                  ) : (
-                    <EditPlaylistTracks playlist={target} />
-                  )}
+                  <EditPlaylistData
+                    playlist={target}
+                    onChangeData={handleChangePlaylistData}
+                    style={{ display: navIndex === 0 ? 'block' : 'none' }}
+                  />
+                  <EditPlaylistTracks
+                    playlist={target}
+                    onChangeOrder={handleChangeOrder}
+                    style={{ display: navIndex === 0 ? 'none' : 'block' }}
+                  />
                 </>
               )}
             </ModalStyle.ModalContent>

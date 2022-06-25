@@ -13,6 +13,18 @@ import { PagingDto } from 'src/common/dto/paging.dto';
 
 @EntityRepository(Playlist)
 export class PlaylistRepository extends Repository<Playlist> {
+  getDetailPlaylistQuery() {
+    return this.createQueryBuilder('playlist')
+      .leftJoinAndSelect('playlist.user', 'user')
+      .leftJoinAndSelect('playlist.musics', 'musics')
+      .leftJoinAndSelect('musics.user', 'pmu')
+      .leftJoinAndSelect('playlist.likes', 'likse')
+      .leftJoinAndSelect('playlist.reposts', 'reposts')
+      .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics')
+      .loadRelationCountAndMap('playlist.likesCount', 'playlist.likes')
+      .loadRelationCountAndMap('playlist.repostsCount', 'playlist.reposts');
+  }
+
   async createPlaylist(
     user: User,
     createPlaylistDto: CreatePlaylistDto,
@@ -46,18 +58,6 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
   }
 
-  getDetailPlaylistQuery() {
-    return this.createQueryBuilder('playlist')
-      .leftJoinAndSelect('playlist.user', 'user')
-      .leftJoinAndSelect('playlist.musics', 'musics')
-      .leftJoinAndSelect('musics.user', 'pmu')
-      .leftJoinAndSelect('playlist.likes', 'likse')
-      .leftJoinAndSelect('playlist.reposts', 'reposts')
-      .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics')
-      .loadRelationCountAndMap('playlist.likesCount', 'playlist.likes')
-      .loadRelationCountAndMap('playlist.repostsCount', 'playlist.reposts');
-  }
-
   async findPlaylistById(playlistId: number) {
     const playlist = await this.getDetailPlaylistQuery()
       .where('playlist.id = :id', { id: playlistId })
@@ -82,65 +82,6 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
 
     return playlist;
-  }
-
-  async updatePlaylistInfo(
-    playlistId: number,
-    updatePlaylistDto: UpdatePlaylistDto,
-  ) {
-    const playlist = await this.findPlaylistById(playlistId);
-    Object.entries(updatePlaylistDto).forEach((entrie) => {
-      const [key, value] = entrie;
-      if (value) {
-        playlist[key] = value;
-      }
-    });
-
-    try {
-      const updatedPlaylist = await this.save(playlist);
-      return updatedPlaylist;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        error,
-        'Error to update playlist info',
-      );
-    }
-  }
-
-  async addMusicToPlaylist(playlistId: number, musics: Music[]) {
-    const playlist = await this.findPlaylistById(playlistId);
-    const existMusics = playlist.musics;
-    playlist.musics = [...existMusics, ...musics];
-    try {
-      return await this.save(playlist);
-    } catch (err) {
-      console.log(err);
-      throw new InternalServerErrorException('Fail to update playlist musics');
-    }
-  }
-
-  async deleteMusic(playlistId: number, musicIds: number[]) {
-    const playlist = await this.findPlaylistById(playlistId);
-    const existMusics = playlist.musics;
-    playlist.musics = existMusics.filter(
-      (music) => !musicIds.includes(music.id),
-    );
-    try {
-      return await this.save(playlist);
-    } catch (err) {
-      throw new InternalServerErrorException('Fail to update playlist musics');
-    }
-  }
-
-  async deletePlaylist(id: number, user: User): Promise<void> {
-    try {
-      const result = await this.delete({ id, user });
-      if (result.affected === 0) {
-        throw new NotFoundException(`Can't find Playlist with id ${id}`);
-      }
-    } catch (error) {
-      throw new InternalServerErrorException(error, 'Error to delete playlist');
-    }
   }
 
   async findDetailPlaylistsById(id: number, pagingDto: PagingDto) {
@@ -179,6 +120,58 @@ export class PlaylistRepository extends Repository<Playlist> {
         error,
         'Error to get detail playlists',
       );
+    }
+  }
+
+  async updatePlaylist(playlist: Playlist) {
+    try {
+      return this.save(playlist);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to update playlist info',
+      );
+    }
+  }
+
+  async updatePlaylistInfo(
+    playlistId: number,
+    updatePlaylistDto: UpdatePlaylistDto,
+  ) {
+    const playlist = await this.findPlaylistById(playlistId);
+    Object.entries(updatePlaylistDto).forEach((entrie) => {
+      const [key, value] = entrie;
+      if (value) {
+        playlist[key] = value;
+      }
+    });
+
+    return this.updatePlaylist(playlist);
+  }
+
+  async addMusicToPlaylist(playlistId: number, musics: Music[]) {
+    const playlist = await this.findPlaylistById(playlistId);
+    const existMusics = playlist.musics;
+    playlist.musics = [...existMusics, ...musics];
+
+    return this.updatePlaylist(playlist);
+  }
+
+  async changePlaylistMusics(id: number, musics: Music[]) {
+    const playlist = await this.findPlaylistById(id);
+    playlist.musics = musics;
+
+    return this.updatePlaylist(playlist);
+  }
+
+  async deletePlaylist(id: number, user: User): Promise<void> {
+    try {
+      const result = await this.delete({ id, user });
+      if (result.affected === 0) {
+        throw new NotFoundException(`Can't find Playlist with id ${id}`);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error to delete playlist');
     }
   }
 }

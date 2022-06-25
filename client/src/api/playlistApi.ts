@@ -25,3 +25,10 @@ export const getUserPlaylists = (userId: string, skip = 0, take = 10) => {
 export const updatePlaylistData = (playlistId: number, body: any) => {
   return Axios.patch(`/api/playlist/update/${playlistId}`, body)
 }
+
+export const changePlaylistMusics = (
+  playlistId: number,
+  musicIds: number[]
+) => {
+  return Axios.patch(`/api/playlist/musics/change/${playlistId}`, { musicIds })
+}

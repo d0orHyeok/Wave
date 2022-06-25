@@ -108,11 +108,21 @@ export const EditInputBox = styled.div`
 
 export const EditInputPermalink = styled(EditInputBox)`
   & .inputwrap {
+    width: 100%;
     display: flex;
     height: 1.5rem;
     color: ${({ theme }) => theme.colors.bgTextRGBA(0.86)};
 
+    & label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
     & input {
+      width: auto;
+      flex-grow: 1;
       padding: 4px 0;
       border: none;
       &:focus {
