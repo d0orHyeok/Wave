@@ -87,18 +87,32 @@ export const PlaylistItem = styled.li`
     height: 50px;
     width: 50px;
     margin-right: 12px;
+
+    & .link,
+    & .img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
 
   & .info {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 0;
     font-size: 12px;
 
+    & .info-name,
     & .info-num {
-      display: inline-flex;
-      align-items: center;
-      line-height: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: default;
+    }
+
+    & .info-num {
+      min-width: 0;
+      & svg {
+        transform: translateY(2px);
+      }
     }
   }
 `

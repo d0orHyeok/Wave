@@ -13,6 +13,7 @@ import {
   userDeleteMusicsFromPlaylist,
 } from '@redux/thunks/playlistThunks'
 import { useAlert } from '@redux/context/alertProvider'
+import { Link } from 'react-router-dom'
 
 interface AddPlaylistProps {
   onClose: (any?: any) => any
@@ -253,14 +254,25 @@ const AddPlaylist = ({
                   return (
                     <S.PlaylistItem key={index}>
                       <div className="image">
-                        {playlist.image ? (
-                          <img src={playlist.image} alt="" />
-                        ) : (
-                          <EmptyPlaylistImage size={50} />
-                        )}
+                        <Link
+                          className="link"
+                          to={`/playlist/${playlist.userId}/${playlist.permalink}`}
+                        >
+                          {playlist.image ? (
+                            <img className="img" src={playlist.image} alt="" />
+                          ) : (
+                            <EmptyPlaylistImage className="img" />
+                          )}
+                        </Link>
                       </div>
                       <div className="info">
-                        <div className="info-name">{playlist.name}</div>
+                        <div className="info-name">
+                          <Link
+                            to={`/playlist/${playlist.userId}/${playlist.permalink}`}
+                          >
+                            {playlist.name}
+                          </Link>
+                        </div>
                         <div
                           className="info-num"
                           title={`${playlist.musics.length} musics`}

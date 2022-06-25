@@ -60,6 +60,8 @@ export const AppHeader = styled.header<{ fold: string }>`
     margin-top: 30px;
     margin-bottom: 45px;
     visibility: ${({ fold }) => (fold === 'true' ? 'hidden' : 'visible')};
+    overflow: hidden;
+    white-space: nowrap;
   }
   & .header-fold,
   & .menuItem-link {
