@@ -37,3 +37,7 @@ export const countMusic = (musicId: number) => {
 export const updateMusicData = (musicId: number, body: any) => {
   return Axios.patch(`/api/music/${musicId}/update`, body)
 }
+
+export const delelteMusic = (musicId: number) => {
+  return Axios.delete(`/api/music/${musicId}`)
+}

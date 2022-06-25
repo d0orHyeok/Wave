@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { PlaylistRepository } from './playlist.repository';
 import { PagingDto } from 'src/common/dto/paging.dto';
+import { deleteFileDisk } from 'src/upload';
 
 @Injectable()
 export class PlaylistService {
@@ -87,6 +88,15 @@ export class PlaylistService {
   }
 
   async deletePlaylist(playlistId: number, user: User) {
+    const playlist = await this.playlistRepository.findPlaylistById(playlistId);
+    if (!playlist) return;
+
+    const { image } = playlist;
+    if (image) {
+      const path = `uploads/${image.split('uploads')[1]}`;
+      deleteFileDisk(path);
+    }
+
     return this.playlistRepository.deletePlaylist(playlistId, user);
   }
 }

@@ -32,3 +32,7 @@ export const changePlaylistMusics = (
 ) => {
   return Axios.patch(`/api/playlist/musics/change/${playlistId}`, { musicIds })
 }
+
+export const deletePlaylist = (playlistId: number) => {
+  return Axios.delete(`/api/playlist/${playlistId}`)
+}

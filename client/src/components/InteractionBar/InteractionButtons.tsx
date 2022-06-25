@@ -13,6 +13,11 @@ import { addMusic } from '@redux/features/player/playerSlice'
 import AddPlaylist from '@components/InnerModal/AddPlaylist/AddPlaylist'
 import { userToggleLike, userToggleRepost } from '@redux/thunks/userThunks'
 import EditTarget from '@components/InnerModal/EditTarget/EditTarget'
+import { RiDeleteBin6Line } from 'react-icons/ri'
+import { delelteMusic } from '@api/musicApi'
+import { deletePlaylist } from '@api/playlistApi'
+import { useNavigate } from 'react-router-dom'
+import { useAlert } from '@redux/context/alertProvider'
 
 interface StyledButtonProps {
   active?: boolean
@@ -88,6 +93,8 @@ const InteractionButtons = ({
   const dispatch = useAppDispatch()
   const openLogin = useLoginOpen()
   const copyLink = useCopyLink()
+  const navigate = useNavigate()
+  const openAlert = useAlert()
 
   const userData = useAppSelector((state) => state.user.userData)
   const [openEditTarget, setOpenEditTarget] = useState(false)
@@ -209,6 +216,23 @@ const InteractionButtons = ({
     dispatch(addMusic(additem))
   }, [dispatch, target])
 
+  const handleClickDelete = useCallback(async () => {
+    try {
+      if ('title' in target) {
+        await delelteMusic(target.id)
+        navigate(`/profile/${target.userId}/${'tracks'}`)
+        openAlert(`Delete Success: ${target.title}`, { severity: 'success' })
+      } else {
+        await deletePlaylist(target.id)
+        navigate(`/profile/${target.userId}/${'playlists'}`)
+        openAlert(`Delete Success: ${target.name}`, { severity: 'success' })
+      }
+    } catch (error: any) {
+      console.error(error.response || error)
+      openAlert(`Fail to delete`, { severity: 'error' })
+    }
+  }, [navigate, openAlert, target])
+
   useLayoutEffect(() => {
     if (!userData) {
       setIsLike(false)
@@ -301,6 +325,13 @@ const InteractionButtons = ({
           >
             <MdOutlineEdit className="icon" />
             <span className="text">Edit</span>
+          </StyledButton>
+          <StyledButton
+            title="Delete"
+            mediaSize={mediaSize}
+            onClick={handleClickDelete}
+          >
+            <RiDeleteBin6Line className="icon" />
           </StyledButton>
           <Modal open={openEditTarget} onClose={closeEditTarget}>
             <EditTarget
