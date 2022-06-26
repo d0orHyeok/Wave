@@ -217,6 +217,8 @@ const InteractionButtons = ({
   }, [dispatch, target])
 
   const handleClickDelete = useCallback(async () => {
+    if (!confirm('Are you sure you want to delete it?')) return
+
     try {
       if ('title' in target) {
         await delelteMusic(target.id)

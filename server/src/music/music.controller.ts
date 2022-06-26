@@ -13,17 +13,21 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { GetUser } from 'src/decorators/get-user.decorator';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
 import { extname } from 'path';
 import { UploadedFilesPipe } from './pipes/uploaded-files.pipe';
 import { UploadMusicDto } from './dto/upload-music.dto';
-import { uploadFileDisk } from 'src/upload';
+import { uploadFileDisk } from 'src/fileFunction';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('music')
@@ -88,20 +92,15 @@ export class MusicController {
     ]),
   )
   async uploadMusic(
-    @UploadedFiles(UploadedFilesPipe)
-    uploadMusicDto: UploadMusicDto,
-    @GetUser()
-    user: User,
+    @UploadedFiles(UploadedFilesPipe) uploadMusicDto: UploadMusicDto,
+    @GetUser() user: User,
   ) {
     const { music, cover, data } = uploadMusicDto;
 
     const fileBase = `${Date.now()}_${user.id}_`;
 
-    const uploadMusicFile = this.musicService.changeMusicFileData(
-      music,
-      data,
-      cover,
-    );
+    const { buffer, originalname, mimetype } =
+      this.musicService.changeMusicFileData(music, data, cover);
 
     let coverUrl: string | undefined;
     if (cover) {
@@ -116,8 +115,9 @@ export class MusicController {
     }
 
     const { filename, link } = await this.musicService.uploadFileFirebase(
-      uploadMusicFile,
-      fileBase + uploadMusicFile.originalname,
+      buffer,
+      mimetype,
+      fileBase + originalname,
     );
 
     const createMusicData = {
@@ -151,5 +151,15 @@ export class MusicController {
     @Body(ValidationPipe) updateMusicDataDto: UpdateMusicDataDto,
   ) {
     return this.musicService.updateMusicData(id, updateMusicDataDto);
+  }
+
+  @Patch('/:id/cover')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  changeCover(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.musicService.changeMusicCover(id, file);
   }
 }

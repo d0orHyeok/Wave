@@ -33,6 +33,15 @@ export const changePlaylistMusics = (
   return Axios.patch(`/api/playlist/musics/change/${playlistId}`, { musicIds })
 }
 
+export const changePlaylistImage = (playlistId: number, image: File) => {
+  const formData = new FormData()
+  formData.append('file', image)
+
+  return Axios.patch(`/api/playlist/image/${playlistId}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
 export const deletePlaylist = (playlistId: number) => {
   return Axios.delete(`/api/playlist/${playlistId}`)
 }

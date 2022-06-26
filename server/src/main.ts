@@ -1,10 +1,12 @@
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as admin from 'firebase-admin';
 import { ServiceAccount } from 'firebase-admin';
+
+export let app: INestApplication;
 
 async function bootstrap() {
   const logger = new Logger();

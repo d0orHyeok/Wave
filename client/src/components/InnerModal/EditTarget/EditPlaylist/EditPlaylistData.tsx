@@ -43,11 +43,10 @@ const EditPlaylistData = ({ playlist, onChangeData, ...props }: Props) => {
         const data = await fileToUint8Array(files[0])
         const url = getCoverUrlFromMetadata(data, files[0].type)
         setCover(url)
-        console.log(files[0])
       } else {
         setCover(playlist.image)
       }
-      onChangeData && onChangeData('cover', files?.item(0))
+      onChangeData && onChangeData('image', files ? files[0] : null)
     },
     [onChangeData, playlist.image]
   )
@@ -57,7 +56,7 @@ const EditPlaylistData = ({ playlist, onChangeData, ...props }: Props) => {
     if (coverInputRef.current) {
       coverInputRef.current.files = null
     }
-    onChangeData && onChangeData('cover', playlist.image)
+    onChangeData && onChangeData('image', playlist.image)
   }, [onChangeData, playlist.image])
 
   const handleChangePrivacy = useCallback(

@@ -25,7 +25,6 @@ const InteractionBar = ({
   setTarget,
   visibleOption,
   mediaSize,
-  editable,
   ...props
 }: InteractionBarProps) => {
   return (
@@ -35,7 +34,6 @@ const InteractionBar = ({
         target={target}
         setTarget={setTarget}
         mediaSize={mediaSize}
-        editable={editable}
       />
       <InteractionCount
         className="interactionCount"

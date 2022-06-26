@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 
 function getPath(filePath?: string) {
@@ -27,3 +28,14 @@ export function deleteFileDisk(fileName: string) {
     unlinkSync(fileName);
   }
 }
+
+export const getBlobFromURL = (url: string) => {
+  return fetch(url).then((res) => {
+    return res.blob();
+  });
+};
+
+export const getBufferFromBlob = async (blob: Blob) => {
+  const arrayBuffer = await blob.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+};

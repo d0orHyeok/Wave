@@ -1,4 +1,5 @@
-import { deleteFileDisk } from 'src/upload';
+import { getBlobFromURL, getBufferFromBlob } from './../fileFunction';
+import { deleteFileDisk, uploadFileDisk } from 'src/fileFunction';
 import { UpdateMusicDataDto } from './dto/update-music-data.dto';
 import { UploadMusicDataDto } from './dto/upload-music-data.dto';
 import { PagingDto } from '../common/dto/paging.dto';
@@ -13,52 +14,19 @@ import { Music } from 'src/entities/music.entity';
 import { getStorage } from 'firebase-admin/storage';
 import * as NodeID3 from 'node-id3';
 import * as uuid from 'uuid';
+import { extname } from 'path';
 
 @Injectable()
 export class MusicService {
   constructor(
     @InjectRepository(MusicRepository)
-    private config: ConfigService,
     private musicRepository: MusicRepository,
+    private configService: ConfigService,
     private authService: AuthService,
   ) {}
 
   async createMusic(createMusicData: MusicDataDto, user: User): Promise<Music> {
     return this.musicRepository.createMusic(createMusicData, user);
-  }
-
-  createPersistentDownloadUrl = (pathToFile, downloadToken) => {
-    const bucket = 'wave-f1616.appspot.com';
-    return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(
-      pathToFile,
-    )}?alt=media&token=${downloadToken}`;
-  };
-
-  async uploadFileFirebase(file: Express.Multer.File, filename: string) {
-    const bucket = getStorage().bucket();
-    const upload = bucket.file(filename);
-
-    try {
-      await upload.save(file.buffer, {
-        contentType: file.mimetype,
-      });
-
-      const dowloadToken = uuid.v4();
-
-      await upload.setMetadata({
-        metadata: { firebaseStorageDownloadTokens: dowloadToken },
-      });
-
-      return {
-        filename,
-        link: this.createPersistentDownloadUrl(filename, dowloadToken),
-      };
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Failed to upload file on firebase\n' + error,
-      );
-    }
   }
 
   async getAllMusic(): Promise<Music[]> {
@@ -158,6 +126,61 @@ export class MusicService {
     return this.musicRepository.updateMusicCount(id);
   }
 
+  async updateMusicData(id: number, updateMusicDataDto: UpdateMusicDataDto) {
+    return this.musicRepository.updateMusicData(id, updateMusicDataDto);
+  }
+
+  async changeMusicCover(id: number, file: Express.Multer.File) {
+    const music = await this.musicRepository.findMusicById(id);
+    const { cover, link, filename } = music;
+    const serverUrl = this.configService.get<string>('SERVER_URL');
+    const fileBase = `${Date.now()}_${music.userId}_`;
+
+    // 음악파일을 가져온다
+    const musicBlob = await getBlobFromURL(link);
+    if (!musicBlob) {
+      throw new InternalServerErrorException('Fail to update');
+    }
+    const musicBuffer = await getBufferFromBlob(musicBlob);
+
+    // 가져온 음악파일의 커버를 수정한다
+    const tags = {
+      image: {
+        type: { id: 3, name: 'front cover' },
+        mime: file.mimetype,
+        description: 'album cover',
+        imageBuffer: file.buffer,
+      },
+    };
+    const newBuffer = NodeID3.update(tags, musicBuffer);
+    if (!newBuffer) {
+      throw new InternalServerErrorException('Fail to update');
+    }
+
+    // 기존에 존재하던 음악파일을 수정한다.
+    await this.deleteFileFirebase(filename);
+    const { filename: newFilename, link: newLink } =
+      await this.uploadFileFirebase(newBuffer, musicBlob.type, filename);
+
+    // 바뀌기 전 음악커버를 삭제한다.
+    if (cover) {
+      const existCoverPath = `uploads${cover.split('uploads')[1]}`;
+      deleteFileDisk(existCoverPath);
+    }
+
+    // 바뀐 음악커버를 저장한다.
+    const newCoverName = `${fileBase}_cover${extname(file.originalname)}`;
+    const newCoverPath =
+      serverUrl + '/' + uploadFileDisk(file, newCoverName, 'cover');
+
+    // 바뀐 음악정보들을 업데이트한다.
+    music.cover = newCoverPath;
+    music.filename = newFilename;
+    music.link = newLink;
+
+    return this.musicRepository.updateMusic(music);
+  }
+
   async deleteMusic(id: number, user: User): Promise<void> {
     const music = await this.musicRepository.findOne({ id, user });
     if (music) {
@@ -171,12 +194,54 @@ export class MusicService {
     }
   }
 
-  async deleteFileFirebase(filename: string) {
+  // firebase function
+  createPersistentDownloadUrl = (pathToFile, downloadToken) => {
+    const bucket = 'wave-f1616.appspot.com';
+    return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(
+      pathToFile,
+    )}?alt=media&token=${downloadToken}`;
+  };
+
+  async uploadFileFirebase(
+    buffer: Buffer,
+    contentType: string,
+    filename: string,
+  ) {
     const bucket = getStorage().bucket();
-    await bucket.file(filename).delete();
+    const upload = bucket.file(filename);
+
+    try {
+      await upload.save(buffer, {
+        contentType: contentType,
+      });
+
+      const dowloadToken = uuid.v4();
+
+      await upload.setMetadata({
+        metadata: { firebaseStorageDownloadTokens: dowloadToken },
+      });
+
+      return {
+        filename,
+        link: this.createPersistentDownloadUrl(filename, dowloadToken),
+      };
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Failed to upload file on firebase\n' + error,
+      );
+    }
   }
 
-  async updateMusicData(id: number, updateMusicDataDto: UpdateMusicDataDto) {
-    return this.musicRepository.updateMusicData(id, updateMusicDataDto);
+  async deleteFileFirebase(filename: string) {
+    try {
+      const bucket = getStorage().bucket();
+      await bucket.file(filename).delete();
+    } catch (err) {
+      throw new InternalServerErrorException(
+        'Fail to Delete Firebase file',
+        err,
+      );
+    }
   }
 }

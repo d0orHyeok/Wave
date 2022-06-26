@@ -7,7 +7,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { PlaylistRepository } from './playlist.repository';
 import { PagingDto } from 'src/common/dto/paging.dto';
-import { deleteFileDisk } from 'src/upload';
+import { deleteFileDisk, uploadFileDisk } from 'src/fileFunction';
+import { extname } from 'path';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PlaylistService {
@@ -16,6 +18,7 @@ export class PlaylistService {
     private playlistRepository: PlaylistRepository,
     private musicRepository: MusicRepository,
     private userRepository: UserRepository,
+    private configService: ConfigService,
   ) {}
 
   async createPlaylist(user: User, createPlaylistDto: CreatePlaylistDto) {
@@ -85,6 +88,32 @@ export class PlaylistService {
   async addMusicToPlaylist(playlistId: number, musicIds: number[]) {
     const musics = await this.musicRepository.findMusicByIds(musicIds);
     return this.playlistRepository.addMusicToPlaylist(playlistId, musics);
+  }
+
+  async changePlaylistImage(playlistId: number, file: Express.Multer.File) {
+    const playlist = await this.playlistRepository.findPlaylistById(playlistId);
+    const { image } = playlist;
+    const serverUrl = this.configService.get<string>('SERVER_URL');
+
+    // 바뀌기 전 음악커버를 삭제한다.
+    if (image) {
+      const existImagePath = `uploads${image.split('uploads')[1]}`;
+      deleteFileDisk(existImagePath);
+    }
+
+    // 바뀐 음악커버를 저장한다.
+    const newImageName = `${Date.now()}_${playlist.permalink}_image${extname(
+      file.originalname,
+    )}`;
+    const newImagePath =
+      serverUrl + '/' + uploadFileDisk(file, newImageName, 'playlist');
+
+    // 바뀐 음악정보들을 업데이트한다.
+    playlist.image = newImagePath;
+
+    const result = await this.playlistRepository.updatePlaylist(playlist);
+    const user = await this.userRepository.findUserById(playlist.userId);
+    return { ...result, user };
   }
 
   async deletePlaylist(playlistId: number, user: User) {

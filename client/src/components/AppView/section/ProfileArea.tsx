@@ -95,12 +95,12 @@ const ProfileArea = ({ className, fold }: ProfileAreaProps) => {
         }}
       >
         <MenuItem onClick={handleClickAndNavigate(`/profile/you`)}>
-          <Link to="/profile/you">프로필</Link>
+          <Link to="/profile/you">Profile</Link>
         </MenuItem>
         <MenuItem onClick={handleClickAndNavigate('/settings')}>
-          <Link to="/settings">설정</Link>
+          <Link to="/settings">Settings</Link>
         </MenuItem>
-        <MenuItem onClick={handleClickLogout}>로그아웃</MenuItem>
+        <MenuItem onClick={handleClickLogout}>Sign Out</MenuItem>
       </S.MyMenu>
     </>
   )

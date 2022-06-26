@@ -9,7 +9,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -17,6 +19,7 @@ import { GetUser } from 'src/decorators/get-user.decorator';
 import { User } from 'src/entities/user.entity';
 import { CreatePlaylistDto } from './dto/createPlaylistDto';
 import { PlaylistService } from './playlist.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('playlist')
 export class PlaylistController {
@@ -90,6 +93,16 @@ export class PlaylistController {
     @Body('musicIds') musicIds: number[],
   ) {
     return this.playlistService.changePlaylistMusics(id, musicIds);
+  }
+
+  @Patch('/image/:id')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  changeCover(
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.playlistService.changePlaylistImage(id, file);
   }
 
   @Delete('/:id')

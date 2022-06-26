@@ -38,6 +38,15 @@ export const updateMusicData = (musicId: number, body: any) => {
   return Axios.patch(`/api/music/${musicId}/update`, body)
 }
 
+export const changeMusicCover = (musicId: number, cover: File) => {
+  const formData = new FormData()
+  formData.append('file', cover)
+
+  return Axios.patch(`/api/music/${musicId}/cover`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
 export const delelteMusic = (musicId: number) => {
   return Axios.delete(`/api/music/${musicId}`)
 }

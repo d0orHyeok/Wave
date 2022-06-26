@@ -21,13 +21,17 @@ import Loading from '@components/Loading/Loading'
 import { IExtractMetadata } from '@components/ExtractMusic/extractMetadata.types'
 import Button, { PrimaryButton } from '@components/Common/Button'
 import { useAlert } from '@redux/context/alertProvider'
-import { updateMusicData } from '@api/musicApi'
+import { changeMusicCover, updateMusicData } from '@api/musicApi'
 import EditPlaylistData, {
   TypeOnChangeDataKey as PlaylistKey,
 } from './EditPlaylist/EditPlaylistData'
 import EditPlaylistTracks from './EditPlaylist/EditPlaylistTracks'
 import * as ModalStyle from '../common.style'
-import { changePlaylistMusics, updatePlaylistData } from '@api/playlistApi'
+import {
+  changePlaylistImage,
+  changePlaylistMusics,
+  updatePlaylistData,
+} from '@api/playlistApi'
 
 interface IMusicEditData {
   title?: string
@@ -51,7 +55,7 @@ interface IPlaylistEditData {
   status?: TypeStatus
   tags?: string[]
   description?: string
-  image?: string
+  image?: string | File
 }
 
 interface EditTargetProps {
@@ -80,8 +84,13 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   const updateTrack = useCallback(async () => {
     // 음악정보를 변경한다.
     try {
-      const response = await updateMusicData(target.id, musicEditData)
-      const updatedMusic = response.data
+      const { cover, ...body } = musicEditData
+      const response = await updateMusicData(target.id, body)
+      const coverReq =
+        cover && typeof cover !== 'string'
+          ? await changeMusicCover(target.id, cover)
+          : null
+      const updatedMusic = coverReq ? coverReq.data : response.data
       setTarget && setTarget(updatedMusic)
       openAlert('Track data has been changed', { severity: 'success' })
     } catch (error: any) {
@@ -96,15 +105,22 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
     // 플레이리스트 정보를 변경한다.
     if ('name' in target) {
       try {
-        const response = await updatePlaylistData(target.id, playlistEditData)
-        const updatedPlaylist = response.data
+        const { image, ...body } = playlistEditData
+        const response = await updatePlaylistData(target.id, body)
+        const imageReq =
+          image && typeof image !== 'string'
+            ? await changePlaylistImage(target.id, image)
+            : null
+        const updatedPlaylist = imageReq ? imageReq.data : response.data
         setTarget && setTarget(updatedPlaylist)
         if (trackIndexes) {
           const musicIds = trackIndexes.map((index) => target.musics[index].id)
           const res = await changePlaylistMusics(target.id, musicIds)
           const musics = res.data
           setTarget((prevState: any) => {
-            return { ...prevState, musics }
+            return !updatedPlaylist
+              ? { ...prevState, musics }
+              : { ...updatedPlaylist, musics }
           })
         }
 
@@ -122,11 +138,13 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
     if (!changed) {
       return
     }
+    setLoading(true)
     if ('title' in target) {
       updateTrack()
     } else {
       updatePlaylist()
     }
+    setLoading(false)
   }, [changed, target, updateTrack, updatePlaylist])
 
   const handleChangeMusicData = useCallback(
@@ -222,67 +240,69 @@ const EditTarget = ({ target, setTarget, onClose }: EditTargetProps) => {
   return (
     <ModalStyle.InnerModalWrapper>
       <ModalStyle.InnerModalContainer>
-        {loading ? (
-          <S.LoadingBox>
-            <Loading />
-          </S.LoadingBox>
-        ) : (
-          <>
-            <ModalStyle.ModalTitle>
-              <ExtractMusicNav
-                navItems={navItems}
-                navIndex={navIndex}
-                handleClickNav={setNavIndex}
-              />
-            </ModalStyle.ModalTitle>
+        <ModalStyle.ModalTitle>
+          <ExtractMusicNav
+            navItems={navItems}
+            navIndex={navIndex}
+            handleClickNav={setNavIndex}
+          />
+        </ModalStyle.ModalTitle>
 
-            <ModalStyle.ModalContent>
-              {'title' in target ? (
-                <>
-                  {navIndex === 0 ? (
-                    <MusicBasicInfo
-                      ref={musicBasicInfoRef}
-                      metadata={metadata}
-                      onChangeData={handleChangeMusicData}
-                    />
-                  ) : (
-                    <MusicMetadata
-                      ref={musiMetadataRef}
-                      metadata={metadata}
-                      onChangeData={handleChangeMusicData}
-                    />
-                  )}
-                </>
+        <ModalStyle.ModalContent
+          style={{
+            position: 'relative',
+            overflowY: loading ? 'hidden' : 'auto',
+          }}
+        >
+          {loading && (
+            <S.LoadingBox>
+              <Loading />
+            </S.LoadingBox>
+          )}
+          {'title' in target ? (
+            <>
+              {navIndex === 0 ? (
+                <MusicBasicInfo
+                  ref={musicBasicInfoRef}
+                  metadata={metadata}
+                  onChangeData={handleChangeMusicData}
+                />
               ) : (
-                <>
-                  <EditPlaylistData
-                    playlist={target}
-                    onChangeData={handleChangePlaylistData}
-                    style={{ display: navIndex === 0 ? 'block' : 'none' }}
-                  />
-                  <EditPlaylistTracks
-                    playlist={target}
-                    onChangeOrder={handleChangeOrder}
-                    style={{ display: navIndex === 0 ? 'none' : 'block' }}
-                  />
-                </>
+                <MusicMetadata
+                  ref={musiMetadataRef}
+                  metadata={metadata}
+                  onChangeData={handleChangeMusicData}
+                />
               )}
-            </ModalStyle.ModalContent>
-            <ModalStyle.ModalActions>
-              <S.Buttons>
-                <Button className="buttons-btn cancel" onClick={onClose}>
-                  Cancel
-                </Button>
-                <PrimaryButton
-                  className={`buttons-btn save ${!changed && 'block'}`}
-                  onClick={handleClickSave}
-                >
-                  Save Changes
-                </PrimaryButton>
-              </S.Buttons>
-            </ModalStyle.ModalActions>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <EditPlaylistData
+                playlist={target}
+                onChangeData={handleChangePlaylistData}
+                style={{ display: navIndex === 0 ? 'block' : 'none' }}
+              />
+              <EditPlaylistTracks
+                playlist={target}
+                onChangeOrder={handleChangeOrder}
+                style={{ display: navIndex === 0 ? 'none' : 'block' }}
+              />
+            </>
+          )}
+        </ModalStyle.ModalContent>
+        <ModalStyle.ModalActions>
+          <S.Buttons>
+            <Button className="buttons-btn cancel" onClick={onClose}>
+              Cancel
+            </Button>
+            <PrimaryButton
+              className={`buttons-btn save ${!changed && 'block'}`}
+              onClick={handleClickSave}
+            >
+              Save Changes
+            </PrimaryButton>
+          </S.Buttons>
+        </ModalStyle.ModalActions>
       </ModalStyle.InnerModalContainer>
     </ModalStyle.InnerModalWrapper>
   )

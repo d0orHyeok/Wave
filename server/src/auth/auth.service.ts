@@ -1,6 +1,6 @@
 import { PlaylistRepository } from './../playlist/playlist.repository';
 import { AuthProfileDto } from './dto/auth-profile.dto';
-import { deleteFileDisk, uploadFileDisk } from 'src/upload';
+import { deleteFileDisk, uploadFileDisk } from 'src/fileFunction';
 import { MusicRepository } from 'src/music/music.repository';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { ConfigService } from '@nestjs/config';
