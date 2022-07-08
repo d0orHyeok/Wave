@@ -9,12 +9,22 @@ import * as S from './MusicCard.style'
 import { BiRepost } from 'react-icons/bi'
 import { IMusic, IUser } from '@appTypes/types.type.'
 
+interface IButtonProps {
+  mediaSize?: number | string
+}
+
 interface MusicCardProps extends React.HTMLAttributes<HTMLDivElement> {
   music: IMusic
   repostUser?: IUser
+  buttonProps?: IButtonProps
 }
 
-const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {
+const MusicCard = ({
+  music,
+  repostUser,
+  buttonProps,
+  ...props
+}: MusicCardProps) => {
   const dispatch = useAppDispatch()
 
   const currentMusic = useAppSelector((state) => state.player.currentMusic)
@@ -91,7 +101,7 @@ const MusicCard = ({ music, repostUser, ...props }: MusicCardProps) => {
         <S.StyledInteractionBar
           className="musicCard-infoBox-interaction"
           target={music}
-          mediaSize={1000}
+          mediaSize={buttonProps?.mediaSize ? buttonProps.mediaSize : 1000}
         />
       </div>
     </S.Container>

@@ -15,16 +15,22 @@ import calculateDateAgo from '@api/functions/calculateDateAgo'
 import { BiRepost } from 'react-icons/bi'
 import { IUser, IPlaylist } from '@appTypes/types.type.'
 
+interface IButtonProps {
+  mediaSize?: number | string
+}
+
 interface PlaylistCardProps extends React.HTMLAttributes<HTMLDivElement> {
   playlist: IPlaylist
   setPlaylist?: any
   repostUser?: IUser
+  buttonProps?: IButtonProps
 }
 
 const PlaylistCard = ({
   playlist,
   setPlaylist,
   repostUser,
+  buttonProps,
   ...props
 }: PlaylistCardProps) => {
   const dispatch = useAppDispatch()
@@ -189,7 +195,7 @@ const PlaylistCard = ({
         <S.StyledInteractionBar
           target={playlist}
           setTarget={setPlaylist}
-          mediaSize={1000}
+          mediaSize={buttonProps?.mediaSize ? buttonProps.mediaSize : 1000}
         />
       </S.PlaylistCardInfo>
     </S.Container>

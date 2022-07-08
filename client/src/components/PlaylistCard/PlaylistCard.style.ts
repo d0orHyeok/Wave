@@ -53,6 +53,9 @@ export const PlaylistCardInfo = styled.div`
 
   & .playlist-info {
     & .playlist-info-user {
+      display: flex;
+      align-items: center;
+
       font-size: 13px;
       color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
 
@@ -74,7 +77,10 @@ export const PlaylistCardInfo = styled.div`
     }
 
     & .playlist-info-user,
-    & .playlist-info-name {
+    & .playlist-info-name,
+    & .playlistCard-createdAt,
+    & .playlistCard-uploader-repost {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -85,20 +91,15 @@ export const PlaylistCardInfo = styled.div`
       display: block;
       clear: both;
     }
-  }
 
-  & .playlistCard-createdAt {
-    float: right;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+    & .playlistCard-createdAt {
+      color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+      margin-left: auto;
+      padding-left: 4px;
 
-    &::after {
-      content: '';
-      display: inline-block;
-      clear: both;
-    }
-
-    @media screen and (max-width: 600px) {
-      display: none;
+      @media screen and (max-width: 600px) {
+        display: none;
+      }
     }
   }
 `
@@ -113,7 +114,7 @@ export const PlayBtn = styled(PrimaryButton)`
   margin-right: 10px;
 
   & .icon.play {
-    transform: translateX(2px);
+    transform: translate(2px, 1px);
   }
 `
 

@@ -55,7 +55,7 @@ export const PlayBtn = styled(PrimaryButton)`
   margin-right: 10px;
 
   & .icon.play {
-    transform: translateX(2px);
+    transform: translate(2px, 1px);
   }
 `
 
@@ -75,6 +75,10 @@ export const MusicInfo = styled.div`
   & .musicCard-infoBox-info {
     width: 100%;
     & .musicCard-uploader {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+
       font-size: 13px;
       color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
 
@@ -95,26 +99,24 @@ export const MusicInfo = styled.div`
     }
 
     & .musicCard-title,
-    & .musicCard-uploader {
+    & .musicCard-uploader,
+    & .musicCard-createdAt,
+    & .musicCard-uploader-repost {
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-  }
 
-  & .musicCard-createdAt {
-    float: right;
-    font-size: 13px;
-    color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+    & .musicCard-createdAt {
+      margin-left: auto;
+      padding-left: 4px;
+      font-size: 13px;
+      color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
 
-    &::after {
-      content: '';
-      display: inline-block;
-      clear: both;
-    }
-
-    @media screen and (max-width: 600px) {
-      display: none;
+      @media screen and (max-width: 600px) {
+        display: none;
+      }
     }
   }
 `
