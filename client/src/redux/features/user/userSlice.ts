@@ -49,7 +49,9 @@ export const userSlice = createSlice({
 
     [userThunks.userToggleFollow.fulfilled.type]: (state, action) => {
       if (state.userData) {
-        state.userData.following = action.payload.following
+        const following: any[] = action.payload.following
+        state.userData.following = following
+        state.userData.followingCount = following.length || 0
       }
     },
     [userThunks.userUpdateImage.fulfilled.type]: (state, action) => {

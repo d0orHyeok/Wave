@@ -97,6 +97,7 @@ const ProfileReposts = ({ user, ...props }: ProfileRepostsProps) => {
                 key={index}
                 music={item}
                 repostUser={user}
+                buttonProps={{ mediaSize: 1200 }}
               />
             ) : (
               <PlaylistCard
@@ -104,6 +105,7 @@ const ProfileReposts = ({ user, ...props }: ProfileRepostsProps) => {
                 key={index}
                 playlist={item}
                 repostUser={user}
+                buttonProps={{ mediaSize: 1200 }}
               />
             )
           )}

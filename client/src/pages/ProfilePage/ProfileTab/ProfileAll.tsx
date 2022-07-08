@@ -98,6 +98,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
                   key={index}
                   music={item}
                   repostUser={repostUser}
+                  buttonProps={{ mediaSize: 1200 }}
                 />
               )
             } else {
@@ -112,6 +113,7 @@ const ProfileAll = ({ user, editable, ...props }: ProfileAllProps) => {
                   key={index}
                   playlist={item}
                   repostUser={repostUser}
+                  buttonProps={{ mediaSize: 1200 }}
                 />
               )
             }

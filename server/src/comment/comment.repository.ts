@@ -10,6 +10,25 @@ import {
 
 @EntityRepository(Comment)
 export class CommentRepository extends Repository<Comment> {
+  getDetailQuery() {
+    return this.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .leftJoinAndSelect('comment.music', 'music');
+  }
+
+  async findCommentsByUserId(userId: string) {
+    try {
+      return this.getDetailQuery()
+        .where('comment.userId = :userId', {
+          userId,
+        })
+        .getMany();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error, 'Error to get comments');
+    }
+  }
+
   async createComment(
     user: User,
     music: Music,

@@ -28,7 +28,7 @@ export interface IUserRelationData {
   // User Create Datas
   musics: IMusic[]
   playlists: IPlaylist[]
-  commnets: IComment[]
+  comments: IComment[]
 
   // Count
   likeMusicsCount: number

@@ -13,6 +13,10 @@ export class CommentService {
     private musicRepository: MusicRepository,
   ) {}
 
+  async findCommentsByUserId(userId: string) {
+    return this.commentRepository.findCommentsByUserId(userId);
+  }
+
   async createComment(user: User, createCommentDto: CreateCommentDto) {
     const music = await this.musicRepository.findMusicById(
       createCommentDto.musicId,

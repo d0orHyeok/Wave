@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   UseGuards,
@@ -16,6 +17,11 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 @Controller('comment')
 export class CommentController {
   constructor(private commentService: CommentService) {}
+
+  @Get('/user/:userId')
+  async getCommentsByUserId(@Param('userId') userId: string) {
+    return this.commentService.findCommentsByUserId(userId);
+  }
 
   @Post('/create')
   @UseGuards(JwtAuthGuard)

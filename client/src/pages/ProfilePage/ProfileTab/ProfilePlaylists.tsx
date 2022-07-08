@@ -73,7 +73,11 @@ const ProfilePlaylists = ({ userId, ...props }: ProfilePlaylistsProps) => {
       {playlists.length ? (
         <div {...props}>
           {playlists.map((playlist, index) => (
-            <StyledPlaylistCard key={index} playlist={playlist} />
+            <StyledPlaylistCard
+              key={index}
+              playlist={playlist}
+              buttonProps={{ mediaSize: 1200 }}
+            />
           ))}
           <LoadingArea loading={loading} onInView={handleOnView} />
         </div>

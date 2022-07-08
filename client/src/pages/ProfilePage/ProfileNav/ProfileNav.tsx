@@ -31,11 +31,12 @@ const Nav = styled.div`
     }
     & li {
       position: relative;
-      padding: 8px 0;
-      margin-right: 16px;
-      &:last-child {
-        margin-right: 0;
+      padding: 10px 0;
+
+      &:not(:last-child) {
+        margin-right: 16px;
       }
+
       &.selected {
         color: ${({ theme }) => theme.colors.primaryColor};
         &::before {
@@ -111,7 +112,9 @@ const ProfileNav = ({ editable, ...props }: ProfileNavProps) => {
   const copyLink = useCopyLink()
   const openLogin = useLoginOpen()
 
-  const following = useAppSelector((state) => state.user.userData?.following)
+  const following = useAppSelector(
+    (state) => state.user.userData?.following || []
+  )
   const isLogin = useAppSelector((state) => state.user.isLogin)
 
   const ulRef = useRef<HTMLUListElement>(null)

@@ -14,43 +14,55 @@ import ProfilePopularTracks from './ProfileTab/ProfilePopularTracks'
 import ProfileTracks from './ProfileTab/ProfileTracks'
 import ProfilePlaylists from './ProfileTab/ProfilePlaylists'
 import ProfileReposts from './ProfileTab/ProfileReposts'
+import ProfileSide from './ProfileSide/ProfileSide'
 
 const ProfilePage = () => {
   const { userId, nav } = useParams()
 
-  const myId = useAppSelector((state) => state.user.userData?.id)
-  const [isLoading, setIsLoading] = useState(true)
+  const userData = useAppSelector((state) => state.user.userData)
+  const [isLoading, setIsLoading] = useState(false)
   const [editable, setEditable] = useState(false)
   const [profileData, setProfileData] = useState<IUser>()
 
   const getProfileData = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      const response = await getUserById(
-        userId === 'you' && myId ? myId : userId || 'fail'
-      )
-      setProfileData(response.data)
-    } catch (error: any) {
-      console.error(error.response || error)
-      setProfileData(undefined)
-    } finally {
-      setIsLoading(false)
+    if (userId === 'you' || userData?.id === userId) {
+      setProfileData(userData)
+    } else {
+      try {
+        const response = await getUserById(userId || 'fail')
+        setProfileData(response.data)
+      } catch (error: any) {
+        console.error(error.response || error)
+        setProfileData(undefined)
+      }
     }
-  }, [userId, myId])
+  }, [userData, userId])
+
+  const onLoad = useCallback(async () => {
+    if (!profileData) {
+      setIsLoading(true)
+    }
+    await getProfileData()
+    setIsLoading(false)
+  }, [getProfileData, profileData])
 
   useLayoutEffect(() => {
-    getProfileData()
-  }, [getProfileData])
+    onLoad()
+  }, [onLoad])
 
   useEffect(() => {
-    setEditable(userId === 'you' || myId === userId)
-  }, [myId, userId])
+    setEditable(userId === 'you' || userData?.id === userId)
+  }, [userData, userId])
 
   useEffect(() => {
     if (profileData) {
       setIsLoading(false)
     }
   }, [profileData])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [nav])
 
   return (
     <>
@@ -66,22 +78,30 @@ const ProfilePage = () => {
             }  | Wave`}</title>
           </Helmet>
           <S.Wrapper>
-            <ProfileHead data={profileData} />
+            <ProfileHead user={profileData} />
+            <ProfileNav className="profileNav" editable={editable} />
             <S.Container>
-              <ProfileNav className="profileNav" editable={editable} />
-              {!nav ? (
-                <ProfileAll user={profileData} editable={editable} />
-              ) : nav === 'popular-tracks' ? (
-                <ProfilePopularTracks user={profileData} editable={editable} />
-              ) : nav === 'tracks' ? (
-                <ProfileTracks userId={profileData.id} editable={editable} />
-              ) : nav === 'playlists' ? (
-                <ProfilePlaylists userId={profileData.id} />
-              ) : nav === 'reposts' ? (
-                <ProfileReposts user={profileData} />
-              ) : (
-                <></>
-              )}
+              <div className="profile-main">
+                {!nav ? (
+                  <ProfileAll user={profileData} editable={editable} />
+                ) : nav === 'popular-tracks' ? (
+                  <ProfilePopularTracks
+                    user={profileData}
+                    editable={editable}
+                  />
+                ) : nav === 'tracks' ? (
+                  <ProfileTracks userId={profileData.id} editable={editable} />
+                ) : nav === 'playlists' ? (
+                  <ProfilePlaylists userId={profileData.id} />
+                ) : nav === 'reposts' ? (
+                  <ProfileReposts user={profileData} />
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div className="profile-side">
+                <ProfileSide user={profileData} />
+              </div>
             </S.Container>
           </S.Wrapper>
         </>
