@@ -12,6 +12,7 @@ import SearchPage from '@pages/SearchPage/SearchPage'
 import PlaylistPage from '@pages/PlaylistPage/PlaylistPage'
 import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
 import PlaylistDetailPage from '@pages/PlaylistDetailPage/playlistDetailPage'
+import ProfileDetailPage from '@pages/ProfileDetailPage/ProfileDetailPage'
 
 const Router = () => {
   const location = useLocation()
@@ -41,10 +42,28 @@ const Router = () => {
         element={withUser(TrackDetailPage, null)}
       />
       <Route path="/track/notfound" element={withUser(NotFoundPage, null)} />
+
       {/* Profile Page */}
       <Route path="/profile/:userId" element={withUser(ProfilePage, null)}>
         <Route path=":nav" element={withUser(ProfilePage, null)} />
       </Route>
+      <Route
+        path="/profile/:userId/likes"
+        element={withUser(ProfileDetailPage, null)}
+      />
+      <Route
+        path="/profile/:userId/following"
+        element={withUser(ProfileDetailPage, null)}
+      />
+      <Route
+        path="/profile/:userId/followers"
+        element={withUser(ProfileDetailPage, null)}
+      />
+      <Route
+        path="/profile/:userId/comments"
+        element={withUser(ProfileDetailPage, null)}
+      />
+
       {/* Playlsit Page */}
       <Route path="/playlist/notfound" element={withUser(NotFoundPage, null)} />
       <Route
@@ -55,6 +74,7 @@ const Router = () => {
         path="/playlist/:userId/:permalink/:detail"
         element={withUser(PlaylistDetailPage, null)}
       />
+
       {/* Search Page */}
       <Route path="/search" element={withUser(SearchPage, null)}></Route>
     </Routes>
