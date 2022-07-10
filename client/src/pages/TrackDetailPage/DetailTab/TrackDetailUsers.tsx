@@ -1,7 +1,7 @@
 import { numberFormat } from '@api/functions'
 import { FollowTextButton } from '@components/Common/Button'
 import { IUser } from '@appTypes/types.type.'
-import { useAppSelector } from '@redux/hook'
+import { useAppDispatch, useAppSelector } from '@redux/hook'
 import { EmptyProfileImage } from '@styles/EmptyImage'
 import React, { useCallback, useLayoutEffect, useState } from 'react'
 import { IoMdPeople } from 'react-icons/io'
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import NoItem from './NoItem.style'
 import LoadingArea from '@components/Loading/LoadingArea'
+import { userToggleFollow } from '@redux/thunks/userThunks'
 
 const StyledUl = styled.ul`
   display: flex;
@@ -75,7 +76,7 @@ const TrackDetailUsers = ({
   isReposts,
   ...props
 }: TrackDetailUsersPorps) => {
-  const displayNum = 20
+  const dispatch = useAppDispatch()
 
   const userId = useAppSelector((state) => state.user.userData?.id)
   const following =
@@ -86,7 +87,28 @@ const TrackDetailUsers = ({
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
 
+  const handleClickFollow = useCallback(
+    (id: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      dispatch(userToggleFollow(id)).then((res: any) => {
+        const { type } = res.payload
+        const addCount = type === 'unfollow' ? -1 : 1
+
+        setDisplayUsers((state) => {
+          return state.map((f) =>
+            f.id === id
+              ? { ...f, followersCount: f.followersCount + addCount }
+              : f
+          )
+        })
+      })
+    },
+    [dispatch]
+  )
+
   const getUserItems = useCallback(() => {
+    const displayNum = 20
+
     if (done) {
       return
     }
@@ -153,6 +175,7 @@ const TrackDetailUsers = ({
               <StyledFollowButton
                 className="followBtn"
                 isFollow={following.findIndex((f) => f.id === user.id) !== -1}
+                onClick={handleClickFollow(user.id)}
               />
             ) : (
               <></>
