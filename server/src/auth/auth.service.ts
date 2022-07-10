@@ -152,7 +152,7 @@ export class AuthService {
   async updateProfileData(user: User, authProfileDto: AuthProfileDto) {
     const { nickname, description } = authProfileDto;
     if (nickname) user.nickname = nickname;
-    if (description) user.description = description;
+    user.description = description;
     const updateUser = await this.userRepository.save(user);
     return {
       nickname: updateUser.nickname,

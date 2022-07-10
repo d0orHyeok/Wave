@@ -103,9 +103,14 @@ const ButtonContainer = styled.div`
 
 interface ProfileNavProps extends React.HTMLAttributes<HTMLDivElement> {
   editable?: boolean
+  editModalProps?: { onClose?: () => any }
 }
 
-const ProfileNav = ({ editable, ...props }: ProfileNavProps) => {
+const ProfileNav = ({
+  editable,
+  editModalProps,
+  ...props
+}: ProfileNavProps) => {
   const { userId, nav } = useParams()
 
   const dispatch = useAppDispatch()
@@ -136,7 +141,8 @@ const ProfileNav = ({ editable, ...props }: ProfileNavProps) => {
 
   const handleCloseModal = useCallback(() => {
     setOpen(false)
-  }, [])
+    editModalProps?.onClose && editModalProps.onClose()
+  }, [editModalProps])
 
   const handleClickArrowButton =
     (move: -1 | 1) => (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -236,7 +236,7 @@ const EditProfile = ({ onClose }: EditProfileProps) => {
       if (imageDelete) {
         dispatch(userDeleteImage())
       }
-      if (nickname || description) {
+      if (nickname || userData?.description !== description) {
         const data = { nickname, description }
         dispatch(userUpdateProfile(data))
       }

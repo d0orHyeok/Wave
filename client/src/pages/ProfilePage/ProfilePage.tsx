@@ -33,7 +33,6 @@ const ProfilePage = () => {
         setProfileData(response.data)
       } catch (error: any) {
         console.error(error.response || error)
-        setProfileData(undefined)
       }
     }
   }, [userData, userId])
@@ -79,7 +78,11 @@ const ProfilePage = () => {
           </Helmet>
           <S.Wrapper>
             <ProfileHead user={profileData} />
-            <ProfileNav className="profileNav" editable={editable} />
+            <ProfileNav
+              className="profileNav"
+              editable={editable}
+              editModalProps={{ onClose: getProfileData }}
+            />
             <S.Container>
               <div className="profile-main">
                 {!nav ? (

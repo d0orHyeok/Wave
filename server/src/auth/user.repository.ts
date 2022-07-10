@@ -68,6 +68,14 @@ export class UserRepository extends Repository<User> {
       .loadRelationCountAndMap('user.repostMusicsCount', 'user.repostMusics')
       .loadRelationCountAndMap('user.likePlaylistsCount', 'user.likePlaylists')
       .loadRelationCountAndMap(
+        'followers.followersCount',
+        'followers.followers',
+      )
+      .loadRelationCountAndMap(
+        'following.followersCount',
+        'following.followers',
+      )
+      .loadRelationCountAndMap(
         'user.repostPlaylistsCount',
         'user.repostPlaylists',
       )

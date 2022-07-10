@@ -60,30 +60,27 @@ const ProfileSide = ({ user }: ProfileSideProps) => {
 
   return (
     <S.Container>
-      {user.followersCount + user.followingCount + user.musicsCount && (
-        <>
-          <S.NumBox>
-            <S.NumBoxItem>
-              <Link to={`/profile/${user.id}/followers`}>
-                <h3 className="tag">Followers</h3>
-                <div className="num">{numberFormat(user.followersCount)}</div>
-              </Link>
-            </S.NumBoxItem>
-            <S.NumBoxItem>
-              <Link to={`/profile/${user.id}/following`}>
-                <h3 className="tag">Following</h3>
-                <div className="num">{numberFormat(user.followingCount)}</div>
-              </Link>
-            </S.NumBoxItem>
-            <S.NumBoxItem>
-              <Link to={`/profile/${user.id}/tracks`}>
-                <h3 className="tag">Tracks</h3>
-                <div className="num">{numberFormat(user.musicsCount)}</div>
-              </Link>
-            </S.NumBoxItem>
-          </S.NumBox>
-        </>
-      )}
+      <S.NumBox>
+        <S.NumBoxItem>
+          <Link to={`/profile/${user.id}/followers`}>
+            <h3 className="tag">Followers</h3>
+            <div className="num">{numberFormat(user.followersCount)}</div>
+          </Link>
+        </S.NumBoxItem>
+        <S.NumBoxItem>
+          <Link to={`/profile/${user.id}/following`}>
+            <h3 className="tag">Following</h3>
+            <div className="num">{numberFormat(user.followingCount)}</div>
+          </Link>
+        </S.NumBoxItem>
+        <S.NumBoxItem>
+          <Link to={`/profile/${user.id}/tracks`}>
+            <h3 className="tag">Tracks</h3>
+            <div className="num">{numberFormat(user.musicsCount)}</div>
+          </Link>
+        </S.NumBoxItem>
+      </S.NumBox>
+      {user.description ? <S.DescBox>{user.description}</S.DescBox> : <></>}
       {userLikes.length ? (
         <>
           <S.BoxTitle>
