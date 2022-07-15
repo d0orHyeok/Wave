@@ -15,6 +15,11 @@ export const EditBasicInfo = styled.div`
     height: 256px;
     margin-right: 1rem;
 
+    ${({ theme }) => theme.device.mobile} {
+      width: 200px;
+      height: 200px;
+    }
+
     & label,
     & .btn.resetBtn {
       display: inline-flex;
@@ -62,14 +67,14 @@ export const EditBasicInfo = styled.div`
 
 export const EditBasicInfoForm = styled.form`
   min-width: 0;
+  flex-grow: 1;
 `
 
 export const EditInputBox = styled.div`
-  margin-bottom: 1rem;
   font-size: 0.9rem;
 
-  &:last-child {
-    margin-bottom: 0;
+  &:not(:last-child) {
+    margin-bottom: 1rem;
   }
 
   & .label {
@@ -148,4 +153,37 @@ export const EditInputPrivacy = styled(EditInputBox)`
   & input {
     width: auto;
   }
+`
+
+export const GenreInputBox = styled(EditInputBox)`
+  display: flex;
+  flex-wrap: wrap;
+`
+
+export const GenreBox = styled.div`
+  min-width: 0;
+
+  &:first-child {
+    margin-right: 8px;
+  }
+
+  & input {
+    margin-top: 8px;
+    height: 30px;
+    font-size: 13px;
+    min-width: 220px;
+  }
+`
+
+export const OptionTitle = styled.h2`
+  font-size: 12px;
+  padding: 4px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border1};
+  color: ${({ theme }) => theme.colors.bgTextRGBA(0.6)};
+  margin: 10px 0;
+`
+
+export const OptionBox = styled.div`
+  font-size: 13px;
+  padding: 0 20px;
 `

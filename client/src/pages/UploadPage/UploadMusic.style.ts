@@ -6,6 +6,10 @@ export const Container = styled.div`
   padding: 0 50px;
   min-width: 300px;
   width: 100%;
+
+  ${({ theme }) => theme.device.tablet} {
+    padding: 0 30px;
+  }
 `
 
 export const EditMain = styled.div`

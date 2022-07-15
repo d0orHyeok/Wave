@@ -14,6 +14,8 @@ import { AiFillCamera } from 'react-icons/ai'
 import EmptyMusicCover from '@styles/EmptyImage/EmptyMusicCover.style'
 import { IExtractMetadata } from '../extractMetadata.types'
 import { IMusic } from '@appTypes/music.type'
+import Select, { Option } from '@components/Common/Select/Select'
+import { genreList } from '@assets/data/genre'
 
 export interface IMusicBasicInfoHandler {
   getData: () => IMusicBasicInfoValue | void
@@ -64,10 +66,11 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
     const [inputValue, setInputValue] = useState({
       title: '',
       permalink: '',
-      genre: '',
+      genre: 'None',
       description: '',
       tags: '',
     })
+    const [customGenre, setCustomGenre] = useState('')
 
     useImperativeHandle(
       ref,
@@ -87,11 +90,14 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
             return alert('[Basic Info]\nPlease enter a permalink')
           }
 
+          const genreData =
+            genre === 'None' ? [] : genre === 'Custom' ? [customGenre] : [genre]
+
           const data = {
             title,
             permalink,
             tags: !tags ? undefined : tags.split('#').splice(1),
-            genre: !genre ? undefined : genre.split(';').slice(0, -1),
+            genre: genreData,
             description,
             cover: newCover || originalCover.file,
             status: status ? 'PUBLIC' : 'PRIVATE',
@@ -99,7 +105,7 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
           return data
         },
       }),
-      [inputValue, originalCover.file, status]
+      [customGenre, inputValue, originalCover.file, status]
     )
 
     const handleChangeCover = useCallback(
@@ -157,13 +163,19 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
             onChangeData(key, value.split('#').splice(1))
             break
           case 'genre':
-            onChangeData(key, value.split(';').slice(0, -1))
+            const v =
+              value === 'None'
+                ? undefined
+                : value === 'Custom'
+                ? customGenre
+                : value
+            onChangeData(key, [v])
             break
           default:
             onChangeData(key, value)
         }
       },
-      [onChangeData]
+      [customGenre, onChangeData]
     )
 
     const handleChangePermalink = useCallback(
@@ -193,23 +205,30 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
       [whenSetInputValue]
     )
 
-    const handleLeaveGenre = useCallback(
-      (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.currentTarget
-        const l = value.length
-        if (l > 0 && value[l - 1] !== ';') {
-          whenSetInputValue('genre', `${value};`)
-        }
-      },
-      [whenSetInputValue]
-    )
-
     const handleChangeInput = useCallback(
       (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { id, value } = event.currentTarget
         whenSetInputValue(id, value)
       },
       [whenSetInputValue]
+    )
+
+    const handleChangeGenreOption = useCallback(
+      (value?: string | number) => {
+        whenSetInputValue('genre', value)
+        if (value === 'Custom') {
+          document.getElementById('genre')?.focus()
+        }
+      },
+      [whenSetInputValue]
+    )
+
+    const handleChangeCustomGenre = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget
+        setCustomGenre(value)
+      },
+      []
     )
 
     const setValue = useCallback(() => {
@@ -248,6 +267,29 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
         setStatus(musicStatus === 'PUBLIC' ? true : false)
       }
 
+      const selectGenre = genreList.find((item) => {
+        if (!genre) {
+          return false
+        }
+        return Boolean(
+          genre.filter(
+            (g) =>
+              item.keywords.findIndex((keyword) =>
+                g.toLowerCase().includes(keyword)
+              ) !== -1
+          ).length
+        )
+      })
+
+      const trackGenre = !genre
+        ? 'None'
+        : !selectGenre
+        ? 'Custom'
+        : selectGenre.label
+      if (trackGenre === 'Custom' && genre) {
+        setCustomGenre(genre[0])
+      }
+
       setInputValue((prevState) => {
         return {
           ...prevState,
@@ -258,12 +300,18 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
               .trim()
               .replaceAll(/[\s]/g, '-')
               .replaceAll(/[^a-zA-Z0-9가-힣ㄱ-ㅎ\_\-]/g, ''),
-          genre: genre?.length ? `${genre.join(';')};` : '',
+          genre: trackGenre,
           description: comment?.length ? comment.join('\n') : '',
-          tags: tags ? `#${tags.join('#')}` : '',
+          tags: tags
+            ? `#${tags.join('#')}`
+            : genre
+            ? `#${genre.join('#')}`
+            : '',
         }
       })
     }, [metadata])
+
+    console.log(inputValue.genre)
 
     useLayoutEffect(() => {
       setValue()
@@ -334,19 +382,38 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
                 </button>
               </div>
             </S.EditInputPermalink>
-            <S.EditInputBox>
-              <label className="label" htmlFor="genre">
-                Genre
-              </label>
-              <input
-                id="genre"
-                type="text"
-                placeholder="Genre of music"
-                value={inputValue.genre}
-                onChange={handleChangeInput}
-                onBlur={handleLeaveGenre}
-              />
-            </S.EditInputBox>
+            <S.GenreInputBox>
+              <S.GenreBox>
+                <div className="label">Genre</div>
+                <Select
+                  value={inputValue.genre}
+                  onChangeValue={handleChangeGenreOption}
+                >
+                  <S.OptionBox>
+                    <Option value="None">None</Option>
+                    <Option value="Custom">Custom</Option>
+                  </S.OptionBox>
+                  <S.OptionTitle>Music</S.OptionTitle>
+                  <S.OptionBox>
+                    {genreList.map((item) => (
+                      <Option key={item.label} value={item.label}>
+                        {item.label}
+                      </Option>
+                    ))}
+                  </S.OptionBox>
+                </Select>
+              </S.GenreBox>
+              {inputValue.genre === 'Custom' && (
+                <S.GenreBox style={{ marginTop: 'auto' }}>
+                  <input
+                    type="text"
+                    id="genre"
+                    value={customGenre}
+                    onChange={handleChangeCustomGenre}
+                  />
+                </S.GenreBox>
+              )}
+            </S.GenreInputBox>
             <S.EditInputBox>
               <label className="label" htmlFor="tag">
                 Additional tags
