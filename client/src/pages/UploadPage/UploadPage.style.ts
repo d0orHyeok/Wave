@@ -3,7 +3,7 @@ import Dropzone from '@components/Dropzone/Dropzone'
 
 export const Wrapper = styled.div`
   min-height: 100%;
-  margin: 30px auto;
+  margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;

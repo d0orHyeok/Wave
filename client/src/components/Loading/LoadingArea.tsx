@@ -7,7 +7,7 @@ const StyledDiv = styled.div<{ hide?: boolean }>`
   display: ${({ hide }) => (hide ? 'none' : 'flex')};
   align-items: center;
   justify-content: center;
-  margin: 30px 0;
+  height: 200px;
 `
 
 interface LodaingAreaProps extends React.HTMLAttributes<HTMLDivElement> {
