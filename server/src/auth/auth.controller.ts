@@ -12,6 +12,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseGuards,
@@ -82,6 +83,16 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async getUserData(@GetUser() user: User) {
     return user;
+  }
+
+  @Get('/search/:keyward')
+  searchMusic(
+    @Param('keyward') keyward: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.authService.searchUser(keyward, pagingDto);
   }
 
   @Patch('/profile')

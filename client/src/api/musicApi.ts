@@ -24,6 +24,10 @@ export const getPopularMusicsOfUser = (userId: string) => {
   return Axios.get(`/api/music/popular/${userId}`)
 }
 
+export const searchMusic = (keyward: string, skip = 0, take = 10) => {
+  return Axios.get(`/api/music/search/${keyward}?skip=${skip}&take=${take}`)
+}
+
 export const uploadMusic = (formData: FormData) => {
   return Axios.post('/api/music/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },

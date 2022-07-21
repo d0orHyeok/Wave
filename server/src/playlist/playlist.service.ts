@@ -61,6 +61,10 @@ export class PlaylistService {
     return this.playlistRepository.findPlaylistsByUserId(userId, pagingDto);
   }
 
+  async searchPlaylist(keyward: string, pagingDto: PagingDto) {
+    return this.playlistRepository.searchPlaylist(keyward, pagingDto);
+  }
+
   async updatePlaylistInfo(
     playlistId: number,
     updatePlaylistDto: UpdatePlaylistDto,

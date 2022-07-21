@@ -180,6 +180,31 @@ export class MusicRepository extends Repository<Music> {
       .getMany();
   }
 
+  async searchMusic(keyward: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      return this.musicSimpleQuery()
+        .where('LOWER(music.title) LIKE :title', {
+          title: `%${keyward}%`,
+        })
+        .orderBy('music.count', 'DESC')
+        .skip(skip)
+        .take(take)
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error, `Error to search musics`);
+    }
+  }
+
+  async getChartMusics(genre?: string[]) {
+    const query = this.musicSimpleQuery()
+      .where('music.genre IN (:genre)', {
+        genre,
+      })
+      .orderBy('music.count', 'DESC');
+  }
+
   // Update
   async updateMusic(music: Music) {
     try {

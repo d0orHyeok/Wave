@@ -82,6 +82,16 @@ export class MusicController {
     return this.musicService.findMusicsByUserId(userId, pagingDto);
   }
 
+  @Get('/search/:keyward')
+  searchMusic(
+    @Param('keyward') keyward: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.musicService.searchMusic(keyward, pagingDto);
+  }
+
   @Post('/upload')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Music } from 'src/entities/music.entity';
 import { Playlist } from 'src/entities/playlist.entity';
+import { PagingDto } from 'src/common/dto/paging.dto';
 
 type TargetType = Music | Playlist;
 
@@ -107,6 +108,23 @@ export class UserRepository extends Repository<User> {
     }
 
     return user;
+  }
+
+  async searchUser(keyward: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      return this.getDetailQuery()
+        .where('LOWER(user.nickname) LIKE :nickname', {
+          nickname: `%${keyward}%`,
+        })
+        .orderBy('user.updatedAt')
+        .skip(skip)
+        .take(take)
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error, 'Error to search user');
+    }
   }
 
   async updateRefreshToken(user: User, hashedRefreshToken?: string) {

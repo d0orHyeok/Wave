@@ -1,3 +1,4 @@
+import { PagingDto } from 'src/common/dto/paging.dto';
 import { PlaylistRepository } from './../playlist/playlist.repository';
 import { AuthProfileDto } from './dto/auth-profile.dto';
 import { deleteFileDisk, uploadFileDisk } from 'src/fileFunction';
@@ -120,6 +121,10 @@ export class AuthService {
 
   async findUserById(id: string) {
     return this.userRepository.findUserById(id);
+  }
+
+  async searchUser(keyward: string, pagingDto: PagingDto) {
+    return this.userRepository.searchUser(keyward, pagingDto);
   }
 
   async updateProfileImage(user: User, image: Express.Multer.File) {

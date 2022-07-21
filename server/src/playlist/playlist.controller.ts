@@ -59,6 +59,16 @@ export class PlaylistController {
     return this.playlistService.findPlaylistsByUserId(userId, pagingDto);
   }
 
+  @Get('/search/:keyward')
+  async searchPlaylist(
+    @Param('keyward') keyward: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.playlistService.searchPlaylist(keyward, pagingDto);
+  }
+
   @Post('/create')
   @UseGuards(JwtAuthGuard)
   async createPlaylist(

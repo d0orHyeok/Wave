@@ -123,6 +123,24 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
   }
 
+  async searchPlaylist(keyward: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      return this.getDetailPlaylistQuery()
+        .where('LOWER(playlist.name) LIKE :name', { name: `%${keyward}%` })
+        .orderBy('playlist.updatedAt')
+        .skip(skip)
+        .take(take)
+        .getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(
+        error,
+        'Error to search playlists',
+      );
+    }
+  }
+
   async updatePlaylist(playlist: Playlist) {
     try {
       return this.save(playlist);

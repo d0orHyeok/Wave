@@ -14,3 +14,7 @@ export const userSignUp = (registerInfo: IUserRegisterBody) => {
 export const getUserById = (userId: string) => {
   return Axios.get(`/api/auth/${userId}`)
 }
+
+export const searchUser = (keyward: string, skip = 0, take = 10) => {
+  return Axios.get(`/api/auth/search/${keyward}?skip=${skip}&take=${take}`)
+}
