@@ -1,4 +1,6 @@
-import React from 'react'
+import { IMusic } from '@appTypes/music.type'
+import { IPlaylist } from '@appTypes/playlist.type'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import InteractionButtons, {
   InteractionButtonsProps,
@@ -27,17 +29,27 @@ const InteractionBar = ({
   mediaSize,
   ...props
 }: InteractionBarProps) => {
+  const [temp, setTemp] = useState<IMusic | IPlaylist>()
+
+  useEffect(() => {
+    if (!setTarget) {
+      setTemp(target)
+    } else {
+      setTemp(undefined)
+    }
+  }, [setTarget, target])
+
   return (
     <Container {...props}>
       <InteractionButtons
         className="interactionButtons"
-        target={target}
-        setTarget={setTarget}
+        target={temp || target}
+        setTarget={setTarget ? setTarget : setTemp}
         mediaSize={mediaSize}
       />
       <InteractionCount
         className="interactionCount"
-        target={target}
+        target={temp || target}
         visibleOption={visibleOption}
       />
     </Container>

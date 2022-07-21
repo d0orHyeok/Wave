@@ -76,7 +76,7 @@ type TargetType = IMusic | IPlaylist
 
 export interface InteractionButtonsProps {
   target: TargetType
-  setTarget?: React.Dispatch<React.SetStateAction<any>>
+  setTarget?: (value: any) => void
   mediaSize?: number | string
 }
 
@@ -120,7 +120,9 @@ const InteractionButtons = ({
     dispatch(userToggleRepost({ targetId: target.id, targetType })).then(
       (value: any) => {
         if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
-          const existReposts = target.reposts || []
+          const existReposts =
+            target.reposts ||
+            Array.from({ length: target.repostsCount || 0 }, (v, i) => i)
           const newReposts =
             value.payload.data.toggleType === 'repost'
               ? [...existReposts, userData]
@@ -144,13 +146,21 @@ const InteractionButtons = ({
     const targetType = 'title' in target ? 'music' : 'playlist'
     dispatch(userToggleLike({ targetId: target.id, targetType })).then(
       (value: any) => {
-        if (value.type.indexOf('fulfilled') !== -1 && setTarget) {
-          const existLikes = target.likes || []
-          const newLikes =
-            value.payload.data.toggleType === 'like'
-              ? [...existLikes, userData]
-              : existLikes.filter((l) => l.id !== userData.id)
-          setTarget({ ...target, likes: newLikes, likesCount: newLikes.length })
+        if (value.type.indexOf('fulfilled') !== -1) {
+          if (setTarget) {
+            const existLikes =
+              target.likes ||
+              Array.from({ length: target.likesCount || 0 }, (v, i) => i)
+            const newLikes =
+              value.payload.data.toggleType === 'like'
+                ? [...existLikes, userData]
+                : existLikes.filter((l) => l.id !== userData.id)
+            setTarget({
+              ...target,
+              likes: newLikes,
+              likesCount: newLikes.length,
+            })
+          }
         }
       }
     )
