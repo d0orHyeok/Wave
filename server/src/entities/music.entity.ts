@@ -2,7 +2,6 @@ import { Comment } from 'src/entities/comment.entity';
 import { Playlist } from 'src/entities/playlist.entity';
 import { User } from 'src/entities/user.entity';
 import {
-  AfterUpdate,
   BaseEntity,
   Column,
   CreateDateColumn,
@@ -84,17 +83,9 @@ export class Music extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.music)
   comments: Comment[];
 
-  @Column({ default: 0 })
-  likeTestCount: number;
-
   // Date
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @AfterUpdate()
-  updateLikesCount() {
-    this.likeTestCount = this.likes.length;
-  }
 }

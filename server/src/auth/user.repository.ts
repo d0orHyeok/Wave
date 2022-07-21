@@ -1,6 +1,6 @@
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { User } from 'src/entities/user.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
@@ -28,6 +28,17 @@ export class UserRepository extends Repository<User> {
         throw new InternalServerErrorException(error, 'Error to create user');
       }
     }
+  }
+
+  orderSelectQuery(query: SelectQueryBuilder<User>) {
+    return query
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(f.id)', 'count')
+          .from(User, 'f')
+          .where('f.id = followers.id');
+      }, 'fcount')
+      .orderBy('fcount', 'DESC');
   }
 
   getSimpleQuery() {
@@ -114,14 +125,13 @@ export class UserRepository extends Repository<User> {
     const { skip, take } = pagingDto;
 
     try {
-      return this.getDetailQuery()
-        .where('LOWER(user.nickname) LIKE :nickname', {
+      const query = this.getDetailQuery().where(
+        'LOWER(user.nickname) LIKE :nickname',
+        {
           nickname: `%${keyward}%`,
-        })
-        .orderBy('user.updatedAt')
-        .skip(skip)
-        .take(take)
-        .getMany();
+        },
+      );
+      return this.orderSelectQuery(query).skip(skip).take(take).getMany();
     } catch (error) {
       throw new InternalServerErrorException(error, 'Error to search user');
     }

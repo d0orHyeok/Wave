@@ -7,18 +7,29 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { Playlist } from './../entities/playlist.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { Music } from 'src/entities/music.entity';
 import { PagingDto } from 'src/common/dto/paging.dto';
 
 @EntityRepository(Playlist)
 export class PlaylistRepository extends Repository<Playlist> {
+  orderSelectQuery(query: SelectQueryBuilder<Playlist>) {
+    return query
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(l.id)', 'count')
+          .from(User, 'l')
+          .where('l.id = likes.id');
+      }, 'lcount')
+      .orderBy('lcount', 'DESC');
+  }
+
   getDetailPlaylistQuery() {
     return this.createQueryBuilder('playlist')
       .leftJoinAndSelect('playlist.user', 'user')
       .leftJoinAndSelect('playlist.musics', 'musics')
       .leftJoinAndSelect('musics.user', 'pmu')
-      .leftJoinAndSelect('playlist.likes', 'likse')
+      .leftJoinAndSelect('playlist.likes', 'likes')
       .leftJoinAndSelect('playlist.reposts', 'reposts')
       .loadRelationCountAndMap('playlist.musicsCount', 'playlist.musics')
       .loadRelationCountAndMap('playlist.likesCount', 'playlist.likes')
@@ -126,13 +137,15 @@ export class PlaylistRepository extends Repository<Playlist> {
   async searchPlaylist(keyward: string, pagingDto: PagingDto) {
     const { skip, take } = pagingDto;
 
+    const whereString = `%${keyward.toLocaleLowerCase()}%`;
+
     try {
-      return this.getDetailPlaylistQuery()
-        .where('LOWER(playlist.name) LIKE :name', { name: `%${keyward}%` })
-        .orderBy('playlist.updatedAt')
-        .skip(skip)
-        .take(take)
-        .getMany();
+      const query = this.getDetailPlaylistQuery()
+        .where('LOWER(playlist.name) LIKE :name', { name: whereString })
+        .orWhere('LOWER(user.nickname) LIKE :nickname', {
+          nickname: whereString,
+        });
+      return this.orderSelectQuery(query).skip(skip).take(take).getMany();
     } catch (error) {
       throw new InternalServerErrorException(
         error,

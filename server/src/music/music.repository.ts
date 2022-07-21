@@ -18,14 +18,20 @@ import {
 export class MusicRepository extends Repository<Music> {
   orderSelectQuery(query: SelectQueryBuilder<Music>) {
     return query
+      .addSelect((subQuery) => {
+        return subQuery
+          .select('COUNT(l.id)', 'count')
+          .from(User, 'l')
+          .where('l.id = likes.id');
+      }, 'lcount')
       .orderBy('music.count', 'DESC')
-      .addOrderBy('likesCount', 'DESC')
-      .addOrderBy('repostsCount', 'DESC');
+      .addOrderBy('lcount', 'DESC');
   }
 
   musicSimpleQuery() {
     return this.createQueryBuilder('music')
       .leftJoinAndSelect('music.user', 'user')
+      .leftJoinAndSelect('music.likes', 'likes')
       .loadRelationCountAndMap('music.likesCount', 'music.likes')
       .loadRelationCountAndMap('music.commentsCount', 'music.comments')
       .loadRelationCountAndMap('music.playlistsCount', 'music.playlists')
@@ -171,38 +177,43 @@ export class MusicRepository extends Repository<Music> {
   }
 
   async findPopularMusicsByUserId(userId: string) {
-    const minCount = 99;
-    return this.musicDetailQuery()
+    const minCount = 9;
+    const query = this.musicDetailQuery()
       .where('music.userId = :userId', { userId })
-      .andWhere((qb) => qb.where('music.count > :minCount', { minCount }))
-      .orderBy('music.count', 'DESC')
-      .take(10)
-      .getMany();
+      .andWhere((qb) => qb.where('music.count > :minCount', { minCount }));
+    return this.orderSelectQuery(query).take(10).getMany();
   }
 
   async searchMusic(keyward: string, pagingDto: PagingDto) {
     const { skip, take } = pagingDto;
 
+    const whereString = `%${keyward.toLowerCase()}%`;
+
     try {
-      return this.musicSimpleQuery()
+      const query = this.musicSimpleQuery()
         .where('LOWER(music.title) LIKE :title', {
-          title: `%${keyward}%`,
+          title: whereString,
         })
-        .orderBy('music.count', 'DESC')
-        .skip(skip)
-        .take(take)
-        .getMany();
+        .orWhere('LOWER(user.nickname) LIKE :nickname', {
+          nickname: whereString,
+        });
+      return this.orderSelectQuery(query).skip(skip).take(take).getMany();
     } catch (error) {
       throw new InternalServerErrorException(error, `Error to search musics`);
     }
   }
 
-  async getChartMusics(genre?: string[]) {
-    const query = this.musicSimpleQuery()
-      .where('music.genre IN (:genre)', {
+  async getGenreMusic(genre: string[], pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    try {
+      const query = this.musicSimpleQuery().where('music.genre IN (:genre)', {
         genre,
-      })
-      .orderBy('music.count', 'DESC');
+      });
+      return this.orderSelectQuery(query).skip(skip).take(take).getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error, `Error to search musics`);
+    }
   }
 
   // Update
