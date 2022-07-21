@@ -34,6 +34,9 @@ const SearchBox = ({ className, windowWidth }: SearchBoxProps) => {
   }
 
   const searchMusic = () => {
+    if (!text) {
+      return
+    }
     navigate(`search?query=${text}`)
   }
 
