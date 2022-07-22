@@ -149,7 +149,7 @@ const TrackPage = () => {
                 <ul className="content-info content-tags">
                   {music.tags.map((tag, index) => (
                     <li key={index} className="content-tags-item">
-                      <Link to={`/search?tags=%23${tag}`}>{`#${tag}`}</Link>
+                      <Link to={`/tags/${tag}`}>{`#${tag}`}</Link>
                     </li>
                   ))}
                 </ul>

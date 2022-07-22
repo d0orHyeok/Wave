@@ -311,8 +311,6 @@ const MusicBasicInfo = forwardRef<IMusicBasicInfoHandler, Props>(
       })
     }, [metadata])
 
-    console.log(inputValue.genre)
-
     useLayoutEffect(() => {
       setValue()
     }, [setValue])

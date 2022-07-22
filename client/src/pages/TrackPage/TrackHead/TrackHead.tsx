@@ -155,9 +155,7 @@ const TrackHead = ({ music }: TrackHeadProps) => {
           <div className="ago">{caculateDateAgo(music.createdAt)}</div>
           {music.genre ? (
             <div className="genre">
-              <Link
-                to={`/search?tags=%23${music.genre}`}
-              >{`#${music.genre}`}</Link>
+              <Link to={`/tags/${music.genre}`}>{`#${music.genre}`}</Link>
             </div>
           ) : (
             <></>
