@@ -13,6 +13,9 @@ import PlaylistPage from '@pages/PlaylistPage/PlaylistPage'
 import TrackDetailPage from '@pages/TrackDetailPage/TrackDetailPage'
 import PlaylistDetailPage from '@pages/PlaylistDetailPage/playlistDetailPage'
 import ProfileDetailPage from '@pages/ProfileDetailPage/ProfileDetailPage'
+import TagPage from '@pages/TagPage/TagPage'
+
+const userDetailPage = ['likes', 'following', 'followers', 'comments']
 
 const Router = () => {
   const location = useLocation()
@@ -47,22 +50,13 @@ const Router = () => {
       <Route path="/profile/:userId" element={withUser(ProfilePage, null)}>
         <Route path=":nav" element={withUser(ProfilePage, null)} />
       </Route>
-      <Route
-        path="/profile/:userId/likes"
-        element={withUser(ProfileDetailPage, null)}
-      />
-      <Route
-        path="/profile/:userId/following"
-        element={withUser(ProfileDetailPage, null)}
-      />
-      <Route
-        path="/profile/:userId/followers"
-        element={withUser(ProfileDetailPage, null)}
-      />
-      <Route
-        path="/profile/:userId/comments"
-        element={withUser(ProfileDetailPage, null)}
-      />
+      {userDetailPage.map((nav, index) => (
+        <Route
+          key={index}
+          path={`/profile/:userId/${nav}`}
+          element={withUser(ProfileDetailPage, null)}
+        />
+      ))}
 
       {/* Playlsit Page */}
       <Route path="/playlist/notfound" element={withUser(NotFoundPage, null)} />
@@ -77,6 +71,11 @@ const Router = () => {
 
       {/* Search Page */}
       <Route path="/search" element={withUser(SearchPage, null)}></Route>
+
+      {/* Tag Page */}
+      <Route path="/tags/:tag" element={withUser(TagPage, null)}>
+        <Route path=":nav" element={withUser(TagPage, null)} />
+      </Route>
     </Routes>
   )
 }

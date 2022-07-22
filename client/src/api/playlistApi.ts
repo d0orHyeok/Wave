@@ -26,6 +26,10 @@ export const searchPlaylist = (keyward: string, skip = 0, take = 10) => {
   return Axios.get(`/api/playlist/search/${keyward}?skip=${skip}&take=${take}`)
 }
 
+export const getPlaylistsByTag = (tag: string, skip = 0, take = 10) => {
+  return Axios.get(`/api/playlist/tag/${tag}?skip=${skip}&take=${take}`)
+}
+
 export const updatePlaylistData = (playlistId: number, body: any) => {
   return Axios.patch(`/api/playlist/update/${playlistId}`, body)
 }
