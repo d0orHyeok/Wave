@@ -154,6 +154,28 @@ export class PlaylistRepository extends Repository<Playlist> {
     }
   }
 
+  async findPlaylistsByTag(tag: string, pagingDto: PagingDto) {
+    const { skip, take } = pagingDto;
+
+    const p = await this.getDetailPlaylistQuery()
+      .addSelect('playlist.tagsLower')
+      .where('playlist.name = :name', { name: 'test' })
+      .take(1)
+      .getMany();
+    console.log(p);
+
+    try {
+      const query = this.getDetailPlaylistQuery()
+        .addSelect('playlist.tagsLower')
+        .where('playlist.tagsLower IN (:tag)', {
+          tag: [tag.toLowerCase()],
+        });
+      return this.orderSelectQuery(query).skip(skip).take(take).getMany();
+    } catch (error) {
+      throw new InternalServerErrorException(error, `Error to find playlists`);
+    }
+  }
+
   async updatePlaylist(playlist: Playlist) {
     try {
       return this.save(playlist);
@@ -174,6 +196,9 @@ export class PlaylistRepository extends Repository<Playlist> {
       const [key, value] = entrie;
       if (value) {
         playlist[key] = value;
+        if (key === 'tags') {
+          playlist['tagsLower'] = value.map((t) => t.toLowerCase());
+        }
       }
     });
 

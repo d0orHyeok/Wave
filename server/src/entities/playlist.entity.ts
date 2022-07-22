@@ -32,6 +32,8 @@ export class Playlist {
   description: string;
   @Column('text', { array: true, nullable: true })
   tags: string[];
+  @Column('text', { array: true, nullable: true, select: false })
+  tagsLower: string[];
 
   // Create User
   @Column({ nullable: true, name: 'userId' })

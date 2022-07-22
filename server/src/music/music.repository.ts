@@ -58,13 +58,15 @@ export class MusicRepository extends Repository<Music> {
 
   // Create
   async createMusic(createMusicData: MusicDataDto, user: User): Promise<Music> {
-    const { permalink } = createMusicData;
+    const { permalink, tags, genre } = createMusicData;
 
     const existMusics = await this.findOne({ permalink, user });
 
     const music = this.create({
       ...createMusicData,
       permalink: !existMusics ? permalink : `${permalink}_${Date.now()}`,
+      genreLower: genre ? genre.map((g) => g.toLowerCase()) : genre,
+      tagsLower: tags ? tags.map((t) => t.toLowerCase()) : tags,
       user,
     });
 
@@ -86,6 +88,7 @@ export class MusicRepository extends Repository<Music> {
       const musics = await this.musicSimpleQuery()
         .where('music.status = :status', { status: 'PUBLIC' })
         .getMany();
+
       return musics;
     } catch (error) {
       console.log(error);
@@ -187,15 +190,13 @@ export class MusicRepository extends Repository<Music> {
   async searchMusic(keyward: string, pagingDto: PagingDto) {
     const { skip, take } = pagingDto;
 
-    const whereString = `%${keyward.toLowerCase()}%`;
-
     try {
       const query = this.musicSimpleQuery()
-        .where('LOWER(music.title) LIKE :title', {
-          title: whereString,
+        .where('LOWER(music.title) LIKE LOWER(:title)', {
+          title: `%${keyward}%`,
         })
-        .orWhere('LOWER(user.nickname) LIKE :nickname', {
-          nickname: whereString,
+        .orWhere('LOWER(user.nickname) LIKE LOWER(:nickname)', {
+          nickname: `%${keyward}%`,
         });
       return this.orderSelectQuery(query).skip(skip).take(take).getMany();
     } catch (error) {
@@ -203,13 +204,19 @@ export class MusicRepository extends Repository<Music> {
     }
   }
 
-  async getGenreMusic(genre: string[], pagingDto: PagingDto) {
+  async findMusicsByTag(tag: string, pagingDto: PagingDto) {
     const { skip, take } = pagingDto;
 
+    const searchArray = [tag.toLowerCase()];
+
     try {
-      const query = this.musicSimpleQuery().where('music.genre IN (:genre)', {
-        genre,
-      });
+      const query = this.musicSimpleQuery()
+        .addSelect('music.genreLower')
+        .addSelect('music.tagsLower')
+        .where('music.genreLower IN (:genre) OR music.tagsLower IN (:tag)', {
+          genre: searchArray,
+          tag: searchArray,
+        });
       return this.orderSelectQuery(query).skip(skip).take(take).getMany();
     } catch (error) {
       throw new InternalServerErrorException(error, `Error to search musics`);
@@ -241,6 +248,11 @@ export class MusicRepository extends Repository<Music> {
     entries.forEach((entrie) => {
       const [key, value] = entrie;
       music[key] = value;
+      if (key === 'genre' || key === 'tags') {
+        music[`${key}Lower`] = value
+          ? value.map((v) => v.toLowerCase())
+          : value;
+      }
     });
 
     return this.updateMusic(music);

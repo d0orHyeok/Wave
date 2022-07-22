@@ -92,6 +92,16 @@ export class MusicController {
     return this.musicService.searchMusic(keyward, pagingDto);
   }
 
+  @Get('/tag/:tag')
+  getTaggedMusics(
+    @Param('tag') tag: string,
+    @Query('skip') skip?: number,
+    @Query('take') take?: number,
+  ) {
+    const pagingDto = { take: take || 10, skip: skip || 0 };
+    return this.musicService.findMusicsByTag(tag, pagingDto);
+  }
+
   @Post('/upload')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

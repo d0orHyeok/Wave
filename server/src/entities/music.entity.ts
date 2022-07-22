@@ -41,6 +41,10 @@ export class Music extends BaseEntity {
   genre: string[];
   @Column('text', { nullable: true, array: true })
   tags: string[];
+  @Column('text', { nullable: true, array: true, select: false })
+  genreLower: string[];
+  @Column('text', { nullable: true, array: true, select: false })
+  tagsLower: string[];
 
   // Optional Metadata
   @Column({ nullable: true })

@@ -72,6 +72,10 @@ export class MusicService {
     return this.musicRepository.searchMusic(keyward, pagingDto);
   }
 
+  async findMusicsByTag(tag: string, pagingDto: PagingDto) {
+    return this.musicRepository.findMusicsByTag(tag, pagingDto);
+  }
+
   changeMusicFileData(
     file: Express.Multer.File,
     data: UploadMusicDataDto,
